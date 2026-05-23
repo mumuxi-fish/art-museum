@@ -1,0 +1,125 @@
+{
+  "galleries": [
+    {
+      "id": "gallery-1",
+      "name": "展厅一 · 晨光",
+      "materials": {
+        "wallColor": 16117224,
+        "accentColor": 13945400,
+        "ceilingColor": 16448245,
+        "floorDark": 4013104,
+        "floorLight": 16314604,
+        "doorColor": 4013104,
+        "frameColor": 4868918,
+        "frameRoughness": 0.7,
+        "frameMetalness": 0.05,
+        "floorType": "checker"
+      },
+      "dimensions": {
+        "roomHalfWidth": 10,
+        "roomHeight": 8,
+        "wallDepth": 0.35
+      },
+      "ambientIntensity": 0.35,
+      "arts": [
+        { "id": "art-1", "title": "晨光", "artist": "AI 艺术", "wall": "back", "position": { "x": 0, "y": 2.5, "z": -9 }, "size": { "width": 3, "height": 2 }, "rotation": { "y": 0, "z": 0 }, "hue": 0.08 },
+        { "id": "art-2", "title": "暮色", "artist": "AI 艺术", "wall": "left", "position": { "x": -9, "y": 2.5, "z": -2 }, "size": { "width": 2.4, "height": 1.8 }, "rotation": { "y": 1.5708, "z": 0 }, "hue": 0.6 },
+        { "id": "art-3", "title": "山岚", "artist": "AI 艺术", "wall": "right", "position": { "x": 9, "y": 2.5, "z": 2 }, "size": { "width": 2.4, "height": 1.8 }, "rotation": { "y": -1.5708, "z": 0 }, "hue": 0.3 },
+        { "id": "art-4", "title": "星夜", "artist": "AI 艺术", "wall": "back", "position": { "x": -4, "y": 2.5, "z": -9 }, "size": { "width": 2, "height": 1.5 }, "rotation": { "y": 0, "z": 0 }, "hue": 0.75 },
+        { "id": "art-5", "title": "花海", "artist": "AI 艺术", "wall": "back", "position": { "x": 4, "y": 2.5, "z": -9 }, "size": { "width": 2, "height": 1.5 }, "rotation": { "y": 0, "z": 0 }, "hue": 0.9 }
+      ],
+      "lights": [
+        { "id": "light-1", "name": "中心顶灯", "type": "ceiling", "position": { "x": 0, "y": 7.5, "z": 0 }, "rotation": { "x": 0, "y": 0, "z": 0 }, "color": "#fff5e8", "intensity": 1.8, "range": 14, "angle": 1.2, "penumbra": 0.4, "enabled": true },
+        { "id": "light-2", "name": "后区顶灯", "type": "ceiling", "position": { "x": 0, "y": 7.5, "z": -4.5 }, "rotation": { "x": 0, "y": 0, "z": 0 }, "color": "#fff0e0", "intensity": 1.5, "range": 10, "angle": 1.3, "penumbra": 0.5, "enabled": true },
+        { "id": "light-3", "name": "左墙灯", "type": "wall", "position": { "x": -9.5, "y": 4.5, "z": -3 }, "rotation": { "x": 0, "y": 1.5708, "z": 0 }, "color": "#ffe8d0", "intensity": 0.8, "range": 8, "angle": 1.0, "penumbra": 0.6, "enabled": true },
+        { "id": "light-4", "name": "右墙灯", "type": "wall", "position": { "x": 9.5, "y": 4.5, "z": -3 }, "rotation": { "x": 0, "y": -1.5708, "z": 0 }, "color": "#ffe8d0", "intensity": 0.8, "range": 8, "angle": 1.0, "penumbra": 0.6, "enabled": true }
+      ]
+    },
+    {
+      "id": "gallery-2",
+      "name": "展厅二 · 暖阳",
+      "materials": {
+        "wallColor": 15262812,
+        "accentColor": 12695864,
+        "ceilingColor": 16382452,
+        "floorDark": 4013104,
+        "floorLight": 16314604,
+        "doorColor": 4013104,
+        "frameColor": 6643031,
+        "frameRoughness": 0.7,
+        "frameMetalness": 0.05,
+        "floorType": "checker"
+      },
+      "dimensions": {
+        "roomHalfWidth": 10,
+        "roomHeight": 8,
+        "wallDepth": 0.35
+      },
+      "ambientIntensity": 0.30,
+      "arts": [
+        { "id": "art-6", "title": "印象 · 日出", "artist": "AI 艺术", "wall": "back", "position": { "x": 0, "y": 2.8, "z": -9 }, "size": { "width": 3.5, "height": 2.2 }, "rotation": { "y": 0, "z": 0 }, "hue": 0.12 },
+        { "id": "art-7", "title": "秋韵", "artist": "AI 艺术", "wall": "left", "position": { "x": -9, "y": 2.2, "z": 0 }, "size": { "width": 2, "height": 2.8 }, "rotation": { "y": 1.5708, "z": 0 }, "hue": 0.1 },
+        { "id": "art-8", "title": "冰川", "artist": "AI 艺术", "wall": "right", "position": { "x": 9, "y": 2.5, "z": 0 }, "size": { "width": 2.8, "height": 1.6 }, "rotation": { "y": -1.5708, "z": 0 }, "hue": 0.55 },
+        { "id": "art-9", "title": "城市 · 夜", "artist": "AI 艺术", "wall": "back", "position": { "x": -4, "y": 2.5, "z": -9 }, "size": { "width": 2.2, "height": 1.6 }, "rotation": { "y": 0, "z": 0 }, "hue": 0.65 },
+        { "id": "art-10", "title": "沙漠", "artist": "AI 艺术", "wall": "back", "position": { "x": 4, "y": 2.5, "z": -9 }, "size": { "width": 2.2, "height": 1.6 }, "rotation": { "y": 0, "z": 0 }, "hue": 0.08 }
+      ],
+      "lights": [
+        { "id": "light-5", "name": "中心顶灯", "type": "ceiling", "position": { "x": 0, "y": 7.5, "z": 0 }, "rotation": { "x": 0, "y": 0, "z": 0 }, "color": "#ffeedd", "intensity": 2.0, "range": 15, "angle": 1.2, "penumbra": 0.35, "enabled": true },
+        { "id": "light-6", "name": "后区顶灯", "type": "ceiling", "position": { "x": 0, "y": 7.5, "z": -4.5 }, "rotation": { "x": 0, "y": 0, "z": 0 }, "color": "#fff5e0", "intensity": 1.5, "range": 10, "angle": 1.3, "penumbra": 0.5, "enabled": true },
+        { "id": "light-7", "name": "左墙灯", "type": "wall", "position": { "x": -9.5, "y": 4.5, "z": -3 }, "rotation": { "x": 0, "y": 1.5708, "z": 0 }, "color": "#ffeecc", "intensity": 1.0, "range": 8, "angle": 1.0, "penumbra": 0.6, "enabled": true },
+        { "id": "light-8", "name": "右墙灯", "type": "wall", "position": { "x": 9.5, "y": 4.5, "z": -3 }, "rotation": { "x": 0, "y": -1.5708, "z": 0 }, "color": "#ffeecc", "intensity": 1.0, "range": 8, "angle": 1.0, "penumbra": 0.6, "enabled": true }
+      ]
+    },
+    {
+      "id": "gallery-3",
+      "name": "展厅三 · 极简",
+      "materials": {
+        "wallColor": 15132390,
+        "accentColor": 13750737,
+        "ceilingColor": 16448250,
+        "floorDark": 2763306,
+        "floorLight": 15263976,
+        "doorColor": 4013104,
+        "frameColor": 4868918,
+        "frameRoughness": 0.7,
+        "frameMetalness": 0.05,
+        "floorType": "checker"
+      },
+      "dimensions": {
+        "roomHalfWidth": 12,
+        "roomHeight": 8,
+        "wallDepth": 0.35
+      },
+      "ambientIntensity": 0.35,
+      "arts": [
+        { "id": "art-11", "title": "无题 · 蓝", "artist": "AI 艺术", "wall": "back", "position": { "x": -3, "y": 3, "z": -11 }, "size": { "width": 4, "height": 3 }, "rotation": { "y": 0, "z": 0 }, "hue": 0.58 },
+        { "id": "art-12", "title": "几何 · 红", "artist": "AI 艺术", "wall": "back", "position": { "x": 4, "y": 2.5, "z": -11 }, "size": { "width": 2, "height": 2 }, "rotation": { "y": 0, "z": 0 }, "hue": 0.0 },
+        { "id": "art-13", "title": "视觉 · 绿", "artist": "AI 艺术", "wall": "left", "position": { "x": -11, "y": 3, "z": -2 }, "size": { "width": 3, "height": 3 }, "rotation": { "y": 1.5708, "z": 0 }, "hue": 0.35 },
+        { "id": "art-14", "title": "混沌", "artist": "AI 艺术", "wall": "right", "position": { "x": 11, "y": 3, "z": 3 }, "size": { "width": 3, "height": 2.5 }, "rotation": { "y": -1.5708, "z": 0 }, "hue": 0.85 }
+      ],
+      "lights": [
+        { "id": "light-9", "name": "中心顶灯", "type": "ceiling", "position": { "x": 0, "y": 7.5, "z": 0 }, "rotation": { "x": 0, "y": 0, "z": 0 }, "color": "#f5f0e8", "intensity": 2.2, "range": 16, "angle": 1.2, "penumbra": 0.35, "enabled": true },
+        { "id": "light-10", "name": "后区顶灯", "type": "ceiling", "position": { "x": 0, "y": 7.5, "z": -5.5 }, "rotation": { "x": 0, "y": 0, "z": 0 }, "color": "#f5f0e8", "intensity": 1.5, "range": 12, "angle": 1.3, "penumbra": 0.5, "enabled": true },
+        { "id": "light-11", "name": "左墙灯", "type": "wall", "position": { "x": -11.5, "y": 4.5, "z": -4 }, "rotation": { "x": 0, "y": 1.5708, "z": 0 }, "color": "#f0e8e0", "intensity": 0.9, "range": 9, "angle": 1.0, "penumbra": 0.6, "enabled": true },
+        { "id": "light-12", "name": "右墙灯", "type": "wall", "position": { "x": 11.5, "y": 4.5, "z": -4 }, "rotation": { "x": 0, "y": -1.5708, "z": 0 }, "color": "#f0e8e0", "intensity": 0.9, "range": 9, "angle": 1.0, "penumbra": 0.6, "enabled": true }
+      ]
+    }
+  ],
+  "materialPresets": {
+    "walls": [
+      { "name": "晨白", "color": "#f5f0e8" },
+      { "name": "米黄", "color": "#e8dcc8" },
+      { "name": "浅灰", "color": "#e5e5e5" },
+      { "name": "淡蓝", "color": "#e0e8f0" },
+      { "name": "暖灰", "color": "#d4cdc5" },
+      { "name": "象牙", "color": "#fffff0" }
+    ],
+    "floors": [
+      { "name": "深棋", "dark": "#3d3830", "light": "#f8f4ec" },
+      { "name": "黑白", "dark": "#2a2a2a", "light": "#e8e8e8" },
+      { "name": "木质", "dark": "#4a3525", "light": "#c9b99a" },
+      { "name": "冷色", "dark": "#2a3540", "light": "#5a6a7e" },
+      { "name": "红棕", "dark": "#4a2f25", "light": "#d4b49a" }
+    ]
+  }
+}

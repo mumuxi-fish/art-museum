@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>展馆编辑器 · 3D 艺术博物馆</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #0e0e12; color: #e0ddd8; overflow: hidden;
+      height: 100vh; display: flex; flex-direction: column;
+    }
+
+    /* ===== 顶部工具栏 ===== */
+    .topbar {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0 1rem; height: 44px; flex-shrink: 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: #111117;
+    }
+    .topbar .logo { font-size: 0.85rem; font-weight: 500; color: #e0ddd8; text-decoration: none; white-space: nowrap; }
+    .topbar .logo span { color: #c9b896; }
+    .topbar .sep { width: 1px; height: 20px; background: rgba(255,255,255,0.08); }
+    .topbar .sep2 { width: 2px; height: 16px; background: rgba(255,255,255,0.12); border-radius: 1px; }
+
+    .tbtn {
+      padding: 0.3rem 0.6rem; border-radius: 5px; font-size: 0.72rem;
+      border: 1px solid rgba(255,255,255,0.1); background: transparent;
+      color: #ccc; cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; gap: 0.3rem; white-space: nowrap;
+    }
+    .tbtn:hover { border-color: #c9b896; color: #fff; }
+    .tbtn.active { background: #c9b896; color: #111; border-color: #c9b896; font-weight: 500; }
+    .tbtn.primary { background: #c9b896; color: #111; border-color: #c9b896; }
+    .tbtn.danger { background: #442222; color: #e66; border-color: #663333; }
+    .tbtn.danger:hover { background: #553333; border-color: #cc4444; }
+
+    select.tbtn {
+      appearance: none; padding-right: 1.5rem;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 0.4rem center;
+      cursor: pointer; max-width: 14rem;
+    }
+
+    .topbar .spacer { flex: 1; }
+
+    .badge {
+      font-size: 0.65rem; color: #fc6; border: 1px solid rgba(255,180,60,0.25);
+      padding: 0.15rem 0.45rem; border-radius: 3px; display: none;
+    }
+    .badge.show { display: inline-block; }
+
+    /* 禁用按钮状态 */
+    .tbtn:disabled { opacity: 0.35; cursor: not-allowed; border-color: rgba(255,255,255,0.05); }
+    .tbtn:disabled:hover { border-color: rgba(255,255,255,0.05); color: #ccc; }
+
+    /* ===== 主体布局 ===== */
+    .main {
+      display: flex; flex: 1; overflow: hidden;
+    }
+
+    /* 3D 视口 */
+    .viewport {
+      flex: 1; position: relative; background: #0a0a0c;
+      cursor: grab; min-width: 0;
+    }
+    .viewport:active { cursor: grabbing; }
+    .viewport canvas { display: block; }
+
+    .viewport-hint {
+      position: absolute; bottom: 12px; left: 16px;
+      font-size: 0.7rem; opacity: 0.35; pointer-events: none;
+    }
+
+    /* 右侧面板 */
+    .sidebar {
+      width: 320px; flex-shrink: 0;
+      background: #111117; border-left: 1px solid rgba(255,255,255,0.06);
+      display: flex; flex-direction: column; overflow-y: auto;
+    }
+
+    .panel-section {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .panel-section h3 {
+      font-size: 0.78rem; color: #c9b896; margin-bottom: 0.75rem;
+      letter-spacing: 0.04em; font-weight: 500;
+    }
+    .panel-section h3 .sub {
+      font-weight: 400; font-size: 0.7rem; color: #888;
+      letter-spacing: 0;
+    }
+
+    .field { margin-bottom: 0.5rem; }
+    .field label {
+      display: block; font-size: 0.7rem; color: #888; margin-bottom: 0.2rem;
+    }
+    .field input[type="text"], .field input[type="number"] {
+      width: 100%; padding: 0.35rem 0.5rem;
+      background: #1a1a22; border: 1px solid rgba(255,255,255,0.08);
+      color: #e0ddd8; border-radius: 5px; font-size: 0.78rem;
+    }
+    .field input[type="text"]:focus, .field input[type="number"]:focus { border-color: #c9b896; outline: none; }
+    .field input[type="range"] { width: 100%; accent-color: #c9b896; cursor: pointer; }
+
+    .field-row { display: flex; gap: 0.5rem; }
+    .field-row .field { flex: 1; }
+
+    .field-inline {
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .field-inline label { margin-bottom: 0; white-space: nowrap; font-size: 0.7rem; }
+    .field-inline input[type="checkbox"] { accent-color: #c9b896; width: 16px; height: 16px; cursor: pointer; }
+
+    /* 颜色字段 */
+    .color-field {
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .color-field input[type="color"] {
+      width: 32px; height: 28px; border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 4px; cursor: pointer; background: transparent; padding: 1px;
+    }
+
+    /* 按钮 */
+    .btn-row { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .btn {
+      padding: 0.35rem 0.75rem; border-radius: 5px; font-size: 0.72rem;
+      border: 1px solid rgba(255,255,255,0.1); cursor: pointer;
+      background: #1a1a22; color: #e0ddd8; transition: background 0.15s;
+    }
+    .btn:hover { background: #25252f; }
+    .btn.primary { background: #c9b896; color: #111; border-color: #c9b896; }
+    .btn.primary:hover { background: #d4bf9a; }
+    .btn.danger { background: #331a1a; color: #e66; border-color: #552a2a; }
+    .btn.danger:hover { background: #442a2a; border-color: #cc4444; }
+
+    /* 图片库 */
+    .img-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem;
+    }
+    .img-card {
+      cursor: pointer; border-radius: 5px; overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.05); transition: border-color 0.15s;
+    }
+    .img-card:hover { border-color: #c9b896; }
+    .img-card img {
+      width: 100%; aspect-ratio: 1; object-fit: cover; display: block;
+    }
+    .img-card .name {
+      display: block; font-size: 0.55rem; text-align: center; padding: 0.1rem;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.4;
+    }
+
+    /* 拖拽上传 */
+    .dropzone {
+      border: 1.5px dashed rgba(255,255,255,0.1); border-radius: 8px;
+      padding: 0.8rem; text-align: center; cursor: pointer;
+      transition: border-color 0.2s; margin-bottom: 0.5rem;
+    }
+    .dropzone:hover, .dropzone.over { border-color: #c9b896; }
+    .dropzone p { font-size: 0.72rem; opacity: 0.5; }
+
+    /* 预设 */
+    .preset {
+      padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.65rem;
+      border: 1px solid rgba(255,255,255,0.08); background: #1a1a22;
+      color: #bbb; cursor: pointer; transition: border-color 0.15s;
+    }
+    .preset:hover { border-color: #c9b896; color: #fff; }
+
+    /* 图片预览 */
+    .art-preview {
+      background: #0a0a0c; border-radius: 4px; min-height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 0.5rem; overflow: hidden;
+    }
+
+    /* 灯号指示 */
+    .light-badge {
+      display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+      margin-right: 0.3rem;
+    }
+    .light-badge.on { background: #c9b896; box-shadow: 0 0 6px #c9b89688; }
+    .light-badge.off { background: #444; }
+
+    /* 灯具快捷列表 */
+    .light-list-item {
+      display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.25rem 0; cursor: pointer; font-size: 0.72rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: color 0.15s;
+    }
+    .light-list-item:hover { color: #c9b896; }
+    .light-list-item:last-child { border-bottom: none; }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%);
+      padding: 0.5rem 1.2rem; border-radius: 8px; font-size: 0.78rem;
+      z-index: 100; pointer-events: none;
+      transition: opacity 0.3s; opacity: 0;
+    }
+    .toast.show { opacity: 1; }
+    .toast.success { background: rgba(100,200,120,0.2); color: #6c6; border: 1px solid rgba(100,200,120,0.2); }
+    .toast.error { background: rgba(255,100,100,0.2); color: #e66; border: 1px solid rgba(255,100,100,0.2); }
+    .toast.info { background: rgba(201,184,150,0.15); color: #c9b896; border: 1px solid rgba(201,184,150,0.2); }
+
+    .empty { color: #444; font-size: 0.72rem; text-align: center; padding: 1rem 0; }
+
+    /* 勾选开关 */
+    .toggle-switch {
+      position: relative; width: 36px; height: 20px; flex-shrink: 0;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background: #333; border-radius: 20px; transition: 0.2s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute; height: 16px; width: 16px;
+      left: 2px; bottom: 2px; background: #888; border-radius: 50%; transition: 0.2s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: #c9b89644; }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(16px); background: #c9b896; }
+
+    /* 灯具类型图标 */
+    .light-icon {
+      font-size: 0.85rem; opacity: 0.6;
+    }
+
+    @media (max-width: 768px) {
+      .main { flex-direction: column; }
+      .viewport { height: 50vh; }
+      .sidebar { width: 100%; max-height: 50vh; }
+    }
+  </style>
+</head>
+<body>
+  <!-- 顶部工具栏 -->
+  <div class="topbar">
+    <a class="logo" href="./">3D<span>博物馆</span> · 编辑器</a>
+    <span class="sep"></span>
+    <button class="tbtn active" id="btnToolSelect" title="选择">🔍 选择</button>
+    <button class="tbtn" id="btnToolMove" title="移动">✋ 移动</button>
+    <span class="sep2"></span>
+    <button class="tbtn" id="btnDuplicate" title="复制" disabled>📋 复制</button>
+    <button class="tbtn danger" id="btnDelete" title="删除" disabled>🗑 删除</button>
+    <span class="sep2"></span>
+    <button class="tbtn" id="btnAddLight" title="添加顶灯">💡 顶灯</button>
+    <button class="tbtn" id="btnAddWallLight" title="添加墙灯">🔦 墙灯</button>
+    <button class="tbtn" id="btnAddPainting" title="添加画作">🖼 画作</button>
+    <span class="sep"></span>
+    <select class="tbtn" id="gallerySelect"></select>
+    <span class="spacer"></span>
+    <span class="badge" id="offlineBadge">静态版</span>
+    <button class="tbtn primary" id="btnSave">保存</button>
+    <a class="tbtn" href="./" target="_blank">预览</a>
+  </div>
+
+  <!-- 主体 -->
+  <div class="main">
+    <!-- 3D 视口 -->
+    <div class="viewport" id="viewport">
+      <div class="viewport-hint">左键选择 · 右键旋转 · 滚轮缩放 · 中键平移</div>
+    </div>
+
+    <!-- 右侧面板 -->
+    <div class="sidebar" id="sidebar">
+
+      <!-- 展馆信息面板（默认） -->
+      <div class="panel-section" id="panel-gallery">
+        <h3>展馆信息</h3>
+        <p style="font-size:0.72rem;opacity:0.5;margin-bottom:0.5rem;">点击场景中的物体编辑，或直接选择：</p>
+        <div class="preset-row" style="display:flex;gap:0.3rem;flex-wrap:wrap;margin-bottom:0.5rem;">
+          <span class="preset" id="quickSelectWall">墙面</span>
+          <span class="preset" id="quickSelectFloor">地板</span>
+          <span class="preset" id="quickSelectCeiling">天花板</span>
+        </div>
+        <div class="preset-row" id="wallPresets" style="margin-top:0.75rem;display:flex;gap:0.3rem;flex-wrap:wrap;"></div>
+        <div class="preset-row" id="floorPresets" style="margin-top:0.5rem;display:flex;gap:0.3rem;flex-wrap:wrap;"></div>
+      </div>
+
+      <!-- 灯具属性面板 -->
+      <div class="panel-section" id="panel-light" style="display:none;">
+        <h3>灯具属性</h3>
+        <div class="field">
+          <label>名称</label>
+          <input type="text" id="lightName" placeholder="灯具名称">
+        </div>
+        <div class="field-inline" style="margin-bottom:0.5rem;">
+          <label>启用</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="lightEnabled">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="field">
+          <label>类型</label>
+          <span id="lightType" style="font-size:0.72rem;opacity:0.6;"></span>
+        </div>
+        <div class="field">
+          <label>颜色</label>
+          <div class="color-field">
+            <input type="color" id="lightColor">
+          </div>
+        </div>
+        <div class="field">
+          <label>强度 <span id="lightIntensityVal" style="font-size:0.65rem;opacity:0.5;">1.0</span></label>
+          <input type="range" id="lightIntensity" min="0" max="5" step="0.05">
+        </div>
+        <div class="field">
+          <label>范围 <span id="lightRangeVal" style="font-size:0.65rem;opacity:0.5;">10</span></label>
+          <input type="range" id="lightRange" min="2" max="25" step="0.5">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>照射角 <span id="lightAngleVal" style="font-size:0.65rem;opacity:0.5;">1.2</span></label>
+            <input type="range" id="lightAngle" min="0.1" max="1.5" step="0.05">
+          </div>
+          <div class="field">
+            <label>边缘 <span id="lightPenumbraVal" style="font-size:0.65rem;opacity:0.5;">0.4</span></label>
+            <input type="range" id="lightPenumbra" min="0" max="1" step="0.05">
+          </div>
+        </div>
+        <p style="font-size:0.65rem;opacity:0.35;margin-top:0.5rem;">切换到「移动」工具拖拽灯具位置</p>
+      </div>
+
+      <!-- 画作属性面板 -->
+      <div class="panel-section" id="panel-painting" style="display:none;">
+        <h3>画作属性</h3>
+        <div class="art-preview" id="paintingPreview"></div>
+        <div class="field">
+          <label>标题</label>
+          <input type="text" id="paintingTitle" placeholder="画作标题">
+        </div>
+        <div class="field">
+          <label>艺术家</label>
+          <input type="text" id="paintingArtist" placeholder="艺术家">
+        </div>
+        <div class="field">
+          <label>图片文件</label>
+          <span id="paintingImage" style="font-size:0.7rem;opacity:0.5;"></span>
+        </div>
+        <div class="field">
+          <label>墙体</label>
+          <select id="paintingWall" class="tbtn" style="width:100%;padding:0.35rem 0.5rem;">
+            <option value="back">后墙</option>
+            <option value="left">左墙</option>
+            <option value="right">右墙</option>
+            <option value="front">前墙（门）</option>
+          </select>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>宽</label>
+            <input type="range" id="paintingSizeW_range" min="0.3" max="5" step="0.1" style="width:100%;">
+            <input type="text" id="paintingSizeW" placeholder="2">
+          </div>
+          <div class="field">
+            <label>高</label>
+            <input type="range" id="paintingSizeH_range" min="0.3" max="5" step="0.1" style="width:100%;">
+            <input type="text" id="paintingSizeH" placeholder="1.5">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>X</label>
+            <input type="range" id="paintingPosX_range" min="-12" max="12" step="0.05" style="width:100%;">
+            <input type="text" id="paintingPosX" style="width:100%;font-size:0.7rem;">
+          </div>
+          <div class="field">
+            <label>Y</label>
+            <input type="range" id="paintingPosY_range" min="0.5" max="7.5" step="0.05" style="width:100%;">
+            <input type="text" id="paintingPosY" style="width:100%;font-size:0.7rem;">
+          </div>
+          <div class="field">
+            <label>Z</label>
+            <input type="range" id="paintingPosZ_range" min="-12" max="12" step="0.05" style="width:100%;">
+            <input type="text" id="paintingPosZ" style="width:100%;font-size:0.7rem;">
+          </div>
+        </div>
+        <p style="font-size:0.65rem;opacity:0.35;margin-top:0.5rem;">切换到「移动」工具拖拽画作</p>
+      </div>
+
+      <!-- 材质属性面板 -->
+      <div class="panel-section" id="panel-material" style="display:none;">
+        <h3>材质属性 · <span id="materialType">墙面</span></h3>
+        <div class="field" id="mat-row-wallColor">
+          <label>墙面颜色</label>
+          <div class="color-field">
+            <input type="color" id="mat-wallColor">
+          </div>
+        </div>
+        <div class="field" id="mat-row-accentColor">
+          <label>装饰 / 门框</label>
+          <div class="color-field">
+            <input type="color" id="mat-accentColor">
+          </div>
+        </div>
+        <div class="field" id="mat-row-ceilingColor">
+          <label>天花板颜色</label>
+          <div class="color-field">
+            <input type="color" id="mat-ceilingColor">
+          </div>
+        </div>
+        <div class="field" id="mat-row-floorDark">
+          <label>地板深色</label>
+          <div class="color-field">
+            <input type="color" id="mat-floorDark">
+          </div>
+        </div>
+        <div class="field" id="mat-row-floorLight">
+          <label>地板浅色</label>
+          <div class="color-field">
+            <input type="color" id="mat-floorLight">
+          </div>
+        </div>
+        <div class="field" id="mat-row-floorType">
+          <label>地板纹理</label>
+          <select id="mat-floorType" class="tbtn" style="width:100%;padding:0.35rem 0.5rem;">
+            <option value="checker">棋盘格</option>
+            <option value="solid">纯色</option>
+            <option value="stripes">条纹</option>
+            <option value="wood">木纹</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 上传 & 图片库 -->
+      <div class="panel-section">
+        <h3>上传图片</h3>
+        <div class="dropzone" id="dropzone">
+          <p>点击或拖拽上传 · JPG/PNG/WEBM ≤10MB</p>
+          <input type="file" id="fileInput" accept="image/*" hidden>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h3>图片库</h3>
+        <div class="img-grid" id="imgGrid"><p class="empty">加载中...</p></div>
+        <p style="font-size:0.65rem;opacity:0.35;margin-top:0.3rem;">点击图片添加到场景</p>
+      </div>
+
+      <!-- 操作 -->
+      <div class="panel-section">
+        <h3>数据</h3>
+        <div class="btn-row">
+          <button class="btn primary" id="btnSaveBottom">保存</button>
+          <button class="btn" id="btnExport">导出 JSON</button>
+          <button class="btn" id="btnImport">导入 JSON</button>
+          <input type="file" id="jsonFileInput" accept=".json" hidden>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script type="module">
+    import { initEditor } from '/src/editor.js';
+    initEditor();
+  </script>
+</body>
+</html>
