@@ -9,7 +9,7 @@ let btn = null;
 
 export function initFlashlight(flashBtn) {
   btn = flashBtn;
-  light = new THREE.SpotLight(0xfff3d6, 0, 20, 0.55, 0.7, 2);
+  light = new THREE.SpotLight(0xfff3d6, 0, 20, 0.5, 0.7, 2);
   light.castShadow = false;
   target = new THREE.Object3D();
   scene.add(target);
@@ -21,7 +21,7 @@ export function initFlashlight(flashBtn) {
 export function toggle() {
   if (!light) return false;
   on = !on;
-  light.intensity = on ? 3.2 : 0;
+  light.intensity = on ? 6 : 0;
   if (btn) btn.classList.toggle('active', on);
   return on;
 }
@@ -29,7 +29,7 @@ export function toggle() {
 export function setFlashlight(v) {
   if (!light) return;
   on = !!v;
-  light.intensity = on ? 3.2 : 0;
+  light.intensity = on ? 6 : 0;
   if (btn) btn.classList.toggle('active', on);
 }
 
