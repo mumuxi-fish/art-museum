@@ -55,6 +55,25 @@ function snapToWall(wall, roomHalf, wallDepth) {
   }
 }
 
+// 画作射灯:从画前方照向画面
+function addArtSpotlight(grp, roomGroup) {
+  const pos = grp.position;
+  const rotY = grp.rotation.y;
+  // 画面法线(平面默认面向 +z,按 rotation.y 旋转)
+  const nx = Math.sin(rotY);
+  const nz = Math.cos(rotY);
+
+  const light = new THREE.SpotLight(0xfff2dd, 1.6, 9, 0.42, 0.55, 2);
+  light.position.set(pos.x + nx * 1.9, pos.y + 0.75, pos.z + nz * 1.9);
+  light.castShadow = false;
+
+  const target = new THREE.Object3D();
+  target.position.copy(pos);
+  roomGroup.add(target);
+  light.target = target;
+  roomGroup.add(light);
+}
+
 function buildArtworks(arts, roomGroup, roomHalf, wallDepth, frameWood) {
   if (!arts) return;
   arts.forEach((a) => {
@@ -96,6 +115,7 @@ function buildArtworks(arts, roomGroup, roomHalf, wallDepth, frameWood) {
     frame.castShadow = true;
     canvas.castShadow = true;
     roomGroup.add(grp);
+    addArtSpotlight(grp, roomGroup); // 射灯照向画作
   });
 }
 
