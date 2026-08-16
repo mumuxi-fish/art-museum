@@ -1,4 +1,5 @@
 // Art Museum — 入口:装配各模块
+import * as THREE from 'three';
 import { scene, camera, renderer } from './scene.js';
 import { IS_MOBILE, EYE_HEIGHT } from './config.js';
 import { galleries, loadGalleries, preloadPaintings } from './loader.js';
