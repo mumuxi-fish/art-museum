@@ -92,41 +92,6 @@ body {
   letter-spacing: 0.08em;
 }
 
-/* ========== Blocker / 入场遮罩 ========== */
-#blocker {
-  position: fixed;
-  inset: 0;
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(ellipse at center, #1a1814 0%, #0a0908 70%);
-  cursor: pointer;
-  transition: opacity 0.45s ease;
-}
-
-#blocker.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.blocker-inner {
-  text-align: center;
-  padding: 2rem;
-}
-
-.blocker-inner p {
-  font-size: 1.15rem;
-  letter-spacing: 0.2em;
-}
-
-.blocker-inner .sub {
-  margin-top: 1rem;
-  font-size: 0.8rem;
-  opacity: 0.5;
-  letter-spacing: 0.1em;
-}
-
 /* ========== Canvas ========== */
 canvas {
   display: block;
@@ -327,12 +292,11 @@ canvas {
     font-size: 0.7rem;
   }
 
-  #blocker .blocker-inner p {
-    font-size: 1rem;
-  }
-
-  #blocker .blocker-inner .sub {
-    font-size: 0.72rem;
+  #galleryMenuBtn {
+    top: 12px;
+    right: 12px;
+    width: 38px;
+    height: 38px;
   }
 
   #mobileControls {
