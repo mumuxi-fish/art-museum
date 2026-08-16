@@ -405,3 +405,70 @@ canvas {
     max-width: 14rem;
   }
 }
+
+/* ── 展厅选择菜单 ── */
+#galleryMenuBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 20;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: background 0.2s, transform 0.2s;
+}
+#galleryMenuBtn:hover { background: rgba(0,0,0,0.8); transform: scale(1.08); }
+
+.gallery-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5,5,12,0.82);
+  backdrop-filter: blur(14px);
+  transition: opacity 0.25s;
+}
+.gallery-menu.hidden { opacity: 0; pointer-events: none; }
+.gallery-menu-inner {
+  max-width: 880px;
+  width: 92%;
+  max-height: 86vh;
+  overflow-y: auto;
+  text-align: center;
+}
+.gallery-menu-inner h2 { color: #fff; font-size: 26px; margin: 0 0 6px; letter-spacing: 2px; }
+.gallery-menu-sub { color: rgba(255,255,255,0.5); font-size: 13px; margin: 0 0 22px; }
+.gallery-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 14px;
+  padding: 4px;
+}
+.gallery-card {
+  background: linear-gradient(160deg, rgba(30,30,50,0.95), rgba(15,15,30,0.95));
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  padding: 22px 16px;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  text-align: left;
+}
+.gallery-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255,255,255,0.5);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.gallery-card .gc-icon { font-size: 30px; margin-bottom: 10px; }
+.gallery-card .gc-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.gallery-card .gc-arts { font-size: 12px; color: rgba(255,255,255,0.5); }
+.gallery-card .gc-enter { display: inline-block; margin-top: 12px; font-size: 12px; color: #4ecdc4; opacity: 0; transition: opacity 0.2s; }
+.gallery-card:hover .gc-enter { opacity: 1; }

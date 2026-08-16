@@ -13,7 +13,7 @@
         "frameColor": 4868918,
         "frameRoughness": 0.7,
         "frameMetalness": 0.05,
-        "floorType": "checker"
+        "floorType": "solid"
       },
       "dimensions": {
         "roomHalfWidth": 10,
@@ -263,7 +263,7 @@
         "frameColor": 6643031,
         "frameRoughness": 0.7,
         "frameMetalness": 0.05,
-        "floorType": "checker"
+        "floorType": "solid"
       },
       "dimensions": {
         "roomHalfWidth": 10,
@@ -513,7 +513,7 @@
         "frameColor": 4868918,
         "frameRoughness": 0.7,
         "frameMetalness": 0.05,
-        "floorType": "checker"
+        "floorType": "solid"
       },
       "dimensions": {
         "roomHalfWidth": 12,
@@ -743,7 +743,7 @@
         "frameColor": 6907744,
         "frameRoughness": 0.6,
         "frameMetalness": 0.2,
-        "floorType": "checker"
+        "floorType": "solid"
       },
       "dimensions": {
         "roomHalfWidth": 10,
@@ -973,7 +973,7 @@
         "frameColor": 11369058,
         "frameRoughness": 0.7,
         "frameMetalness": 0.05,
-        "floorType": "wood"
+        "floorType": "solid"
       },
       "dimensions": {
         "roomHalfWidth": 10,

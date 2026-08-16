@@ -8,6 +8,7 @@ import { doorWorldPos } from './room.js';
 export const controls = IS_MOBILE ? null : new PointerLockControls(camera, document.body);
 
 export let nearDoor = false;
+let doorCooldown = false; // 自动传送防抖
 
 // 移动端状态
 let mobileActive = false;
@@ -123,7 +124,7 @@ function onTouchEnd(e) {
   }
 }
 
-function enterMobileMode() {
+export function enterMobileMode() {
   if (mobileActive) return;
   mobileActive = true;
   opts.mobileControls.style.display = 'block';
@@ -159,17 +160,7 @@ function collide(pos) {
 export function initControls(options) {
   opts = options;
 
-  if (controls) {
-    opts.blocker.addEventListener('click', () => controls.lock());
-    controls.addEventListener('lock', () => opts.blocker.classList.add('hidden'));
-    controls.addEventListener('unlock', () => opts.blocker.classList.remove('hidden'));
-  } else {
-    opts.blocker.addEventListener('click', () => {
-      opts.blocker.classList.add('hidden');
-      enterMobileMode();
-    });
-  }
-
+  // 展厅选择菜单替代了 blocker,进入/退出由 main.js 管理
   opts.lookBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     mobileLookActive = !mobileLookActive;
@@ -182,16 +173,8 @@ export function initControls(options) {
     }
   });
 
-  opts.doorBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (nearDoor) opts.onDoorEnter();
-  });
-
   window.addEventListener('keydown', (e) => {
     if (e.code in keys) keys[e.code] = true;
-    if (e.code === 'KeyE' && controls?.isLocked && nearDoor) {
-      opts.onDoorEnter();
-    }
   });
   window.addEventListener('keyup', (e) => {
     if (e.code in keys) keys[e.code] = false;
@@ -246,16 +229,15 @@ export function updateMovement(dt) {
     controls.object.position.y = EYE_HEIGHT;
   }
 
-  // 门检测与提示
+  // 门检测:靠近门自动切换展厅(防抖 1.5s,传送后位置重置远离门)
   const bodyPos = (controls?.isLocked) ? controls.object.position : camera.position;
   const dist = Math.hypot(bodyPos.x - doorWorldPos.x, bodyPos.z - doorWorldPos.z);
   const ROOM_HALF = opts.getRoomHalf();
   nearDoor = dist < DOOR_TRIGGER_DIST && bodyPos.z > ROOM_HALF - 6;
 
-  if (IS_MOBILE) {
-    opts.doorPromptMobile.hidden = !nearDoor;
-    opts.doorBtn.hidden = !nearDoor;
-  } else {
-    opts.doorPrompt.hidden = !(nearDoor && controls?.isLocked);
+  if (nearDoor && !doorCooldown) {
+    doorCooldown = true;
+    opts.onDoorEnter();
+    setTimeout(() => { doorCooldown = false; }, 1500);
   }
 }
