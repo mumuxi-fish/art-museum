@@ -1,9 +1,9 @@
 {
-  "name": "3d-art-museum",
+  "name": "art-museum",
   "private": true,
   "version": "2.0.0",
   "type": "module",
-  "description": "3D Art Museum - GitHub Pages static version",
+  "description": "Art Museum - immersive 3D virtual gallery (Three.js)",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

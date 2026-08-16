@@ -3,7 +3,7 @@ import { resolve } from 'path';
 
 export default defineConfig({
   // GitHub Pages repo name
-  base: '/3D-art/',
+  base: '/art-museum/',
   root: '.',
   build: {
     outDir: 'dist',

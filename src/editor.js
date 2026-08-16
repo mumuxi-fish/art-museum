@@ -9,7 +9,8 @@ import {
 let galleriesData = null;
 let currentIndex = 0;
 let currentGallery = null;
-const STORAGE_KEY = '3d-art-museum-galleries';
+const STORAGE_KEY = 'art-museum-galleries';
+const LEGACY_STORAGE_KEY = '3d-art-museum-galleries';
 
 const $ = (id) => document.getElementById(id);
 
@@ -52,7 +53,16 @@ function saveToLocalStorage() {
 
 function loadFromLocalStorage() {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    let saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) {
+      // 旧版本数据迁移
+      const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+      if (legacy) {
+        localStorage.setItem(STORAGE_KEY, legacy);
+        localStorage.removeItem(LEGACY_STORAGE_KEY);
+        saved = legacy;
+      }
+    }
     return saved ? JSON.parse(saved) : null;
   } catch { return null; }
 }

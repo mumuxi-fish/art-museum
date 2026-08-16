@@ -1,4 +1,4 @@
-# 🎨 3D 艺术博物馆 · GitHub Pages 版
+# 🎨 Art Museum · 沉浸式 3D 虚拟艺术馆
 
 沉浸式 3D 虚拟艺术展厅，基于 Three.js 构建，**无后端依赖**，可直接部署到 GitHub Pages。
 
@@ -46,7 +46,7 @@ npm run preview # 预览构建结果
 ## 🗂️ 项目结构
 
 ```
-3D-art/
+art-museum/
 ├── index.html              # 主展厅入口
 ├── editor.html             # 编辑器入口
 ├── public/
