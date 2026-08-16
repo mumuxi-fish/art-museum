@@ -21,7 +21,7 @@ export function initFlashlight(flashBtn) {
 export function toggle() {
   if (!light) return false;
   on = !on;
-  light.intensity = on ? 6 : 0;
+  light.intensity = on ? 30 : 0;
   if (btn) btn.classList.toggle('active', on);
   return on;
 }
@@ -29,7 +29,7 @@ export function toggle() {
 export function setFlashlight(v) {
   if (!light) return;
   on = !!v;
-  light.intensity = on ? 6 : 0;
+  light.intensity = on ? 30 : 0;
   if (btn) btn.classList.toggle('active', on);
 }
 

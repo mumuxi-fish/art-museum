@@ -63,7 +63,7 @@ function addArtSpotlight(grp, roomGroup) {
   const nx = Math.sin(rotY);
   const nz = Math.cos(rotY);
 
-  const light = new THREE.SpotLight(0xfff2dd, 6.0, 10, 0.35, 0.55, 2);
+  const light = new THREE.SpotLight(0xfff2dd, 30.0, 10, 0.35, 0.55, 2);
   light.position.set(pos.x + nx * 1.9, pos.y + 0.75, pos.z + nz * 1.9);
   light.castShadow = false;
 
