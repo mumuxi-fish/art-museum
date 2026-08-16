@@ -7,6 +7,7 @@ import { buildRoom, getRoomHalfWidth } from './room.js';
 import { initControls, controls, updateMovement, enterMobileMode } from './controls.js';
 import { initPlayer, updatePlayer } from './player.js';
 import { createDustParticles, updateDustParticles } from './effects.js';
+import { initFlashlight, updateFlashlight, toggle } from './flashlight.js';
 
 // DOM
 const galleryLabel = document.getElementById('galleryLabel');
@@ -19,6 +20,7 @@ const bodyToggle = document.getElementById('bodyToggle');
 const galleryMenu = document.getElementById('gallery-menu');
 const galleryMenuBtn = document.getElementById('galleryMenuBtn');
 const galleryCards = document.getElementById('gallery-cards');
+const flashBtn = document.getElementById('flashBtn');
 
 let currentGalleryIndex = 0;
 
@@ -90,6 +92,13 @@ galleryMenuBtn.addEventListener('click', () => {
   galleryMenu.classList.remove('hidden');
 });
 
+// F 键手电筒开关(桌面)
+window.addEventListener('keydown', (e) => {
+  if (e.code === 'KeyF') toggle();
+});
+
+initFlashlight(flashBtn);
+
 // 桌面端 ESC 退出指针锁定 → 重新显示菜单
 if (controls) {
   controls.addEventListener('unlock', () => {
@@ -104,6 +113,7 @@ function animate() {
   const dt = Math.min(clock.getDelta(), 0.05);
   updateMovement(dt);
   updatePlayer();
+  updateFlashlight();
   updateDustParticles(dt);
   renderer.render(scene, camera);
 }

@@ -13,8 +13,8 @@
   <body>
     <div id="ui">
       <h1>Art Museum</h1>
-      <p class="hint desktop-hint">点击画面锁定鼠标 · <kbd>W A S D</kbd> 移动 · 走进门自动切换展厅 · 左上角 🏛 随时选厅</p>
-      <p class="hint mobile-hint">拖动屏幕环顾四周 · 摇杆移动 · 走进门自动切换 · 左上角 🏛 随时选厅</p>
+      <p class="hint desktop-hint">点击画面锁定鼠标 · <kbd>W A S D</kbd> 移动 · 走进门自动切换展厅 · <kbd>F</kbd> 手电筒 · 🏛 选厅</p>
+      <p class="hint mobile-hint">拖动屏幕环顾四周 · 摇杆移动 · 走进门自动切换 · 🔦 手电筒 · 🏛 选厅</p>
       <p class="gallery" id="galleryLabel"></p>
     </div>
     <button id="bodyToggle" title="显示/隐藏人物">👤</button>
@@ -39,6 +39,7 @@
       </div>
       <!-- 右侧操作按钮 -->
       <div id="actionButtons">
+        <button id="flashBtn" class="action-btn toggle-btn" title="手电筒">🔦</button>
         <button id="lookBtn" class="action-btn toggle-btn" title="环顾四周">
           <svg viewBox="0 0 24 24" width="28" height="28"><circle fill="currentColor" cx="12" cy="12" r="10" opacity="0.2"/><circle fill="currentColor" cx="12" cy="12" r="3"/></svg>
         </button>
