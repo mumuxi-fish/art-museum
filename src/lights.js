@@ -1,4 +1,8 @@
 // 灯具 3D 模型与光源创建
+//
+// 和上一版的区别：不再按"一个房间一个 group"来建，而是直接在世界坐标里摆。
+// 整座馆是一张连续的平面图，所有房间挂在同一个 group 下。
+
 import * as THREE from 'three';
 
 function createCeilingLightFixture(color = '#fff5e8') {
@@ -6,38 +10,37 @@ function createCeilingLightFixture(color = '#fff5e8') {
   const c = new THREE.Color(color);
 
   const base = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.5, 0.5, 0.08, 16),
+    new THREE.CylinderGeometry(0.32, 0.32, 0.06, 16),
     new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.6, metalness: 0.4 }),
   );
-  base.position.y = -0.04;
-  base.castShadow = true;
+  base.position.y = -0.03;
   group.add(base);
 
   const shade = new THREE.Mesh(
-    new THREE.SphereGeometry(0.65, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.5),
+    new THREE.SphereGeometry(0.42, 16, 12, 0, Math.PI * 2, 0, Math.PI * 0.5),
     new THREE.MeshStandardMaterial({
       color: c, roughness: 0.5, metalness: 0.1,
       transparent: true, opacity: 0.4, side: THREE.DoubleSide,
     }),
   );
   shade.rotation.x = Math.PI;
-  shade.position.y = -0.35;
+  shade.position.y = -0.22;
   group.add(shade);
 
   const bulb = new THREE.Mesh(
-    new THREE.SphereGeometry(0.15, 12, 12),
+    new THREE.SphereGeometry(0.1, 12, 12),
     new THREE.MeshStandardMaterial({
-      color: c, emissive: c, emissiveIntensity: 1.2, roughness: 0.1,
+      color: c, emissive: c, emissiveIntensity: 2.4, roughness: 0.1,
     }),
   );
-  bulb.position.y = -0.2;
+  bulb.position.y = -0.13;
   group.add(bulb);
 
   const ring = new THREE.Mesh(
-    new THREE.TorusGeometry(0.5, 0.03, 8, 24),
+    new THREE.TorusGeometry(0.32, 0.022, 8, 24),
     new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.7, metalness: 0.5 }),
   );
-  ring.position.y = -0.65;
+  ring.position.y = -0.42;
   ring.rotation.x = Math.PI / 2;
   group.add(ring);
 
@@ -86,47 +89,37 @@ function createWallLightFixture(color = '#ffe8d0') {
   return group;
 }
 
-// 创建环境光 + 全部点光源;fixtures 用于记录以便清理
-export function createLights({ lights, ambientIntensity }, scene, roomGroup, fixtures) {
-  const ambient = new THREE.AmbientLight(0xffffff, ambientIntensity ?? 0.35);
-  ambient.name = '__ambient';
-  scene.add(ambient);
-  fixtures.push({ group: null, lightObj: ambient });
-
-  if (!lights) return;
-  lights.forEach((ld) => {
+// 按房间的 lights 配置在世界坐标里建灯，并把灯对象收进 out 供按房间剔除用
+export function buildRoomLights(room, group, out) {
+  (room.lights || []).forEach((ld) => {
     const useSpot = ld.type === 'ceiling';
-    const fixtureGroup = useSpot ? createCeilingLightFixture(ld.color) : createWallLightFixture(ld.color);
-    const color = new THREE.Color(ld.color);
-    let lightObj;
-
-    if (useSpot) {
-      lightObj = new THREE.SpotLight(color, ld.enabled ? ld.intensity : 0, ld.range || 14, ld.angle || 1.2, ld.penumbra || 0.4, 2);
-      lightObj.target.position.set(0, 0, -1);
-      lightObj.castShadow = true;
-      lightObj.shadow.mapSize.set(1024, 1024);
-      lightObj.shadow.bias = -0.001;
-    } else {
-      lightObj = new THREE.SpotLight(color, ld.enabled ? ld.intensity : 0, ld.range || 10, ld.angle || 1.0, ld.penumbra || 0.6, 2);
-      lightObj.target.position.set(0, 0, -1);
-      lightObj.castShadow = false;
-    }
-
-    const pos = ld.position || { x: 0, y: 7.5, z: 0 };
-    fixtureGroup.position.set(pos.x, pos.y, pos.z);
-    lightObj.position.copy(fixtureGroup.position);
-
+    const fixture = useSpot ? createCeilingLightFixture(ld.color) : createWallLightFixture(ld.color);
+    const pos = ld.position || { x: 0, y: 3, z: 0 };
+    fixture.position.set(pos.x, pos.y, pos.z);
     if (ld.rotation) {
-      fixtureGroup.rotation.set(ld.rotation.x || 0, ld.rotation.y || 0, ld.rotation.z || 0);
+      fixture.rotation.set(ld.rotation.x || 0, ld.rotation.y || 0, ld.rotation.z || 0);
     }
+    group.add(fixture);
 
-    const dir = new THREE.Vector3(0, -1, 0);
-    dir.applyQuaternion(fixtureGroup.quaternion);
-    lightObj.target.position.copy(fixtureGroup.position).add(dir);
+    const color = new THREE.Color(ld.color);
+    const light = new THREE.SpotLight(
+      color,
+      ld.enabled === false ? 0 : (ld.intensity ?? 30),
+      ld.range || 14,
+      ld.angle || 1.2,
+      ld.penumbra ?? 0.4,
+      2,
+    );
+    light.position.copy(fixture.position);
 
-    scene.add(lightObj);
-    scene.add(lightObj.target);
-    roomGroup.add(fixtureGroup);
-    fixtures.push({ group: fixtureGroup, lightObj });
+    const dir = new THREE.Vector3(0, -1, 0).applyQuaternion(fixture.quaternion);
+    const target = new THREE.Object3D();
+    target.position.copy(fixture.position).add(dir);
+    group.add(target);
+    light.target = target;
+
+    light.userData.roomId = room.id;
+    group.add(light);
+    out.push(light);
   });
 }

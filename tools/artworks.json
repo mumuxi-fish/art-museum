@@ -1,0 +1,452 @@
+{
+  "dawn": [
+    {
+      "file": "dawn-01.jpg",
+      "title": "Water Lilies (Agapanthus)",
+      "artist": "Claude Monet",
+      "year": "c. 1915–26",
+      "w": 1400,
+      "h": 651,
+      "bytes": 170437,
+      "source": "https://www.clevelandart.org/art/1960.81",
+      "credit": "The Cleveland Museum of Art, 1960.81"
+    },
+    {
+      "file": "dawn-02.jpg",
+      "title": "Gardener's House at Antibes",
+      "artist": "Claude Monet",
+      "year": "1888",
+      "w": 1400,
+      "h": 996,
+      "bytes": 440706,
+      "source": "https://www.clevelandart.org/art/1916.1044",
+      "credit": "The Cleveland Museum of Art, 1916.1044"
+    },
+    {
+      "file": "dawn-03.jpg",
+      "title": "Spring Flowers",
+      "artist": "Claude Monet",
+      "year": "1864",
+      "w": 1066,
+      "h": 1400,
+      "bytes": 278540,
+      "source": "https://www.clevelandart.org/art/1953.155",
+      "credit": "The Cleveland Museum of Art, 1953.155"
+    },
+    {
+      "file": "dawn-04.jpg",
+      "title": "Villerville Seen from Le Ratier",
+      "artist": "Charles François Daubigny",
+      "year": "1855",
+      "w": 1400,
+      "h": 651,
+      "bytes": 115298,
+      "source": "https://www.clevelandart.org/art/1951.323",
+      "credit": "The Cleveland Museum of Art, 1951.323"
+    },
+    {
+      "file": "dawn-05.jpg",
+      "title": "Saint-Mammès, Loing Canal",
+      "artist": "Alfred Sisley",
+      "year": "1885",
+      "w": 1400,
+      "h": 1172,
+      "bytes": 301122,
+      "source": "https://www.clevelandart.org/art/1961.262",
+      "credit": "The Cleveland Museum of Art, 1961.262"
+    },
+    {
+      "file": "dawn-06.jpg",
+      "title": "Edge of the Woods Near L'Hermitage, Pontoise",
+      "artist": "Camille Pissarro",
+      "year": "1879",
+      "w": 1400,
+      "h": 1073,
+      "bytes": 432860,
+      "source": "https://www.clevelandart.org/art/1951.356",
+      "credit": "The Cleveland Museum of Art, 1951.356"
+    },
+    {
+      "file": "dawn-07.jpg",
+      "title": "The Lock at Pontoise",
+      "artist": "Camille Pissarro",
+      "year": "1872",
+      "w": 1400,
+      "h": 889,
+      "bytes": 249919,
+      "source": "https://www.clevelandart.org/art/1990.7",
+      "credit": "The Cleveland Museum of Art, 1990.7"
+    },
+    {
+      "file": "dawn-08.jpg",
+      "title": "Fishmarket",
+      "artist": "Camille Pissarro",
+      "year": "1902",
+      "w": 1400,
+      "h": 1122,
+      "bytes": 447907,
+      "source": "https://www.clevelandart.org/art/2020.113",
+      "credit": "The Cleveland Museum of Art, 2020.113"
+    }
+  ],
+  "sun": [
+    {
+      "file": "sun-01.jpg",
+      "title": "Romaine Lacaux",
+      "artist": "Pierre-Auguste Renoir",
+      "year": "1864",
+      "w": 1114,
+      "h": 1400,
+      "bytes": 281657,
+      "source": "https://www.clevelandart.org/art/1942.1065",
+      "credit": "The Cleveland Museum of Art, 1942.1065"
+    },
+    {
+      "file": "sun-02.jpg",
+      "title": "Young Woman Arranging Her Earring",
+      "artist": "Pierre-Auguste Renoir",
+      "year": "1905",
+      "w": 1164,
+      "h": 1400,
+      "bytes": 340485,
+      "source": "https://www.clevelandart.org/art/1951.324",
+      "credit": "The Cleveland Museum of Art, 1951.324"
+    },
+    {
+      "file": "sun-03.jpg",
+      "title": "Roses in a Vase",
+      "artist": "Pierre-Auguste Renoir",
+      "year": "c. 1890",
+      "w": 1400,
+      "h": 1017,
+      "bytes": 317082,
+      "source": "https://www.clevelandart.org/art/1941.14",
+      "credit": "The Cleveland Museum of Art, 1941.14"
+    },
+    {
+      "file": "sun-04.jpg",
+      "title": "Frieze of Dancers",
+      "artist": "Edgar Degas",
+      "year": "c. 1895",
+      "w": 1400,
+      "h": 489,
+      "bytes": 104269,
+      "source": "https://www.clevelandart.org/art/1946.83",
+      "credit": "The Cleveland Museum of Art, 1946.83"
+    },
+    {
+      "file": "sun-05.jpg",
+      "title": "Paul Lafond and Alphonse Cherfils Examining a Painting",
+      "artist": "Edgar Degas",
+      "year": "c. 1878–80",
+      "w": 1400,
+      "h": 1089,
+      "bytes": 192797,
+      "source": "https://www.clevelandart.org/art/1958.25",
+      "credit": "The Cleveland Museum of Art, 1958.25"
+    },
+    {
+      "file": "sun-06.jpg",
+      "title": "Berthe Morisot with a Muff",
+      "artist": "Édouard Manet",
+      "year": "c. 1871–72",
+      "w": 1130,
+      "h": 1400,
+      "bytes": 287747,
+      "source": "https://www.clevelandart.org/art/1958.34",
+      "credit": "The Cleveland Museum of Art, 1958.34"
+    },
+    {
+      "file": "sun-07.jpg",
+      "title": "Boats at Berck-sur-Mer",
+      "artist": "Édouard Manet",
+      "year": "1873",
+      "w": 1400,
+      "h": 842,
+      "bytes": 193513,
+      "source": "https://www.clevelandart.org/art/1940.534",
+      "credit": "The Cleveland Museum of Art, 1940.534"
+    },
+    {
+      "file": "sun-08.jpg",
+      "title": "Reading",
+      "artist": "Berthe Morisot",
+      "year": "1873",
+      "w": 1400,
+      "h": 895,
+      "bytes": 200423,
+      "source": "https://www.clevelandart.org/art/1950.89",
+      "credit": "The Cleveland Museum of Art, 1950.89"
+    }
+  ],
+  "minimal": [
+    {
+      "file": "minimal-01.jpg",
+      "title": "South Wind, Clear Sky, from Thirty-Six Views of Mount Fuji",
+      "artist": "Katsushika Hokusai",
+      "year": "early 1830s",
+      "w": 1400,
+      "h": 959,
+      "bytes": 304579,
+      "source": "https://www.clevelandart.org/art/1930.189",
+      "credit": "The Cleveland Museum of Art, 1930.189"
+    },
+    {
+      "file": "minimal-02.jpg",
+      "title": "Rain Below the Mountain (from the series Thirty-six Views of Mt. Fuji)",
+      "artist": "Katsushika Hokusai",
+      "year": "early 1830s",
+      "w": 1400,
+      "h": 945,
+      "bytes": 230565,
+      "source": "https://www.clevelandart.org/art/1940.1002",
+      "credit": "The Cleveland Museum of Art, 1940.1002"
+    },
+    {
+      "file": "minimal-03.jpg",
+      "title": "Basket of Peonies",
+      "artist": "Katsushika Hokusai",
+      "year": "1810 or 1814",
+      "w": 1400,
+      "h": 1048,
+      "bytes": 226719,
+      "source": "https://www.clevelandart.org/art/1943.5",
+      "credit": "The Cleveland Museum of Art, 1943.5"
+    },
+    {
+      "file": "minimal-04.jpg",
+      "title": "The Monkey Bridge",
+      "artist": "Katsushika Taito II",
+      "year": "early 1830s",
+      "w": 1277,
+      "h": 1400,
+      "bytes": 411825,
+      "source": "https://www.clevelandart.org/art/1921.413",
+      "credit": "The Cleveland Museum of Art, 1921.413"
+    },
+    {
+      "file": "minimal-05.jpg",
+      "title": "Driving Rain at Shōno, from Fifty-Three Stations of the Tokaidō",
+      "artist": "Utagawa Hiroshige",
+      "year": "1833",
+      "w": 1400,
+      "h": 935,
+      "bytes": 331977,
+      "source": "https://www.clevelandart.org/art/1948.306",
+      "credit": "The Cleveland Museum of Art, 1948.306"
+    },
+    {
+      "file": "minimal-06.jpg",
+      "title": "Eight Views of Kanazawa at Night",
+      "artist": "Utagawa Hiroshige",
+      "year": "1857",
+      "w": 1400,
+      "h": 692,
+      "bytes": 172479,
+      "source": "https://www.clevelandart.org/art/1924.967",
+      "credit": "The Cleveland Museum of Art, 1924.967"
+    },
+    {
+      "file": "minimal-07.jpg",
+      "title": "Full Moon on Kanazawa, Musashi",
+      "artist": "Utagawa Hiroshige",
+      "year": "1857",
+      "w": 976,
+      "h": 1400,
+      "bytes": 239305,
+      "source": "https://www.clevelandart.org/art/1924.967.c",
+      "credit": "The Cleveland Museum of Art, 1924.967.c"
+    },
+    {
+      "file": "minimal-08.jpg",
+      "title": "The Flirtatious Type, from Ten Types in the Physiognomy of Women",
+      "artist": "Kitagawa Utamaro",
+      "year": "c. 1793",
+      "w": 936,
+      "h": 1400,
+      "bytes": 266958,
+      "source": "https://www.clevelandart.org/art/1930.218",
+      "credit": "The Cleveland Museum of Art, 1930.218"
+    }
+  ],
+  "night": [
+    {
+      "file": "night-01.jpg",
+      "title": "Twilight in the Wilderness",
+      "artist": "Frederic Edwin Church",
+      "year": "1860",
+      "w": 1400,
+      "h": 874,
+      "bytes": 155951,
+      "source": "https://www.clevelandart.org/art/1965.233",
+      "credit": "The Cleveland Museum of Art, 1965.233"
+    },
+    {
+      "file": "night-02.jpg",
+      "title": "Evening Mood-Lidingö",
+      "artist": "Eugène Jansson",
+      "year": "1900",
+      "w": 1400,
+      "h": 742,
+      "bytes": 133975,
+      "source": "https://www.clevelandart.org/art/2005.4",
+      "credit": "The Cleveland Museum of Art, 2005.4"
+    },
+    {
+      "file": "night-03.jpg",
+      "title": "Gray and Silver: A Nocturne",
+      "artist": "Walter Greaves",
+      "year": "c. 1880–1900",
+      "w": 1400,
+      "h": 1161,
+      "bytes": 276015,
+      "source": "https://www.clevelandart.org/art/1964.361",
+      "credit": "The Cleveland Museum of Art, 1964.361"
+    },
+    {
+      "file": "night-04.jpg",
+      "title": "The Marl Pit at Mulcent: Evening",
+      "artist": "Antoine Chintreuil",
+      "year": "after 1857",
+      "w": 1400,
+      "h": 667,
+      "bytes": 136797,
+      "source": "https://www.clevelandart.org/art/1980.245",
+      "credit": "The Cleveland Museum of Art, 1980.245"
+    },
+    {
+      "file": "night-05.jpg",
+      "title": "Drying the Linen, or Moonrise at the Priory",
+      "artist": "Maurice Denis",
+      "year": "1894",
+      "w": 1228,
+      "h": 1400,
+      "bytes": 444326,
+      "source": "https://www.clevelandart.org/art/2020.109",
+      "credit": "The Cleveland Museum of Art, 2020.109"
+    },
+    {
+      "file": "night-06.jpg",
+      "title": "Scenes of Witchcraft: Evening",
+      "artist": "Salvator Rosa",
+      "year": "c. 1645–49",
+      "w": 1400,
+      "h": 1393,
+      "bytes": 188510,
+      "source": "https://www.clevelandart.org/art/1977.37.3",
+      "credit": "The Cleveland Museum of Art, 1977.37.3"
+    },
+    {
+      "file": "night-07.jpg",
+      "title": "Nocturne",
+      "artist": "James McNeill Whistler",
+      "year": "1878",
+      "w": 1400,
+      "h": 936,
+      "bytes": 357411,
+      "source": "https://www.clevelandart.org/art/1941.89",
+      "credit": "The Cleveland Museum of Art, 1941.89"
+    },
+    {
+      "file": "night-08.jpg",
+      "title": "Nocturne: Palaces",
+      "artist": "James McNeill Whistler",
+      "year": "1879–80",
+      "w": 954,
+      "h": 1400,
+      "bytes": 217488,
+      "source": "https://www.clevelandart.org/art/1922.461",
+      "credit": "The Cleveland Museum of Art, 1922.461"
+    }
+  ],
+  "flora": [
+    {
+      "file": "flora-01.jpg",
+      "title": "Flowers in a Glass",
+      "artist": "Ambrosius Bosschaert",
+      "year": "1606",
+      "w": 1171,
+      "h": 1400,
+      "bytes": 254172,
+      "source": "https://www.clevelandart.org/art/1960.108",
+      "credit": "The Cleveland Museum of Art, 1960.108"
+    },
+    {
+      "file": "flora-02.jpg",
+      "title": "Vase of Flowers",
+      "artist": "Odilon Redon",
+      "year": "c. 1905",
+      "w": 1029,
+      "h": 1400,
+      "bytes": 445075,
+      "source": "https://www.clevelandart.org/art/1935.233",
+      "credit": "The Cleveland Museum of Art, 1935.233"
+    },
+    {
+      "file": "flora-03.jpg",
+      "title": "Flowers in a Vase",
+      "artist": "Simon Verelst",
+      "year": "c. 1669",
+      "w": 1176,
+      "h": 1400,
+      "bytes": 197399,
+      "source": "https://www.clevelandart.org/art/1982.246",
+      "credit": "The Cleveland Museum of Art, 1982.246"
+    },
+    {
+      "file": "flora-04.jpg",
+      "title": "Herbaceous Peony",
+      "artist": "Yun Shouping",
+      "year": "1685",
+      "w": 860,
+      "h": 1400,
+      "bytes": 161688,
+      "source": "https://www.clevelandart.org/art/1967.192",
+      "credit": "The Cleveland Museum of Art, 1967.192"
+    },
+    {
+      "file": "flora-05.jpg",
+      "title": "Chrysanthemum",
+      "artist": "Piet Mondrian",
+      "year": "1906–42",
+      "w": 1305,
+      "h": 1400,
+      "bytes": 401149,
+      "source": "https://www.clevelandart.org/art/1958.38",
+      "credit": "The Cleveland Museum of Art, 1958.38"
+    },
+    {
+      "file": "flora-06.jpg",
+      "title": "Paintings after Ancient Masters: Chrysanthemum and Rock",
+      "artist": "Chen Hongshou",
+      "year": "1598–1652",
+      "w": 1227,
+      "h": 1400,
+      "bytes": 399578,
+      "source": "https://www.clevelandart.org/art/1979.27.1.9",
+      "credit": "The Cleveland Museum of Art, 1979.27.1.9"
+    },
+    {
+      "file": "flora-07.jpg",
+      "title": "Fruits and Flowers",
+      "artist": "Henry Lee McFee",
+      "year": "1927",
+      "w": 1400,
+      "h": 928,
+      "bytes": 205323,
+      "source": "https://www.clevelandart.org/art/1928.258",
+      "credit": "The Cleveland Museum of Art, 1928.258"
+    },
+    {
+      "file": "flora-08.jpg",
+      "title": "Birds and Flowers in a Landscape of the Four Seasons",
+      "artist": "Sesshū Tōyō",
+      "year": "second half of the 1500s",
+      "w": 1400,
+      "h": 653,
+      "bytes": 160700,
+      "source": "https://www.clevelandart.org/art/1960.173",
+      "credit": "The Cleveland Museum of Art, 1960.173"
+    }
+  ]
+}

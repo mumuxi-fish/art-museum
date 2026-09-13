@@ -1,24 +1,24 @@
-// 输入控制:桌面(PointerLock)+ 移动端(摇杆/触控)+ 键盘 + 碰撞 + 门交互
+// 输入控制：桌面(PointerLock) + 移动端(摇杆/触控) + 键盘 + 碰撞
+//
+// 和上一版的区别：不再有"走到门口触发传送"。整座馆是连续平面图，
+// 碰撞直接问 plan.canStand()，玩家就是一路走过去。
+
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
-import { camera, scene, renderer } from './scene.js';
-import { IS_MOBILE, EYE_HEIGHT, MOVE_SPEED, DOOR_HALF_W, DOOR_H, DOOR_TRIGGER_DIST } from './config.js';
-import { doorWorldPos } from './room.js';
+import { camera, renderer } from './scene.js';
+import { IS_MOBILE, EYE_HEIGHT, MOVE_SPEED } from './config.js';
 
 export const controls = IS_MOBILE ? null : new PointerLockControls(camera, document.body);
-
-export let nearDoor = false;
-let doorCooldown = false; // 自动传送防抖
 
 // 移动端状态
 let mobileActive = false;
 let mobileLookActive = true;
 let joystickActive = false;
 let joystickId = null;
-let joystickOrigin = { x: 0, y: 0 };
+const joystickOrigin = { x: 0, y: 0 };
 const joystickValue = { x: 0, y: 0 };
 const JOYSTICK_MAX_R = 62;
-let euler = new THREE.Euler(0, 0, 0, 'YXZ');
+const euler = new THREE.Euler(0, 0, 0, 'YXZ');
 let touchStart = null;
 let lastTouchId = null;
 let touchLast = null;
@@ -26,10 +26,18 @@ let touchLast = null;
 const keys = { KeyW: false, KeyA: false, KeyS: false, KeyD: false };
 const moveDir = new THREE.Vector3();
 
-let opts = null; // { blocker, mobileControls, joystickBase, joystickThumb, doorPrompt, doorPromptMobile, doorBtn, lookBtn, mobileToast, onDoorEnter, getRoomHalf }
+let opts = null;
+
+// 指针锁定的兜底。预览面板/iframe 里浏览器会拒绝 Pointer Lock，
+// 上一版把"能移动"绑死在 isLocked 上，一旦锁定失败就彻底动不了。
+// 现在改成：锁定可用就用锁定，不可用就按住鼠标拖动转视角，两种都能走。
+let pointerLockFailed = false;
+let dragging = false;
+let lastMouse = { x: 0, y: 0 };
+const LOOK_SENS = 0.0032;
 
 function showToast(msg, duration = 2500) {
-  if (!opts) return;
+  if (!opts?.mobileToast) return;
   const t = opts.mobileToast;
   t.textContent = msg;
   t.hidden = false;
@@ -141,26 +149,9 @@ export function enterMobileMode() {
   renderer.domElement.addEventListener('touchstart', onCanvasTouch, { passive: false });
 }
 
-function collide(pos) {
-  const margin = 0.35;
-  const ROOM_HALF = opts.getRoomHalf();
-  const hx = ROOM_HALF - margin;
-  const hz = ROOM_HALF - margin;
-  if (pos.x < -hx || pos.x > hx) return false;
-  if (pos.z < -hz) return false;
-  if (pos.z > hz) {
-    const inDoorX = Math.abs(pos.x) <= DOOR_HALF_W + 0.25;
-    const inDoorY = pos.y >= 0 && pos.y <= DOOR_H + 0.2;
-    if (inDoorX && inDoorY) return true;
-    return false;
-  }
-  return true;
-}
-
 export function initControls(options) {
   opts = options;
 
-  // 展厅选择菜单替代了 blocker,进入/退出由 main.js 管理
   opts.lookBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     mobileLookActive = !mobileLookActive;
@@ -179,9 +170,75 @@ export function initControls(options) {
   window.addEventListener('keyup', (e) => {
     if (e.code in keys) keys[e.code] = false;
   });
+
+  if (IS_MOBILE) return;
+
+  // 浏览器拒绝指针锁定（常见于 iframe / 预览面板）→ 切到拖动转视角。
+  // 不能只靠 pointerlockerror 事件：有些环境点了锁不上但也不报错，
+  // 所以点击后过一小会儿回头检查一次，没锁上就启用拖动模式。
+  const enableDragLook = () => {
+    if (pointerLockFailed) return;
+    pointerLockFailed = true;
+    document.body.classList.add('drag-look');
+    showToast('指针锁定不可用，按住鼠标拖动即可转视角', 4500);
+  };
+  document.addEventListener('pointerlockerror', enableDragLook);
+
+  renderer.domElement.addEventListener('click', () => {
+    if (!controls || controls.isLocked) return;
+    try { controls.lock(); } catch { enableDragLook(); return; }
+    setTimeout(() => {
+      if (!controls.isLocked) enableDragLook();
+    }, 350);
+  });
+
+  renderer.domElement.addEventListener('mousedown', (e) => {
+    if (controls?.isLocked || e.button !== 0) return;
+    dragging = true;
+    lastMouse = { x: e.clientX, y: e.clientY };
+    document.body.classList.add('dragging');
+  });
+  window.addEventListener('mouseup', () => {
+    dragging = false;
+    document.body.classList.remove('dragging');
+  });
+  window.addEventListener('mousemove', (e) => {
+    if (!dragging || controls?.isLocked) return;
+    const dx = e.clientX - lastMouse.x;
+    const dy = e.clientY - lastMouse.y;
+    lastMouse = { x: e.clientX, y: e.clientY };
+    euler.setFromQuaternion(camera.quaternion);
+    euler.y -= dx * LOOK_SENS;
+    euler.x -= dy * LOOK_SENS;
+    euler.x = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, euler.x));
+    camera.quaternion.setFromEuler(euler);
+  });
 }
 
-// 每帧更新移动与门提示
+// 桌面上是否处于"可走动"状态。
+//
+// 这里故意不跟指针锁定绑定：上一版写成"只有 isLocked 才能走"，
+// 结果浏览器拒绝 Pointer Lock 时（iframe / 预览面板）玩家彻底动不了。
+// 能不能走动跟怎么看是两件事，桌面上就一律允许，菜单打开时由 main.js 挡掉。
+export function canWalk() {
+  if (IS_MOBILE) return mobileActive;
+  return true;
+}
+
+// 玩家身体位置（桌面端是 controls.object，移动端就是相机）
+export function getBody() {
+  return controls?.isLocked ? controls.object : camera;
+}
+
+function tryMove(body, step) {
+  const p = body.position;
+  const nx = p.x + moveDir.x * step;
+  const nz = p.z + moveDir.z * step;
+  // 分轴尝试，贴墙时还能沿着墙滑
+  if (opts.canStand(nx, p.z)) p.x = nx;
+  if (opts.canStand(p.x, nz)) p.z = nz;
+}
+
 export function updateMovement(dt) {
   moveDir.set(0, 0, 0);
 
@@ -192,17 +249,10 @@ export function updateMovement(dt) {
       moveDir.y = 0;
       if (moveDir.lengthSq() > 0) {
         moveDir.normalize();
-        const step = MOVE_SPEED * dt;
-        const p = camera.position;
-        const ox = p.x;
-        p.x += moveDir.x * step;
-        if (!collide(p)) p.x = ox;
-        const oz = p.z;
-        p.z += moveDir.z * step;
-        if (!collide(p)) p.z = oz;
+        tryMove(camera, MOVE_SPEED * dt);
       }
     }
-  } else if (controls?.isLocked) {
+  } else if (canWalk()) {
     if (keys.KeyW) moveDir.z -= 1;
     if (keys.KeyS) moveDir.z += 1;
     if (keys.KeyA) moveDir.x -= 1;
@@ -212,32 +262,9 @@ export function updateMovement(dt) {
       moveDir.applyQuaternion(camera.quaternion);
       moveDir.y = 0;
       moveDir.normalize();
-      const step = MOVE_SPEED * dt;
-      const p = controls.object.position;
-      const ox = p.x;
-      p.x += moveDir.x * step;
-      if (!collide(p)) p.x = ox;
-      const oz = p.z;
-      p.z += moveDir.z * step;
-      if (!collide(p)) p.z = oz;
+      tryMove(camera, MOVE_SPEED * dt);
     }
   }
 
-  if (IS_MOBILE && mobileActive) {
-    camera.position.y = EYE_HEIGHT;
-  } else if (controls?.isLocked) {
-    controls.object.position.y = EYE_HEIGHT;
-  }
-
-  // 门检测:靠近门自动切换展厅(防抖 1.5s,传送后位置重置远离门)
-  const bodyPos = (controls?.isLocked) ? controls.object.position : camera.position;
-  const dist = Math.hypot(bodyPos.x - doorWorldPos.x, bodyPos.z - doorWorldPos.z);
-  const ROOM_HALF = opts.getRoomHalf();
-  nearDoor = dist < DOOR_TRIGGER_DIST && bodyPos.z > ROOM_HALF - 6;
-
-  if (nearDoor && !doorCooldown) {
-    doorCooldown = true;
-    opts.onDoorEnter();
-    setTimeout(() => { doorCooldown = false; }, 1500);
-  }
+  getBody().position.y = EYE_HEIGHT;
 }

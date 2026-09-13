@@ -6,6 +6,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="description" content="沉浸式 3D 虚拟艺术馆 · 40 幅克利夫兰艺术博物馆 CC0 公版画作 · 门厅、主廊与五个展厅" />
+    <meta property="og:title" content="Art Museum · 沉浸式 3D 艺术馆" />
+    <meta property="og:description" content="走进去，逛一圈。40 幅公版画作，五个展厅。" />
+    <meta property="og:type" content="website" />
     <title>Art Museum · 沉浸式 3D 艺术馆</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎨</text></svg>">
     <link rel="stylesheet" href="/src/style.css" />
@@ -13,39 +17,59 @@
   <body>
     <div id="ui">
       <h1>Art Museum</h1>
-      <p class="hint desktop-hint">点击画面锁定鼠标 · <kbd>W A S D</kbd> 移动 · 走进门自动切换展厅 · <kbd>F</kbd> 手电筒 · 🏛 选厅</p>
-      <p class="hint mobile-hint">拖动屏幕环顾四周 · 摇杆移动 · 走进门自动切换 · 🔦 手电筒 · 🏛 选厅</p>
+      <p class="hint desktop-hint">点击画面锁定鼠标 · <kbd>W A S D</kbd> 移动 · 沿走廊逛五个展厅 · <kbd>F</kbd> 手电筒 · 🏛 展厅列表</p>
+      <p class="hint drag-hint" style="display:none">按住鼠标拖动转视角 · <kbd>W A S D</kbd> 移动 · 沿走廊逛五个展厅 · <kbd>F</kbd> 手电筒 · 🏛 展厅列表</p>
+      <p class="hint mobile-hint">拖动屏幕环顾四周 · 摇杆移动 · 沿走廊逛五个展厅 · 🔦 手电筒 · 🏛 展厅列表</p>
       <p class="gallery" id="galleryLabel"></p>
     </div>
     <button id="bodyToggle" title="显示/隐藏人物">👤</button>
-    <button id="galleryMenuBtn" title="选择展厅">🏛</button>
+    <button id="galleryMenuBtn" title="展厅列表">🏛</button>
 
-    <!-- 展厅选择菜单 -->
-    <div id="gallery-menu" class="gallery-menu">
+    <!-- 桌面端提示条（手电筒开关等） -->
+    <div id="toast" class="toast" hidden></div>
+
+    <!-- 桌面端提示条（手电筒开关等） -->
+    <div id="toast" class="toast" hidden></div>
+
+    <!-- 画作后台加载进度 -->
+    <div id="art-progress" class="art-progress hidden"></div>
+
+    <!-- 展厅列表（跳转用，不再是"重建房间"）。默认收起，进门直接看门厅 -->
+    <div id="gallery-menu" class="gallery-menu hidden">
       <div class="gallery-menu-inner">
-        <h2>选择展厅</h2>
-        <p class="gallery-menu-sub">点击进入 · 展厅内走进门可继续前进</p>
+        <h2>展厅列表</h2>
+        <p class="gallery-menu-sub">也可以直接走到对应展厅 · 门厅墙上有一张导览图</p>
         <div id="gallery-cards" class="gallery-cards"></div>
       </div>
     </div>
 
     <!-- 手机触控 UI -->
     <div id="mobileControls">
-      <!-- 虚拟摇杆区域 -->
       <div id="joystickZone">
         <div id="joystickBase">
           <div id="joystickThumb"></div>
         </div>
       </div>
-      <!-- 右侧操作按钮 -->
       <div id="actionButtons">
         <button id="flashBtn" class="action-btn toggle-btn" title="手电筒">🔦</button>
         <button id="lookBtn" class="action-btn toggle-btn" title="环顾四周">
           <svg viewBox="0 0 24 24" width="28" height="28"><circle fill="currentColor" cx="12" cy="12" r="10" opacity="0.2"/><circle fill="currentColor" cx="12" cy="12" r="3"/></svg>
         </button>
       </div>
-      <!-- 移动端提示 -->
       <div id="mobileToast" class="mobile-toast" hidden></div>
+    </div>
+
+    <!-- 载入提示 -->
+    <div id="loading" class="loading hidden">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">正在开门…</p>
+    </div>
+
+    <!-- 启动失败兜底 -->
+    <div id="fatal" class="fatal hidden">
+      <h2>展馆没能打开</h2>
+      <p>平面图加载失败，请刷新重试。</p>
+      <p class="fatal-detail"></p>
     </div>
 
     <script type="module" src="/src/main.js"></script>

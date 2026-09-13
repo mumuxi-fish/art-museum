@@ -436,3 +436,140 @@ canvas {
 .gallery-card .gc-arts { font-size: 12px; color: rgba(255,255,255,0.5); }
 .gallery-card .gc-enter { display: inline-block; margin-top: 12px; font-size: 12px; color: #4ecdc4; opacity: 0; transition: opacity 0.2s; }
 .gallery-card:hover .gc-enter { opacity: 1; }
+
+/* 载入提示 */
+.loading {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: rgba(8, 8, 12, 0.72);
+  backdrop-filter: blur(3px);
+  z-index: 40;
+}
+.loading.hidden { display: none; }
+.loading-spinner {
+  width: 34px;
+  height: 34px;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  border-top-color: #e8d9b8;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text {
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0;
+}
+
+/* 启动失败兜底 */
+.fatal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+  padding: 0 24px;
+  background: #0a0a0c;
+  z-index: 60;
+}
+.fatal.hidden { display: none; }
+.fatal h2 { font-size: 20px; font-weight: 600; margin: 0 0 8px; color: #f2ede4; }
+.fatal p { font-size: 13px; color: rgba(255, 255, 255, 0.55); margin: 0; }
+.fatal .fatal-detail {
+  margin-top: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.3);
+  max-width: 480px;
+  word-break: break-word;
+}
+
+/* 画作后台加载进度 */
+.art-progress {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 30;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(10, 10, 14, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  pointer-events: none;
+}
+.art-progress.hidden { display: none; }
+
+/* 指针锁定不可用时的拖动转视角 */
+body.drag-look { cursor: grab; }
+body.drag-look.dragging { cursor: grabbing; }
+body.drag-look .desktop-hint { display: none; }
+body.drag-look .drag-hint { display: block; }
+
+/* 进入新展厅时房间名短促地浮一下（代替原来整屏闪黑） */
+#ui .gallery.pop {
+  animation: roomPop 0.55s ease-out;
+}
+@keyframes roomPop {
+  0% { opacity: 0; transform: translateY(6px); }
+  35% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 1; }
+}
+
+/* 桌面端提示条 */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 76px;
+  transform: translateX(-50%) translateY(6px);
+  z-index: 46;
+  padding: 9px 22px;
+  border-radius: 999px;
+  background: rgba(10, 10, 14, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #f0ebe3;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.toast[hidden] { display: none; }
+
+/* 桌面端提示条 */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 76px;
+  transform: translateX(-50%) translateY(6px);
+  z-index: 46;
+  padding: 9px 22px;
+  border-radius: 999px;
+  background: rgba(10, 10, 14, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #f0ebe3;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.toast[hidden] { display: none; }
