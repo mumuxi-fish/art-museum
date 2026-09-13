@@ -35,7 +35,7 @@ THEMES = {
         "ambientIntensity": 0.58,
         "materials": {
             "wallColor": 0xF2EDE3, "ceilingColor": 0xC6C1B7, "accentColor": 0x8C7A5E,
-            "floorDark": 0xA9A093, "floorLight": 0xE7E1D5, "floorType": "checker",
+            "floorDark": 0xA9A093, "floorLight": 0xE7E1D5, "floorType": "stone",
             "doorColor": 0x4A3B2C, "frameColor": 0x5A4632,
             "frameRoughness": 0.7, "frameMetalness": 0.05,
         },
@@ -49,7 +49,7 @@ THEMES = {
         "ambientIntensity": 0.55,
         "materials": {
             "wallColor": 0xEFE0CE, "ceilingColor": 0xCAC0B1, "accentColor": 0xB08454,
-            "floorDark": 0xC3A184, "floorLight": 0xEFE3D2, "floorType": "stripes",
+            "floorDark": 0xC3A184, "floorLight": 0xEFE3D2, "floorType": "stone",
             "doorColor": 0x5C4028, "frameColor": 0x6B4F2F,
             "frameRoughness": 0.72, "frameMetalness": 0.04,
         },
@@ -63,7 +63,7 @@ THEMES = {
         "ambientIntensity": 0.62,
         "materials": {
             "wallColor": 0xEDEDEA, "ceilingColor": 0xD2D2CD, "accentColor": 0x4A4A48,
-            "floorDark": 0xC7C7C0, "floorLight": 0xE4E4DE, "floorType": "checker",
+            "floorDark": 0xC7C7C0, "floorLight": 0xE4E4DE, "floorType": "stone",
             "doorColor": 0x3A3A38, "frameColor": 0x2E2E2C,
             "frameRoughness": 0.6, "frameMetalness": 0.12,
         },
@@ -77,7 +77,7 @@ THEMES = {
         "ambientIntensity": 0.62,
         "materials": {
             "wallColor": 0x2A3040, "ceilingColor": 0x1E222E, "accentColor": 0x6E7BA8,
-            "floorDark": 0x2A3140, "floorLight": 0x4A5470, "floorType": "checker",
+            "floorDark": 0x2A3140, "floorLight": 0x4A5470, "floorType": "stone",
             "doorColor": 0x1B2030, "frameColor": 0x8A7A5A,
             "frameRoughness": 0.55, "frameMetalness": 0.25,
         },
@@ -276,17 +276,26 @@ def build_museum(src):
         "ambientIntensity": 0.5,
         "materials": {
             "wallColor": 0xE8E2D6, "ceilingColor": 0xB8B2A6, "accentColor": 0x6B5B45,
-            "floorDark": 0x9A9186, "floorLight": 0xDAD3C6, "floorType": "checker",
+            "floorDark": 0x9A9186, "floorLight": 0xDAD3C6, "floorType": "stone",
             "doorColor": 0x3E3226, "frameColor": 0x5A4632,
             "frameRoughness": 0.7, "frameMetalness": 0.05,
         },
-        "lights": [{
-            "id": "entrance-light-1", "name": "门厅顶灯", "type": "ceiling",
-            "position": {"x": ENTRANCE["x"], "y": round(ENTRANCE["h"] - 0.06, 2), "z": ENTRANCE["z"]},
-            "rotation": {"x": 0, "y": 0, "z": 0},
-            "color": "#fff2e0", "intensity": round(46 * ((ENTRANCE["h"] - 0.5) / 6.0) ** 2, 1),
-            "range": 14, "angle": 1.3, "penumbra": 0.6, "enabled": True,
-        }],
+        # 门厅 4 盏（2×2）。原来只有 1 盏，可见灯数比走廊少（5 vs 8），
+        # 穿过门洞时画面会突然变亮。灯数对齐后过渡就平了。
+        "lights": [
+            {
+                "id": f"entrance-light-{i + 1}", "name": f"门厅顶灯{i + 1}", "type": "ceiling",
+                "position": {
+                    "x": ENTRANCE["x"] + dx * 2.2,
+                    "y": round(ENTRANCE["h"] - 0.06, 2),
+                    "z": ENTRANCE["z"] + dz * 2.2,
+                },
+                "rotation": {"x": 0, "y": 0, "z": 0},
+                "color": "#fff2e0", "intensity": round(13 * ((ENTRANCE["h"] - 0.5) / 6.0) ** 2, 1),
+                "range": 12, "angle": 1.3, "penumbra": 0.6, "enabled": True,
+            }
+            for i, (dx, dz) in enumerate([(-1, -1), (1, -1), (-1, 1), (1, 1)])
+        ],
         "arts": [],
         "signs": [{
             "kind": "directory", "wall": "north",
@@ -324,7 +333,7 @@ def build_museum(src):
         "ambientIntensity": 0.45,
         "materials": {
             "wallColor": 0xDED8CB, "ceilingColor": 0xA9A399, "accentColor": 0x6B5B45,
-            "floorDark": 0x8E877C, "floorLight": 0xD2CBBE, "floorType": "stripes",
+            "floorDark": 0x8E877C, "floorLight": 0xD2CBBE, "floorType": "stone",
             "doorColor": 0x3E3226, "frameColor": 0x5A4632,
             "frameRoughness": 0.72, "frameMetalness": 0.06,
         },

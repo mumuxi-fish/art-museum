@@ -32,8 +32,8 @@ function rngFrom(...parts) {
 }
 
 // 地板纹理(checker / stripes / wood / solid)
-export function makeFloorTexture(darkHex, lightHex, roomHalf, type = 'checker') {
-  const size = 256;
+export function makeFloorTexture(darkHex, lightHex, roomHalf, type = 'checker', roomW = 0, roomD = 0) {
+  const size = 512;
   const canvas = document.createElement('canvas');
   canvas.width = canvas.height = size;
   const ctx = canvas.getContext('2d');
@@ -73,19 +73,47 @@ export function makeFloorTexture(darkHex, lightHex, roomHalf, type = 'checker') 
       ctx.fillRect(baseX, 0, 2, size);
     }
   } else {
-    const cell = size / 10;
-    for (let y = 0; y < 10; y++) {
-      for (let x = 0; x < 10; x++) {
-        ctx.fillStyle = (x + y) % 2 === 0 ? `#${dark.getHexString()}` : `#${light.getHexString()}`;
-        ctx.fillRect(x * cell, y * cell, cell + 0.5, cell + 0.5);
-      }
+    // 默认：抛光水磨石。没有条纹、没有格子，只有细碎石粒和柔和的色斑。
+    const mid = dark.clone().lerp(light, 0.42);
+    ctx.fillStyle = `#${mid.getHexString()}`;
+    ctx.fillRect(0, 0, size, size);
+
+    // 柔和的深浅色斑，避免大面积死板
+    for (let i = 0; i < 170; i++) {
+      const x = rnd() * size;
+      const y = rnd() * size;
+      const r = 26 + rnd() * 96;
+      const c = dark.clone().lerp(light, rnd());
+      const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+      g.addColorStop(0, `rgba(${(c.r * 255) | 0},${(c.g * 255) | 0},${(c.b * 255) | 0},0.14)`);
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // 细碎石粒 —— 水磨石的质感来源
+    for (let i = 0; i < 11000; i++) {
+      const x = rnd() * size;
+      const y = rnd() * size;
+      const r = 0.5 + rnd() * 2.0;
+      const c = dark.clone().lerp(light, rnd());
+      ctx.fillStyle = `rgba(${(c.r * 255) | 0},${(c.g * 255) | 0},${(c.b * 255) | 0},${0.22 + rnd() * 0.4})`;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
     }
   }
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(roomHalf / 2.5, roomHalf / 2.5);
+  // 按房间长宽分别算重复次数，保证纹理是正方形的 ——
+  // 走廊是 41.5×4.5，长宽比 9:1，如果两个方向用同一个值，横向会被拉成条状
+  const rx = (roomW || roomHalf * 2) / 2.5;
+  const rz = (roomD || roomHalf * 2) / 2.5;
+  tex.repeat.set(rx, rz);
   tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
   return tex;
 }

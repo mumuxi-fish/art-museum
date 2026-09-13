@@ -73,7 +73,8 @@ function buildRoomShell(room, plan, lights) {
   const m = room.materials;
 
   const floorTex = makeFloorTexture(
-    m.floorDark, m.floorLight, Math.max(room.w, room.d) / 2, m.floorType || 'checker',
+    m.floorDark, m.floorLight, Math.max(room.w, room.d) / 2, m.floorType || 'stone',
+    room.w, room.d,
   );
   const floor = new THREE.Mesh(
     new THREE.PlaneGeometry(room.w, room.d),
