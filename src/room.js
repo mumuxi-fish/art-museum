@@ -12,6 +12,7 @@ import {
   makeLabelTexture,
   makeRoomSignTexture,
   makeDirectoryBoardTexture,
+  makeThemeLabelTexture,
 } from './textures.js';
 import { buildRoomLights } from './lights.js';
 
@@ -155,6 +156,144 @@ function buildDoorCasing(op, plan) {
   museumGroup.add(g);
 }
 
+// 展厅长凳：一块木坐板 + 两片支撑板。美术馆里一定有它，
+// 而且有了它才谈得上"坐下看画"这个交互。
+function buildBench(bench, room, benchTargets) {
+  const g = new THREE.Group();
+  const wood = mat(room.materials.frameColor || 0x4a3f36, {
+    roughness: 0.62, metalness: 0.04,
+  });
+  const seat = new THREE.Mesh(BOX(bench.w, 0.1, bench.d), wood);
+  seat.position.y = bench.seatY;
+  g.add(seat);
+  [-1, 1].forEach((s) => {
+    const leg = new THREE.Mesh(BOX(0.09, bench.seatY, bench.d - 0.06), wood);
+    leg.position.set(s * (bench.w / 2 - 0.14), bench.seatY / 2, 0);
+    g.add(leg);
+  });
+  g.position.set(bench.x, 0, bench.z);
+  g.rotation.y = bench.rotY || 0;
+  museumGroup.add(g);
+
+  if (benchTargets) {
+    g.traverse((o) => {
+      if (!o.isMesh) return;
+      o.userData.bench = bench;
+      benchTargets.push(o);
+    });
+  }
+}
+
+// 走廊尽头的雕塑端景：青铜抽象形体立在石质基座上，顶上一盏射灯
+function buildSculpture(sc) {
+  const plinthMat = mat(0xCFC9BD, { roughness: 0.85, metalness: 0.02 });
+  const plinth = new THREE.Mesh(BOX(sc.plinth, sc.plinthH, sc.plinth), plinthMat);
+  plinth.position.set(sc.x, sc.plinthH / 2, sc.z);
+  museumGroup.add(plinth);
+
+  // 拉成一条细长的竖向形体。上一版半径给到 0.28，1.95m 高显得像个圆墩子，
+  // 收到 0.21 之后比例才立得住。
+  const profile = [
+    [0.001, 0.00], [0.22, 0.03], [0.24, 0.15], [0.17, 0.31], [0.13, 0.52],
+    [0.145, 0.74], [0.115, 1.00], [0.075, 1.30], [0.088, 1.58], [0.052, 1.88],
+    [0.024, 2.06], [0.001, 2.16],
+  ].map(([x, y]) => new THREE.Vector2(x, y));
+  const bronze = STD({
+    color: 0xCBA76B, roughness: 0.28, metalness: 0.34,
+  });
+  const piece = new THREE.Mesh(new THREE.LatheGeometry(profile, 48), bronze);
+  piece.position.set(sc.x, sc.plinthH, sc.z);
+  museumGroup.add(piece);
+
+  const target = new THREE.Object3D();
+  target.position.set(sc.x, sc.plinthH + sc.height * 0.5, sc.z);
+  museumGroup.add(target);
+  const spot = new THREE.SpotLight(0xfff1d8, 42, 6.5, 0.36, 0.6, 1.6);
+  spot.position.set(sc.x, sc.plinthH + sc.height + 1.3, sc.z);
+  spot.target = target;
+  museumGroup.add(spot);
+  return spot;
+}
+
+// 走廊里的展厅导言展签。走廊侧放不下时（花语的门洞几乎占满走廊宽度），
+// 退回到展厅内部、门洞旁边。
+function buildThemeLabel(room, plan, corridor) {
+  const op = plan.openings.find(
+    (o) => o.rooms.includes(room.id) && o.rooms.includes(corridor.id),
+  );
+  if (!op) return;
+
+  const off = plan.wallThickness / 2 + 0.04;
+  const PW = 0.85, PH = 0.62, Y = 1.5;
+  const along = PW; // 展签宽边沿墙展开
+
+  const tryPlace = (axis, at, side, from, to, lim0, lim1) => {
+    const mid = (from + to) / 2;
+    const half = (to - from) / 2;
+    const cands = [mid + half + along / 2 + 0.35, mid - half - along / 2 - 0.35];
+    const v = cands.find((c) => c >= lim0 + along / 2 + 0.25 && c <= lim1 - along / 2 - 0.25);
+    if (v === undefined) return null;
+    if (axis === 'z') {
+      const corridorIsNorth = corridor.z1 <= at + 0.01;
+      return {
+        x: v,
+        z: at + (corridorIsNorth ? -off : off),
+        rotY: corridorIsNorth ? Math.PI : 0,
+        facingRoom: side,
+      };
+    }
+    const corridorIsWest = corridor.x1 <= at + 0.01;
+    return {
+      x: at + (corridorIsWest ? -off : off),
+      z: v,
+      rotY: corridorIsWest ? -Math.PI / 2 : Math.PI / 2,
+      facingRoom: side,
+    };
+  };
+
+  // 先在走廊侧试
+  let pos = null;
+  if (op.axis === 'z') {
+    pos = tryPlace('z', op.at, 'corridor', op.from, op.to, corridor.x0, corridor.x1);
+  } else {
+    pos = tryPlace('x', op.at, 'corridor', op.from, op.to, corridor.z0, corridor.z1);
+  }
+  // 放不下就放到展厅内侧、同一面墙上
+  if (!pos) {
+    const at = op.at;
+    if (op.axis === 'z') {
+      pos = tryPlace('z', at, 'room', op.from, op.to, room.x0, room.x1);
+      if (pos) pos.z = at + (room.z0 >= at ? off : -off);
+      if (pos) pos.rotY = room.z0 >= at ? 0 : Math.PI;
+    } else {
+      pos = tryPlace('x', at, 'room', op.from, op.to, room.z0, room.z1);
+      if (pos) pos.x = at + (room.x0 >= at ? off : -off);
+      if (pos) pos.rotY = room.x0 >= at ? Math.PI / 2 : -Math.PI / 2;
+    }
+  }
+  if (!pos) return;
+
+  const tex = makeThemeLabelTexture(room.name, room.blurb || '', room.arts?.length || 0);
+  const labelMat = STD({
+    map: tex, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: 0.26,
+    roughness: 0.85, metalness: 0,
+  });
+  labelMat.userData.keepMap = true;
+  const panel = new THREE.Mesh(new THREE.PlaneGeometry(PW, PH), labelMat);
+  panel.position.set(pos.x, Y, pos.z);
+  panel.rotation.y = pos.rotY;
+  museumGroup.add(panel);
+
+  const frame = new THREE.Mesh(
+    BOX(PW + 0.07, PH + 0.07, 0.03),
+    mat(room.materials.frameColor, { roughness: 0.65, metalness: 0.08 }),
+  );
+  frame.position.set(pos.x, Y, pos.z);
+  frame.rotation.y = pos.rotY;
+  frame.translateZ(-0.025);
+  museumGroup.add(frame);
+}
+
 // 画作射灯：按画面宽度反算锥角，让光锥刚好罩住画面，墙上不留光晕
 function addArtSpotlight(pos, rotY, artWidth, hero, artLight, roomId) {
   const nx = Math.sin(rotY);
@@ -181,7 +320,7 @@ function addArtSpotlight(pos, rotY, artWidth, hero, artLight, roomId) {
   return light;
 }
 
-function buildArtworks(room, plan, lights, artSlots) {
+function buildArtworks(room, plan, lights, artSlots, artTargets) {
   if (!room.arts?.length) return;
   const m = room.materials;
   const frameWood = mat(m.frameColor || 0x4a3f36, {
@@ -249,6 +388,10 @@ function buildArtworks(room, plan, lights, artSlots) {
     if (a.image && !artSlots.has(a.image)) {
       artSlots.set(a.image, { material: canvasMat, fallbackSeed: seed, hue: a.hue ?? 0.5 });
     }
+    // 供交互系统射线拾取：瞄到画布就能弹出详情
+    canvas.userData.art = a;
+    canvas.userData.roomId = room.id;
+    artTargets.push(canvas);
   });
 }
 
@@ -342,19 +485,33 @@ export function buildMuseum(plan) {
 
   const lights = [];
   const artSlots = new Map();
+  const artTargets = [];
+  const benches = [];
+  const benchTargets = [];
 
   for (const room of plan.rooms) buildRoomShell(room, plan, lights);
   for (const op of plan.openings) buildDoorCasing(op, plan);
 
   const corridor = plan.rooms.find((r) => r.kind === 'corridor');
   for (const room of plan.rooms) {
-    buildArtworks(room, plan, lights, artSlots);
-    if (room.kind === 'gallery' && corridor) buildGallerySign(room, plan, corridor);
+    buildArtworks(room, plan, lights, artSlots, artTargets);
+
+    for (const b of room.benches || []) {
+      const entry = { ...b, roomId: room.id, roomName: room.name };
+      buildBench(entry, room, benchTargets);
+      benches.push(entry);
+    }
+    if (room.sculpture) lights.push(buildSculpture(room.sculpture));
+
+    if (room.kind === 'gallery' && corridor) {
+      buildGallerySign(room, plan, corridor);
+      buildThemeLabel(room, plan, corridor);
+    }
     if (room.kind === 'entrance') {
       room._planRooms = plan.rooms;
       buildEntranceSigns(room);
     }
   }
 
-  return { group: museumGroup, lights, artSlots };
+  return { group: museumGroup, lights, artSlots, artTargets, benches, benchTargets };
 }

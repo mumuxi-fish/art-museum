@@ -573,3 +573,147 @@ body.drag-look .drag-hint { display: block; }
   transform: translateX(-50%) translateY(0);
 }
 .toast[hidden] { display: none; }
+
+/* ========== 沉浸式 HUD 调整 ========== */
+/* 原来左上角那一大块操作说明去掉了，只留馆名 + 当前空间 */
+#ui .hint, #ui .desktop-hint, #ui .mobile-hint { display: none; }
+
+/* 开场提示：底部一行，几秒后自动淡出 */
+.intro-hint {
+  position: fixed;
+  left: 50%;
+  bottom: 40px;
+  transform: translateX(-50%);
+  z-index: 20;
+  padding: 10px 22px;
+  border-radius: 999px;
+  background: rgba(10, 10, 14, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(240, 235, 227, 0.8);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 1.2s ease;
+  white-space: nowrap;
+}
+.intro-hint.fade { opacity: 0; }
+.intro-hint kbd {
+  display: inline-block;
+  min-width: 20px;
+  padding: 1px 5px;
+  margin: 0 1px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  font-family: inherit;
+  font-size: 11px;
+  text-align: center;
+}
+@media (max-width: 768px) {
+  .intro-hint { font-size: 11px; padding: 8px 14px; bottom: 132px; white-space: normal; max-width: 88vw; text-align: center; }
+}
+
+/* 可交互提示：屏幕下方居中，可点 */
+.prompt {
+  position: fixed;
+  left: 50%;
+  bottom: 96px;
+  transform: translateX(-50%);
+  z-index: 44;
+  padding: 8px 20px;
+  border-radius: 999px;
+  background: rgba(10, 10, 14, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #f0ebe3;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.prompt.hidden { display: none; }
+.prompt:hover { background: rgba(20, 20, 26, 0.85); }
+
+/* 作品详情浮层 */
+.art-detail {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4vh 4vw;
+  background: rgba(6, 6, 10, 0.82);
+  backdrop-filter: blur(6px);
+}
+.art-detail.hidden { display: none; }
+.art-detail-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 28px;
+  max-width: 1000px;
+  width: 100%;
+  max-height: 88vh;
+  padding: 24px;
+  border-radius: 16px;
+  background: #14141a;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.detail-figure {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  background: #0b0b0f;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.detail-figure img {
+  max-width: 100%;
+  max-height: 76vh;
+  object-fit: contain;
+  display: block;
+}
+.detail-meta { display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+.detail-meta h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #f4f0e8;
+  font-family: "Songti SC", Georgia, serif;
+}
+.detail-meta p { margin: 0; font-size: 14px; color: rgba(240, 235, 227, 0.72); }
+.detail-meta .detail-year { color: rgba(240, 235, 227, 0.5); font-size: 13px; }
+.detail-link {
+  margin-top: 16px;
+  font-size: 13px;
+  color: #7fd4c4;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(127, 212, 196, 0.35);
+  align-self: flex-start;
+  padding-bottom: 2px;
+}
+.detail-link.hidden { display: none; }
+.detail-link:hover { border-bottom-color: #7fd4c4; }
+.detail-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(240, 235, 227, 0.75);
+  font-size: 14px;
+  cursor: pointer;
+  line-height: 1;
+}
+.detail-close:hover { background: rgba(255, 255, 255, 0.14); }
+@media (max-width: 768px) {
+  .art-detail-card { grid-template-columns: 1fr; gap: 16px; padding: 16px; }
+  .detail-figure img { max-height: 44vh; }
+}

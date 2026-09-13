@@ -399,3 +399,67 @@ export function makeDirectoryBoardTexture(rooms, youAreHereId) {
   return tex;
 }
 
+
+// 走廊里的展厅导言展签：展厅名 + 主题介绍 + 作品数
+const themeLabelCache = new Map();
+export function makeThemeLabelTexture(name, blurb, count) {
+  const key = `${name}|${blurb}|${count}`;
+  if (themeLabelCache.has(key)) return themeLabelCache.get(key);
+
+  const W = 768, H = 560;
+  const c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const ctx = c.getContext('2d');
+
+  ctx.fillStyle = '#f5f2ea';
+  ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = 'rgba(0,0,0,0.20)';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(1.5, 1.5, W - 3, H - 3);
+
+  const serif = '"Songti SC","Noto Serif SC",Georgia,serif';
+  const sans = '"PingFang SC","Hiragino Sans GB","Microsoft YaHei",Helvetica,Arial,sans-serif';
+  const PAD = 62;
+
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+
+  ctx.fillStyle = '#1f1d1a';
+  ctx.font = `600 52px ${serif}`;
+  ctx.fillText(name, PAD, 92);
+
+  ctx.strokeStyle = 'rgba(0,0,0,0.28)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(PAD, 136);
+  ctx.lineTo(W - PAD, 136);
+  ctx.stroke();
+
+  // 正文按宽度断行
+  ctx.fillStyle = '#4a463f';
+  ctx.font = `400 30px ${sans}`;
+  const maxW = W - PAD * 2;
+  const chars = [...(blurb || '')];
+  const lines = [];
+  let line = '';
+  for (const ch of chars) {
+    if (ctx.measureText(line + ch).width > maxW && line) {
+      lines.push(line);
+      line = ch;
+    } else {
+      line += ch;
+    }
+  }
+  if (line) lines.push(line);
+  lines.slice(0, 6).forEach((l, i) => ctx.fillText(l, PAD, 196 + i * 46));
+
+  ctx.fillStyle = '#8a857b';
+  ctx.font = `400 26px ${sans}`;
+  ctx.fillText(`${count} 幅作品`, PAD, H - 62);
+
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  themeLabelCache.set(key, tex);
+  return tex;
+}

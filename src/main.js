@@ -11,6 +11,7 @@ import { buildMuseum, disposeMuseum } from './room.js';
 import { initControls, controls, updateMovement, enterMobileMode } from './controls.js';
 import { initPlayer, updatePlayer } from './player.js';
 import { initFlashlight, updateFlashlight, toggle } from './flashlight.js';
+import { initInteract, updateInteract, activate, isSeated, stand } from './interact.js';
 
 // DOM
 const roomLabel = document.getElementById('galleryLabel');
@@ -28,6 +29,15 @@ const loadingEl = document.getElementById('loading');
 const fatalEl = document.getElementById('fatal');
 const progressEl = document.getElementById('art-progress');
 const toastEl = document.getElementById('toast');
+const promptEl = document.getElementById('prompt');
+const detailEl = document.getElementById('art-detail');
+const detailImg = document.getElementById('detail-img');
+const detailTitle = document.getElementById('detail-title');
+const detailArtist = document.getElementById('detail-artist');
+const detailYear = document.getElementById('detail-year');
+const detailLink = document.getElementById('detail-link');
+const detailClose = document.getElementById('detail-close');
+const introHint = document.getElementById('intro-hint');
 
 const GALLERY_ICONS = ['🌅', '☀️', '🖼️', '🌌', '🌸', '🏛', '🎨', '🌿', '🔥', '💧'];
 
@@ -36,6 +46,7 @@ let lights = [];
 let currentRoomId = null;
 let started = false;
 let warmupQueue = null;
+let detailOpen = false;
 
 // 轻量提示：借移动端那个 toast 元素，桌面端也能用
 let toastTimer = null;
@@ -131,6 +142,34 @@ function updateRoom() {
   started = true;
 }
 
+// 作品详情浮层。打开时锁住走动，并且不要让指针解锁去弹展厅列表
+function openArtDetail(art) {
+  if (!detailEl) return;
+  detailOpen = true;
+  if (detailImg) detailImg.src = `art/${art.image}`;
+  if (detailImg) detailImg.alt = art.title || '';
+  if (detailTitle) detailTitle.textContent = art.title || '无题';
+  if (detailArtist) detailArtist.textContent = art.artist || '佚名';
+  if (detailYear) detailYear.textContent = art.year || '';
+  if (detailLink) {
+    if (art.source) {
+      detailLink.href = art.source;
+      detailLink.classList.remove('hidden');
+    } else {
+      detailLink.classList.add('hidden');
+    }
+  }
+  detailEl.classList.remove('hidden');
+  if (controls?.isLocked) controls.unlock();
+}
+
+function closeArtDetail() {
+  if (!detailEl || !detailOpen) return;
+  detailOpen = false;
+  detailEl.classList.add('hidden');
+  if (controls) controls.lock();
+}
+
 function renderGalleryMenu() {
   if (!galleryCards) return;
   galleryCards.innerHTML = '';
@@ -198,8 +237,18 @@ galleryMenu?.addEventListener('click', (e) => {
   if (e.target === galleryMenu) galleryMenu.classList.add('hidden');
 });
 
+detailClose?.addEventListener('click', closeArtDetail);
+detailEl?.addEventListener('click', (e) => {
+  if (e.target === detailEl) closeArtDetail();
+});
+
 window.addEventListener('keydown', (e) => {
   if (e.code === 'KeyF') toggle();
+  if (e.code === 'KeyE') activate();
+  if (e.code === 'Escape') {
+    if (detailOpen) closeArtDetail();
+    else if (isSeated()) stand();
+  }
 });
 
 initFlashlight(flashBtn, {
@@ -208,7 +257,7 @@ initFlashlight(flashBtn, {
 
 if (controls) {
   controls.addEventListener('unlock', () => {
-    galleryMenu.classList.remove('hidden');
+    if (!detailOpen) galleryMenu.classList.remove('hidden');
   });
 }
 
@@ -216,8 +265,9 @@ const clock = new THREE.Clock();
 function animate() {
   requestAnimationFrame(animate);
   const dt = Math.min(clock.getDelta(), 0.05);
-  if (!menuOpen()) updateMovement(dt);
+  if (!menuOpen() && !detailOpen && !isSeated()) updateMovement(dt);
   updateRoom();
+  if (!detailOpen) updateInteract();
   updatePlayer();
   updateFlashlight(dt);
   stepWarmup();
@@ -251,6 +301,20 @@ async function bootstrap() {
     // 立刻开始预热各房间的光照 shader（每帧一个房间）。
     // 之前是等 40 张图加载完才开始，用户在加载期间走进展厅就会现场编译，卡一下。
     warmupQueue = plan.rooms.map((r) => r.id);
+
+    initInteract({
+      artTargets: built.artTargets,
+      benches: built.benches,
+      benchTargets: built.benchTargets,
+      promptEl,
+      canStand: (x, z) => plan.canStand(x, z),
+      onOpenArt: openArtDetail,
+      onSit: (b) => toast(`已坐下 · ${b.roomName}`),
+      onStand: () => toast('已起身'),
+    });
+
+    // 开场提示只留几秒，之后彻底交给沉浸
+    setTimeout(() => introHint?.classList.add('fade'), 6000);
 
     if (IS_MOBILE) mobileControls.style.display = 'none';
 

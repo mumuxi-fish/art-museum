@@ -15,26 +15,43 @@
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
+    <!-- 极简 HUD：只留馆名和当前所在空间 -->
     <div id="ui">
       <h1>Art Museum</h1>
-      <p class="hint desktop-hint">点击画面锁定鼠标 · <kbd>W A S D</kbd> 移动 · 沿走廊逛五个展厅 · <kbd>F</kbd> 手电筒 · 🏛 展厅列表</p>
-      <p class="hint drag-hint" style="display:none">按住鼠标拖动转视角 · <kbd>W A S D</kbd> 移动 · 沿走廊逛五个展厅 · <kbd>F</kbd> 手电筒 · 🏛 展厅列表</p>
-      <p class="hint mobile-hint">拖动屏幕环顾四周 · 摇杆移动 · 沿走廊逛五个展厅 · 🔦 手电筒 · 🏛 展厅列表</p>
       <p class="gallery" id="galleryLabel"></p>
     </div>
     <button id="bodyToggle" title="显示/隐藏人物">👤</button>
     <button id="galleryMenuBtn" title="展厅列表">🏛</button>
 
-    <!-- 桌面端提示条（手电筒开关等） -->
-    <div id="toast" class="toast" hidden></div>
+    <!-- 开场提示，几秒后自动淡出 -->
+    <div id="intro-hint" class="intro-hint">
+      <p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 走动 · 鼠标转视角 · <kbd>E</kbd> 看作品 / 坐下 · <kbd>F</kbd> 手电筒</p>
+    </div>
 
-    <!-- 桌面端提示条（手电筒开关等） -->
+    <!-- 可交互提示（桌面上按 E，移动端直接点） -->
+    <div id="prompt" class="prompt hidden"></div>
+
+    <!-- 桌面端轻提示 -->
     <div id="toast" class="toast" hidden></div>
 
     <!-- 画作后台加载进度 -->
     <div id="art-progress" class="art-progress hidden"></div>
 
-    <!-- 展厅列表（跳转用，不再是"重建房间"）。默认收起，进门直接看门厅 -->
+    <!-- 作品详情浮层 -->
+    <div id="art-detail" class="art-detail hidden">
+      <div class="art-detail-card">
+        <button id="detail-close" class="detail-close" title="关闭">✕</button>
+        <div class="detail-figure"><img id="detail-img" alt="" /></div>
+        <div class="detail-meta">
+          <h2 id="detail-title"></h2>
+          <p id="detail-artist"></p>
+          <p id="detail-year" class="detail-year"></p>
+          <a id="detail-link" class="detail-link" target="_blank" rel="noopener">查看馆藏记录 →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 展厅列表（跳转用）。默认收起，进门直接看馆内 -->
     <div id="gallery-menu" class="gallery-menu hidden">
       <div class="gallery-menu-inner">
         <h2>展厅列表</h2>

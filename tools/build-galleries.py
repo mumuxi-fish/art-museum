@@ -29,6 +29,7 @@ CORRIDOR = {"x": 29.75, "z": 18.75, "w": 41.5, "d": 4.5, "h": 4.0}
 THEMES = {
     "dawn": {
         "name": "展厅一 · 晨光",
+        "blurb": "印象派的清晨与河岸。莫奈、毕沙罗、西斯莱、道比尼——他们第一次把空气画成了主角。",
         "hue": 0.09,
         "rect": {"x": 18.25, "z": 9.0, "w": 12.5, "d": 15.0, "h": 7.4},
         "ambientIntensity": 0.58,
@@ -42,6 +43,7 @@ THEMES = {
     },
     "sun": {
         "name": "展厅二 · 暖阳",
+        "blurb": "十九世纪法国的人物与日常。雷诺阿、德加、马奈、莫里索笔下的闲坐、舞蹈与午后。",
         "hue": 0.07,
         "rect": {"x": 35.5, "z": 8.25, "w": 14.0, "d": 16.5, "h": 7.0},
         "ambientIntensity": 0.55,
@@ -55,6 +57,7 @@ THEMES = {
     },
     "minimal": {
         "name": "展厅三 · 极简",
+        "blurb": "日本浮世绘版画。北斋、广重、歌麿——用最少的笔触留住雨、月与风。",
         "hue": 0.55,
         "rect": {"x": 19.0, "z": 27.75, "w": 14.0, "d": 13.5, "h": 7.8},
         "ambientIntensity": 0.62,
@@ -68,6 +71,7 @@ THEMES = {
     },
     "night": {
         "name": "展厅四 · 星空",
+        "blurb": "夜色、黄昏与海。丘奇、扬松、惠斯勒、罗萨，从哈德逊河到泰晤士河的天光。",
         "hue": 0.66,
         "rect": {"x": 37.0, "z": 28.0, "w": 14.0, "d": 14.0, "h": 7.6},
         "ambientIntensity": 0.62,
@@ -82,6 +86,7 @@ THEMES = {
     },
     "flora": {
         "name": "展厅五 · 花语",
+        "blurb": "从荷兰静物到蒙德里安的菊花。四百年间，花如何被画。",
         "hue": 0.95,
         "rect": {"x": 55.25, "z": 18.75, "w": 9.5, "d": 16.5, "h": 7.0},
         "ambientIntensity": 0.58,
@@ -184,6 +189,26 @@ def build_arts(key, items, r):
     return arts
 
 
+FACING_YAW = {"north": 0.0, "south": math.pi, "east": -math.pi / 2, "west": math.pi / 2}
+TOWARD = {"east": (1.2, 0.0), "west": (-1.2, 0.0), "south": (0.0, 1.2), "north": (0.0, -1.2)}
+
+
+def bench_for(key, r):
+    """一条长凳：坐在上面正对主墙。朝向决定凳子是横放还是竖放。"""
+    ent = ENTRANCE_SIDE[key]
+    main = OPPOSITE[ent]
+    dx, dz = TOWARD[ent]
+    return {
+        "x": round(r["x"] + dx, 2),
+        "z": round(r["z"] + dz, 2),
+        "rotY": 0.0 if main in ("north", "south") else math.pi / 2,
+        "facing": round(FACING_YAW[main], 4),
+        "w": 1.9,
+        "d": 0.52,
+        "seatY": 0.46,
+    }
+
+
 def build_lights(key, r, t, ceiling_count=2):
     k = ((r["h"] - 0.5) / 6.0) ** 2
     lights = []
@@ -274,6 +299,7 @@ def build_museum(src):
         "lights": corridor_lights,
         "arts": [],
         "signs": [],
+        "sculpture": {"x": 45.4, "z": CORRIDOR["z"], "plinth": 0.92, "plinthH": 0.72, "height": 2.16},
     })
 
     for key, t in THEMES.items():
@@ -295,6 +321,8 @@ def build_museum(src):
             "materials": t["materials"],
             "lights": build_lights(key, r, t),
             "artLight": t.get("artLight", {"base": 8.5, "hero": 11.5}),
+            "blurb": t["blurb"],
+            "benches": [bench_for(key, r)],
             "arts": arts,
             "signs": [],
             "entranceSide": ENTRANCE_SIDE[key],
@@ -302,7 +330,7 @@ def build_museum(src):
         print(f"{t['name']}: {len(arts)} 幅 · {r['w']}×{r['d']}×{r['h']} m")
 
     return {
-        "spawn": {"x": 1.9, "z": 20.1, "yaw": -1.15},
+        "spawn": {"x": 3.4, "z": 18.9, "yaw": -1.5708},
         "wallThickness": WALL_T,
         "opening": {"width": OPEN_W, "height": OPEN_H},
         "rooms": rooms,
@@ -390,11 +418,6 @@ def main():
     with open(DST, "w", encoding="utf-8") as f:
         json.dump(museum, f, ensure_ascii=False, indent=2)
     print(f"\n写入 {DST}（{len(museum['rooms'])} 个空间）")
-
-    legacy_path = os.path.join(os.path.dirname(DST), "galleries.json")
-    with open(legacy_path, "w", encoding="utf-8") as f:
-        json.dump(build_legacy(museum), f, ensure_ascii=False, indent=2)
-    print(f"写入 {legacy_path}（编辑器用旧格式）")
 
     write_credits(museum, os.path.join(os.path.dirname(DST), "..", "..", "CREDITS.md"))
 

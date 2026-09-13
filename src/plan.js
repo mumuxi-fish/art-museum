@@ -126,11 +126,34 @@ export function buildPlan(data) {
     }
   }
 
+  // ---- 家具障碍：长凳和雕塑基座不能穿过去 ----
+  const obstacles = [];
+  for (const room of rooms) {
+    for (const b of room.benches || []) {
+      const rotated = Math.abs(Math.sin(b.rotY || 0)) > 0.5;
+      const hw = (rotated ? b.d : b.w) / 2;
+      const hd = (rotated ? b.w : b.d) / 2;
+      obstacles.push({ x0: b.x - hw, z0: b.z - hd, x1: b.x + hw, z1: b.z + hd });
+    }
+    if (room.sculpture) {
+      const p = (room.sculpture.plinth || 0.9) / 2;
+      obstacles.push({
+        x0: room.sculpture.x - p, z0: room.sculpture.z - p,
+        x1: room.sculpture.x + p, z1: room.sculpture.z + p,
+      });
+    }
+  }
+
   // ---- 可行走判定 ----
   const M = PLAYER_RADIUS;
   function canStand(x, z) {
     for (const r of rooms) {
-      if (x > r.x0 + M && x < r.x1 - M && z > r.z0 + M && z < r.z1 - M) return true;
+      if (x > r.x0 + M && x < r.x1 - M && z > r.z0 + M && z < r.z1 - M) {
+        for (const o of obstacles) {
+          if (x > o.x0 - M && x < o.x1 + M && z > o.z0 - M && z < o.z1 + M) return false;
+        }
+        return true;
+      }
     }
     for (const o of openings) {
       if (o.axis === 'x') {
@@ -160,6 +183,7 @@ export function buildPlan(data) {
     openingHeight: openH,
     rooms,
     openings,
+    obstacles,
     byId,
     canStand,
     roomAt,
