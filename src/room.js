@@ -68,7 +68,7 @@ function wallBox(room, wall, wallT) {
   }
 }
 
-function buildRoomShell(room, plan, lights) {
+function buildRoomShell(room, plan, lights, floorMats) {
   const wallT = plan.wallThickness;
   const m = room.materials;
 
@@ -76,10 +76,10 @@ function buildRoomShell(room, plan, lights) {
     m.floorDark, m.floorLight, Math.max(room.w, room.d) / 2, m.floorType || 'stone',
     room.w, room.d,
   );
-  const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(room.w, room.d),
-    STD({ map: floorTex, roughness: 0.74, metalness: 0.06 }),
-  );
+  // roughness 压低 + 金属度微抬，让它像抛光石材。envMap 稍后由 main.js 统一注入
+  const floorMat = STD({ map: floorTex, roughness: 0.38, metalness: 0.05 });
+  if (floorMats) floorMats.push(floorMat);
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(room.w, room.d), floorMat);
   floor.rotation.x = -Math.PI / 2;
   floor.position.set(room.cx, 0, room.cz);
   floor.receiveShadow = true;
@@ -561,8 +561,9 @@ export function buildMuseum(plan) {
   const artTargets = [];
   const benches = [];
   const benchTargets = [];
+  const floorMats = [];
 
-  for (const room of plan.rooms) buildRoomShell(room, plan, lights);
+  for (const room of plan.rooms) buildRoomShell(room, plan, lights, floorMats);
   for (const op of plan.openings) buildDoorCasing(op, plan);
 
   const corridor = plan.rooms.find((r) => r.kind === 'corridor');
@@ -586,5 +587,5 @@ export function buildMuseum(plan) {
     }
   }
 
-  return { group: museumGroup, lights, artSlots, artTargets, benches, benchTargets };
+  return { group: museumGroup, lights, artSlots, artTargets, benches, benchTargets, floorMats };
 }

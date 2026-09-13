@@ -96,6 +96,39 @@ function placePlayer(x, z, yaw) {
 // 数量恒定 = 只编译一次，走动时一次重编译都没有。
 const LIGHT_BUDGET_EXTRA = 4;
 
+// 地板反射：在馆内拍一次环境贴图（主要是天花板和灯），作为所有地板的 envMap。
+// 只拍一次 —— 地板反射的是上方环境，走动时基本不变，没必要每帧重算，
+// 这样比 Reflector 那种每帧再渲染一遍场景便宜得多。
+function applyFloorReflection(floorMats) {
+  if (!floorMats?.length) return;
+
+  const rt = new THREE.WebGLCubeRenderTarget(256, {
+    generateMipmaps: true,
+    minFilter: THREE.LinearMipmapLinearFilter,
+  });
+  const cubeCam = new THREE.CubeCamera(0.3, 60, rt);
+  // 放在走廊中段、离地 1.1m：这里能同时拍到天花板灯和两侧展厅的门洞
+  cubeCam.position.set(24, 1.1, 18.75);
+
+  // 拍的时候临时藏起地板，否则会把自己拍进去形成自反射
+  const hidden = [];
+  scene.traverse((o) => {
+    if (o.isMesh && floorMats.includes(o.material)) {
+      hidden.push(o);
+      o.visible = false;
+    }
+  });
+  cubeCam.update(renderer, scene);
+  for (const o of hidden) o.visible = true;
+
+  for (const m of floorMats) {
+    m.envMap = rt.texture;
+    m.envMapIntensity = 0.6;
+    // envMap 从 null 变成有值会改变 shader 的 defines，必须重编译
+    m.needsUpdate = true;
+  }
+}
+
 function lightBudgetFor(roomId) {
   let own = 0;
   for (const l of lights) if (l.userData.roomId === roomId) own += 1;
@@ -353,6 +386,9 @@ async function bootstrap() {
 
     const built = buildMuseum(plan);
     lights = built.lights;
+
+    // 抛光地板的环境反射（拍一次，不是每帧）
+    applyFloorReflection(built.floorMats);
 
     placePlayer(plan.spawn.x, plan.spawn.z, plan.spawn.yaw);
     prevPos.copy(camera.position);
