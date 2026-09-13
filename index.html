@@ -22,6 +22,7 @@
     </div>
     <button id="bodyToggle" title="显示/隐藏人物">👤</button>
     <button id="galleryMenuBtn" title="展厅列表">🏛</button>
+    <button id="soundBtn" class="active" title="声音开关">🔊</button>
 
     <!-- 开场提示，几秒后自动淡出 -->
     <div id="intro-hint" class="intro-hint">
@@ -43,10 +44,19 @@
         <button id="detail-close" class="detail-close" title="关闭">✕</button>
         <div class="detail-figure"><img id="detail-img" alt="" /></div>
         <div class="detail-meta">
-          <h2 id="detail-title"></h2>
-          <p id="detail-artist"></p>
-          <p id="detail-year" class="detail-year"></p>
-          <a id="detail-link" class="detail-link" target="_blank" rel="noopener">查看馆藏记录 →</a>
+          <div class="detail-head">
+            <h2 id="detail-title"></h2>
+            <p id="detail-artist" class="detail-artist"></p>
+            <p id="detail-year" class="detail-year"></p>
+          </div>
+          <p id="detail-desc" class="detail-desc"></p>
+          <p id="detail-know" class="detail-know hidden"></p>
+          <dl class="detail-facts">
+            <div><dt>材质</dt><dd id="detail-technique"></dd></div>
+            <div><dt>尺寸</dt><dd id="detail-dimensions"></dd></div>
+            <div><dt>来源</dt><dd id="detail-credit"></dd></div>
+          </dl>
+          <a id="detail-link" class="detail-link" target="_blank" rel="noopener">克利夫兰艺术博物馆馆藏记录 →</a>
         </div>
       </div>
     </div>

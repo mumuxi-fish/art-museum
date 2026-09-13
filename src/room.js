@@ -4,6 +4,8 @@
 // 七个空间（门厅 + 主廊 + 五个展厅）一次性建好，玩家一路走过去，不再有传送。
 
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { scene } from './scene.js';
 import {
   makeFloorTexture,
@@ -184,35 +186,113 @@ function buildBench(bench, room, benchTargets) {
   }
 }
 
-// 走廊尽头的雕塑端景：青铜抽象形体立在石质基座上，顶上一盏射灯
+// 走廊尽头的雕塑端景：石质基座 + 顶上一盏射灯 + 基座正面的作品牌。
+// 有真 3D 扫描（tools/fetch-sculpture.py 下下来的）就用真模型，
+// 没有就先立一个程序化形体占位，加载失败也留着占位，不会空着。
 function buildSculpture(sc) {
   const plinthMat = mat(0xCFC9BD, { roughness: 0.85, metalness: 0.02 });
   const plinth = new THREE.Mesh(BOX(sc.plinth, sc.plinthH, sc.plinth), plinthMat);
   plinth.position.set(sc.x, sc.plinthH / 2, sc.z);
   museumGroup.add(plinth);
 
-  // 拉成一条细长的竖向形体。上一版半径给到 0.28，1.95m 高显得像个圆墩子，
-  // 收到 0.21 之后比例才立得住。
+  // 程序化占位：细长的竖向形体
   const profile = [
     [0.001, 0.00], [0.22, 0.03], [0.24, 0.15], [0.17, 0.31], [0.13, 0.52],
     [0.145, 0.74], [0.115, 1.00], [0.075, 1.30], [0.088, 1.58], [0.052, 1.88],
     [0.024, 2.06], [0.001, 2.16],
   ].map(([x, y]) => new THREE.Vector2(x, y));
-  const bronze = STD({
-    color: 0xCBA76B, roughness: 0.28, metalness: 0.34,
-  });
-  const piece = new THREE.Mesh(new THREE.LatheGeometry(profile, 48), bronze);
-  piece.position.set(sc.x, sc.plinthH, sc.z);
-  museumGroup.add(piece);
+  const placeholder = new THREE.Mesh(
+    new THREE.LatheGeometry(profile, 48),
+    STD({ color: 0xCBA76B, roughness: 0.28, metalness: 0.34 }),
+  );
+  placeholder.position.set(sc.x, sc.plinthH, sc.z);
+  museumGroup.add(placeholder);
+
+  if (sc.model) loadSculptureModel(sc, placeholder);
+
+  // 基座正面的作品牌，面朝走廊来的方向
+  if (sc.title) {
+    const tex = makeLabelTexture(sc.title, sc.artist || '', sc.year || '');
+    const plaqueMat = STD({
+      map: tex, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: 0.3,
+      roughness: 0.85, metalness: 0,
+    });
+    plaqueMat.userData.keepMap = true;
+    const pw = 0.6, ph = pw * (160 / 512);
+    const plaque = new THREE.Mesh(new THREE.PlaneGeometry(pw, ph), plaqueMat);
+    plaque.position.set(sc.x - sc.plinth / 2 - 0.012, sc.plinthH * 0.62, sc.z);
+    plaque.rotation.y = -Math.PI / 2;
+    museumGroup.add(plaque);
+  }
 
   const target = new THREE.Object3D();
-  target.position.set(sc.x, sc.plinthH + sc.height * 0.5, sc.z);
+  target.position.set(sc.x, sc.plinthH + sc.height * 0.45, sc.z);
   museumGroup.add(target);
-  const spot = new THREE.SpotLight(0xfff1d8, 42, 6.5, 0.36, 0.6, 1.6);
-  spot.position.set(sc.x, sc.plinthH + sc.height + 1.3, sc.z);
+  const spot = new THREE.SpotLight(0xfff1d8, 46, 7, 0.34, 0.6, 1.6);
+  spot.position.set(sc.x, sc.plinthH + sc.height + 1.2, sc.z);
   spot.target = target;
   museumGroup.add(spot);
   return spot;
+}
+
+let dracoLoader = null;
+function getDracoLoader() {
+  if (dracoLoader) return dracoLoader;
+  dracoLoader = new DRACOLoader();
+  // 用绝对路径，避免相对路径在子目录部署时解析错
+  dracoLoader.setDecoderPath(new URL('draco/', location.href).href);
+  dracoLoader.setDecoderConfig({ type: 'wasm' });
+  return dracoLoader;
+}
+// 预加载解码器，避免第一次加载模型时才去拉 WASM
+getDracoLoader();
+
+function loadSculptureModel(sc, placeholder) {
+  
+  const loader = new GLTFLoader();
+  loader.setDRACOLoader(getDracoLoader());
+  loader.load(
+    `models/${sc.model}`,
+    (gltf) => {
+      
+      const root = gltf.scene;
+
+      // Met 的扫描件把展台也扫进去了，但雕塑和展台是合在同一个 mesh 里的，
+      // 不能简单按名字删（会把雕塑一起删掉）。直接整体缩放，让展台跟着一起变小。
+      // 注意：模型内部可能自带缩放（如 0.01），必须用 setFromObject 算世界空间尺寸。
+      const box = new THREE.Box3().setFromObject(root);
+      const size = box.getSize(new THREE.Vector3());
+      
+      if (size.y > 0.0001) root.scale.setScalar(sc.height / size.y);
+      box.setFromObject(root);
+      const cx = (box.min.x + box.max.x) / 2;
+      const cz = (box.min.z + box.max.z) / 2;
+      root.position.x += sc.x - cx;
+      root.position.z += sc.z - cz;
+      root.position.y += sc.plinthH - box.min.y;
+      
+
+      root.traverse((o) => {
+        if (!o.isMesh) return;
+        o.castShadow = false;
+        o.receiveShadow = false;
+        const m = o.material;
+        if (m) {
+          m.roughness = Math.min(1, (m.roughness ?? 0.8) + 0.1);
+          m.metalness = 0;
+        }
+      });
+
+      museumGroup.remove(placeholder);
+      placeholder.geometry.dispose();
+      placeholder.material.dispose();
+      museumGroup.add(root);
+    },
+    undefined,
+    (err) => {
+      console.warn('[art-museum] 雕塑模型加载失败，保留程序化形体:', err?.message || err);
+    },
+  );
 }
 
 // 走廊里的展厅导言展签。走廊侧放不下时（花语的门洞几乎占满走廊宽度），
@@ -273,7 +353,9 @@ function buildThemeLabel(room, plan, corridor) {
   }
   if (!pos) return;
 
-  const tex = makeThemeLabelTexture(room.name, room.blurb || '', room.arts?.length || 0);
+  const tex = makeThemeLabelTexture(
+    room.name, room.blurb || '', room.arts?.length || 0, room.yearRange || '',
+  );
   const labelMat = STD({
     map: tex, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: 0.26,
     roughness: 0.85, metalness: 0,

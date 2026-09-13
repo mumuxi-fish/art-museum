@@ -12,6 +12,9 @@ import { initControls, controls, updateMovement, enterMobileMode } from './contr
 import { initPlayer, updatePlayer } from './player.js';
 import { initFlashlight, updateFlashlight, toggle } from './flashlight.js';
 import { initInteract, updateInteract, activate, isSeated, stand } from './interact.js';
+import {
+  initAudio, setAudioEnabled, toggleMute, footstep, sitSound, clickSound,
+} from './audio.js';
 
 // DOM
 const roomLabel = document.getElementById('galleryLabel');
@@ -37,7 +40,13 @@ const detailArtist = document.getElementById('detail-artist');
 const detailYear = document.getElementById('detail-year');
 const detailLink = document.getElementById('detail-link');
 const detailClose = document.getElementById('detail-close');
+const detailDesc = document.getElementById('detail-desc');
+const detailKnow = document.getElementById('detail-know');
+const detailTechnique = document.getElementById('detail-technique');
+const detailDimensions = document.getElementById('detail-dimensions');
+const detailCredit = document.getElementById('detail-credit');
 const introHint = document.getElementById('intro-hint');
+const soundBtn = document.getElementById('soundBtn');
 
 const GALLERY_ICONS = ['🌅', '☀️', '🖼️', '🌌', '🌸', '🏛', '🎨', '🌿', '🔥', '💧'];
 
@@ -146,11 +155,23 @@ function updateRoom() {
 function openArtDetail(art) {
   if (!detailEl) return;
   detailOpen = true;
+  clickSound();
   if (detailImg) detailImg.src = `art/${art.image}`;
   if (detailImg) detailImg.alt = art.title || '';
   if (detailTitle) detailTitle.textContent = art.title || '无题';
   if (detailArtist) detailArtist.textContent = art.artist || '佚名';
   if (detailYear) detailYear.textContent = art.year || '';
+  if (detailDesc) {
+    detailDesc.textContent = art.description || '';
+    detailDesc.classList.toggle('hidden', !art.description);
+  }
+  if (detailKnow) {
+    detailKnow.textContent = art.didYouKnow ? `你知道吗 · ${art.didYouKnow}` : '';
+    detailKnow.classList.toggle('hidden', !art.didYouKnow);
+  }
+  if (detailTechnique) detailTechnique.textContent = art.technique || '—';
+  if (detailDimensions) detailDimensions.textContent = art.dimensions || '—';
+  if (detailCredit) detailCredit.textContent = art.creditline || '—';
   if (detailLink) {
     if (art.source) {
       detailLink.href = art.source;
@@ -244,11 +265,31 @@ detailEl?.addEventListener('click', (e) => {
 
 window.addEventListener('keydown', (e) => {
   if (e.code === 'KeyF') toggle();
+  if (e.code === 'KeyM') soundBtn?.click();
   if (e.code === 'KeyE') activate();
   if (e.code === 'Escape') {
     if (detailOpen) closeArtDetail();
     else if (isSeated()) stand();
   }
+});
+
+// 浏览器要求用户手势之后才能出声，所以第一次点击/按键时才启动音频
+let audioStarted = false;
+const startAudio = () => {
+  if (audioStarted) return;
+  audioStarted = true;
+  if (setAudioEnabled(true)) soundBtn?.classList.add('active');
+};
+window.addEventListener('pointerdown', startAudio);
+window.addEventListener('keydown', startAudio);
+
+soundBtn?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  startAudio();
+  const isMuted = toggleMute();
+  soundBtn.textContent = isMuted ? '🔇' : '🔊';
+  soundBtn.classList.toggle('active', !isMuted);
+  toast(isMuted ? '声音已关' : '声音已开');
 });
 
 initFlashlight(flashBtn, {
@@ -262,6 +303,26 @@ if (controls) {
 }
 
 const clock = new THREE.Clock();
+const prevPos = new THREE.Vector3();
+let stepAccum = 0;
+const STRIDE = 0.78;   // 一步大约 0.78m
+
+// 按实际走过的距离触发脚步，和移动速度天然同步
+function updateFootsteps() {
+  const dx = camera.position.x - prevPos.x;
+  const dz = camera.position.z - prevPos.z;
+  const moved = Math.hypot(dx, dz);
+  prevPos.copy(camera.position);
+  // 传送/菜单跳转会是一次很大的位移，排除掉
+  if (moved <= 0.0005 || moved > 1.5) return;
+  stepAccum += moved;
+  if (stepAccum >= STRIDE) {
+    stepAccum = 0;
+    const room = plan?.byId.get(currentRoomId);
+    footstep(room?.materials?.floorType || 'checker');
+  }
+}
+
 function animate() {
   requestAnimationFrame(animate);
   const dt = Math.min(clock.getDelta(), 0.05);
@@ -270,6 +331,7 @@ function animate() {
   if (!detailOpen) updateInteract();
   updatePlayer();
   updateFlashlight(dt);
+  updateFootsteps();
   stepWarmup();
   renderer.render(scene, camera);
 }
@@ -293,6 +355,7 @@ async function bootstrap() {
     lights = built.lights;
 
     placePlayer(plan.spawn.x, plan.spawn.z, plan.spawn.yaw);
+    prevPos.copy(camera.position);
     currentRoomId = plan.roomAt(plan.spawn.x, plan.spawn.z)?.id ?? plan.rooms[0].id;
     applyLightBudget(currentRoomId);
 
@@ -302,6 +365,8 @@ async function bootstrap() {
     // 之前是等 40 张图加载完才开始，用户在加载期间走进展厅就会现场编译，卡一下。
     warmupQueue = plan.rooms.map((r) => r.id);
 
+    initAudio({});
+
     initInteract({
       artTargets: built.artTargets,
       benches: built.benches,
@@ -309,8 +374,8 @@ async function bootstrap() {
       promptEl,
       canStand: (x, z) => plan.canStand(x, z),
       onOpenArt: openArtDetail,
-      onSit: (b) => toast(`已坐下 · ${b.roomName}`),
-      onStand: () => toast('已起身'),
+      onSit: (b) => { sitSound(); toast(`已坐下 · ${b.roomName}`); },
+      onStand: () => { sitSound(); toast('已起身'); },
     });
 
     // 开场提示只留几秒，之后彻底交给沉浸

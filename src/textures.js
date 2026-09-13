@@ -402,8 +402,8 @@ export function makeDirectoryBoardTexture(rooms, youAreHereId) {
 
 // 走廊里的展厅导言展签：展厅名 + 主题介绍 + 作品数
 const themeLabelCache = new Map();
-export function makeThemeLabelTexture(name, blurb, count) {
-  const key = `${name}|${blurb}|${count}`;
+export function makeThemeLabelTexture(name, blurb, count, yearRange = '') {
+  const key = `${name}|${blurb}|${count}|${yearRange}`;
   if (themeLabelCache.has(key)) return themeLabelCache.get(key);
 
   const W = 768, H = 560;
@@ -455,7 +455,7 @@ export function makeThemeLabelTexture(name, blurb, count) {
 
   ctx.fillStyle = '#8a857b';
   ctx.font = `400 26px ${sans}`;
-  ctx.fillText(`${count} 幅作品`, PAD, H - 62);
+  ctx.fillText(yearRange ? `${yearRange} · ${count} 幅作品` : `${count} 幅作品`, PAD, H - 62);
 
   const tex = new THREE.CanvasTexture(c);
   tex.colorSpace = THREE.SRGBColorSpace;

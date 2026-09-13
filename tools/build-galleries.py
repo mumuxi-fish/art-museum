@@ -28,8 +28,8 @@ CORRIDOR = {"x": 29.75, "z": 18.75, "w": 41.5, "d": 4.5, "h": 4.0}
 
 THEMES = {
     "dawn": {
-        "name": "展厅一 · 晨光",
-        "blurb": "印象派的清晨与河岸。莫奈、毕沙罗、西斯莱、道比尼——他们第一次把空气画成了主角。",
+        "name": "展厅一 · 光与河岸",
+        "blurb": "印象派第一次把空气画成了主角。莫奈、毕沙罗、西斯莱、道比尼笔下的河岸、田野与光。",
         "hue": 0.09,
         "rect": {"x": 18.25, "z": 9.0, "w": 12.5, "d": 15.0, "h": 7.4},
         "ambientIntensity": 0.58,
@@ -42,8 +42,8 @@ THEMES = {
         "lightColor": "#fff5e8", "wallLightColor": "#ffe8d0",
     },
     "sun": {
-        "name": "展厅二 · 暖阳",
-        "blurb": "十九世纪法国的人物与日常。雷诺阿、德加、马奈、莫里索笔下的闲坐、舞蹈与午后。",
+        "name": "展厅二 · 日常与肖像",
+        "blurb": "十九世纪法国的人物与日常。雷诺阿、德加、马奈、莫里索——闲坐、舞蹈、读书的午后。",
         "hue": 0.07,
         "rect": {"x": 35.5, "z": 8.25, "w": 14.0, "d": 16.5, "h": 7.0},
         "ambientIntensity": 0.55,
@@ -56,8 +56,8 @@ THEMES = {
         "lightColor": "#ffeedd", "wallLightColor": "#ffeecc",
     },
     "minimal": {
-        "name": "展厅三 · 极简",
-        "blurb": "日本浮世绘版画。北斋、广重、歌麿——用最少的笔触留住雨、月与风。",
+        "name": "展厅三 · 浮世绘",
+        "blurb": "日本浮世绘版画。北斋、广重、歌麿——用最少的笔触留住一场雨、一轮月、一阵风。",
         "hue": 0.55,
         "rect": {"x": 19.0, "z": 27.75, "w": 14.0, "d": 13.5, "h": 7.8},
         "ambientIntensity": 0.62,
@@ -70,8 +70,8 @@ THEMES = {
         "lightColor": "#f7f4ee", "wallLightColor": "#f0ece4",
     },
     "night": {
-        "name": "展厅四 · 星空",
-        "blurb": "夜色、黄昏与海。丘奇、扬松、惠斯勒、罗萨，从哈德逊河到泰晤士河的天光。",
+        "name": "展厅四 · 夜色与海",
+        "blurb": "从罗萨的巫术之夜到丘奇的荒野暮色，三百年的夜、黄昏与海。",
         "hue": 0.66,
         "rect": {"x": 37.0, "z": 28.0, "w": 14.0, "d": 14.0, "h": 7.6},
         "ambientIntensity": 0.62,
@@ -85,8 +85,8 @@ THEMES = {
         "artLight": {"base": 15.0, "hero": 20.0},
     },
     "flora": {
-        "name": "展厅五 · 花语",
-        "blurb": "从荷兰静物到蒙德里安的菊花。四百年间，花如何被画。",
+        "name": "展厅五 · 花与静物",
+        "blurb": "从十六世纪荷兰静物到蒙德里安的菊花。四百年间，花如何被画。",
         "hue": 0.95,
         "rect": {"x": 55.25, "z": 18.75, "w": 9.5, "d": 16.5, "h": 7.0},
         "ambientIntensity": 0.58,
@@ -142,6 +142,9 @@ def place_on_wall(items, side, r, max_h, area, hero=False):
     if not items:
         return []
     length, at, rot = wall_frame(side, r)
+    # 面朝这面墙时，south / west 的 t 增方向是往右，会读成倒序，翻一下
+    if side in ("south", "west"):
+        items = list(reversed(items))
     n = len(items)
     margin = max(1.1, length * 0.08)
     usable = length - 2 * margin
@@ -162,6 +165,12 @@ def place_on_wall(items, side, r, max_h, area, hero=False):
             "year": item.get("year", ""),
             "image": item["file"],
             "source": item.get("source", ""),
+            "sortYear": item.get("sortYear"),
+            "description": item.get("description", ""),
+            "didYouKnow": item.get("didYouKnow", ""),
+            "technique": item.get("technique", ""),
+            "dimensions": item.get("dimensions", ""),
+            "creditline": item.get("creditline", ""),
             "wall": side,
             "position": {"x": round(px, 3), "y": HANG_Y, "z": round(pz, 3)},
             "size": {"width": w, "height": h},
@@ -177,11 +186,14 @@ def build_arts(key, items, r):
     ent = ENTRANCE_SIDE[key]
     main = OPPOSITE[ent]
     sides = [s for s in ("north", "south", "east", "west") if s not in (ent, main)]
-    # 画幅更大的作品留给主墙；最大的那幅放主墙正中间
-    items = sorted(items, key=lambda it: -(it.get("w", 1) * it.get("h", 1)))
+    # 按年代布展：进门面对的主墙是最早的三幅，然后沿一侧墙、另一侧墙依次往后。
+    # 绕房间走一圈就是一条时间线。
+    items = sorted(items, key=lambda it: (it.get("sortYear") or 9999))
     main_items, rest = items[:3], items[3:]
     a_items, b_items = rest[:3], rest[3:5]
-    ordered_main = [main_items[1], main_items[0], main_items[2]] if len(main_items) == 3 else main_items
+    # 严格按年代排，不再为了"把最大的一幅放中间"而打乱顺序 ——
+    # 中间那幅的视觉焦点交给射灯（hero）和 1.5 倍面积，不靠调换位置
+    ordered_main = main_items
     arts = []
     arts += place_on_wall(ordered_main, main, r, 2.7, 4.2, hero=True)
     arts += place_on_wall(a_items, sides[0], r, 2.4, 3.4)
@@ -209,6 +221,15 @@ def bench_for(key, r):
     }
 
 
+def year_range(arts):
+    """展厅里作品的年代区间，例如 1864–1926。"""
+    ys = [a.get("sortYear") for a in arts if a.get("sortYear")]
+    if not ys:
+        return ""
+    lo, hi = min(ys), max(ys)
+    return f"{lo}" if lo == hi else f"{lo}–{hi}"
+
+
 def build_lights(key, r, t, ceiling_count=2):
     k = ((r["h"] - 0.5) / 6.0) ** 2
     lights = []
@@ -233,8 +254,19 @@ def build_lights(key, r, t, ceiling_count=2):
     return lights
 
 
+def load_sculpture():
+    """走廊尽头那件雕塑的元数据，由 tools/fetch-sculpture.py 产出。
+    没有就退回程序化形体。"""
+    path = os.path.join(os.path.dirname(SRC), "sculpture.json")
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    return None
+
+
 def build_museum(src):
     rooms = []
+    sculpt = load_sculpture()
 
     rooms.append({
         "id": "entrance", "kind": "entrance", "name": "门厅",
@@ -299,7 +331,11 @@ def build_museum(src):
         "lights": corridor_lights,
         "arts": [],
         "signs": [],
-        "sculpture": {"x": 45.4, "z": CORRIDOR["z"], "plinth": 0.92, "plinthH": 0.72, "height": 2.16},
+        "sculpture": {
+            "x": 45.4, "z": CORRIDOR["z"],
+            "plinth": 0.92, "plinthH": 0.72, "height": 2.0,
+            **(sculpt or {}),
+        },
     })
 
     for key, t in THEMES.items():
@@ -322,6 +358,7 @@ def build_museum(src):
             "lights": build_lights(key, r, t),
             "artLight": t.get("artLight", {"base": 8.5, "hero": 11.5}),
             "blurb": t["blurb"],
+            "yearRange": year_range(arts),
             "benches": [bench_for(key, r)],
             "arts": arts,
             "signs": [],

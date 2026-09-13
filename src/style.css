@@ -292,7 +292,29 @@ canvas {
     font-size: 0.7rem;
   }
 
-  #galleryMenuBtn {
+  #soundBtn {
+  position: fixed;
+  top: 1.25rem;
+  right: 4.5rem;
+  z-index: 5;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(10, 10, 14, 0.5);
+  color: rgba(240, 235, 227, 0.8);
+  font-size: 16px;
+  cursor: pointer;
+  line-height: 1;
+  transition: background 0.2s, border-color 0.2s;
+}
+#soundBtn:hover { background: rgba(30, 30, 38, 0.8); }
+#soundBtn.active { border-color: rgba(127, 212, 196, 0.5); }
+@media (max-width: 768px) {
+  #soundBtn { top: 12px; right: 64px; width: 36px; height: 36px; }
+}
+
+#galleryMenuBtn {
     top: 12px;
     right: 12px;
     width: 38px;
@@ -716,4 +738,43 @@ body.drag-look .drag-hint { display: block; }
 @media (max-width: 768px) {
   .art-detail-card { grid-template-columns: 1fr; gap: 16px; padding: 16px; }
   .detail-figure img { max-height: 44vh; }
+}
+
+/* 作品详情：展签正文 */
+.detail-head { display: flex; flex-direction: column; gap: 4px; }
+.detail-artist { font-size: 15px !important; color: rgba(240, 235, 227, 0.85) !important; }
+.detail-desc {
+  margin-top: 14px !important;
+  font-size: 13.5px !important;
+  line-height: 1.75;
+  color: rgba(240, 235, 227, 0.7) !important;
+  max-height: 26vh;
+  overflow-y: auto;
+}
+.detail-desc.hidden, .detail-know.hidden { display: none; }
+.detail-know {
+  margin-top: 12px !important;
+  padding: 10px 14px;
+  border-left: 2px solid rgba(127, 212, 196, 0.5);
+  background: rgba(127, 212, 196, 0.06);
+  border-radius: 0 6px 6px 0;
+  font-size: 13px !important;
+  line-height: 1.7;
+  color: rgba(190, 230, 220, 0.85) !important;
+}
+.detail-facts {
+  margin: 16px 0 0;
+  padding: 14px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12.5px;
+}
+.detail-facts > div { display: grid; grid-template-columns: 46px 1fr; gap: 10px; }
+.detail-facts dt { color: rgba(240, 235, 227, 0.42); }
+.detail-facts dd { margin: 0; color: rgba(240, 235, 227, 0.72); line-height: 1.5; }
+@media (max-width: 768px) {
+  .detail-desc { max-height: none; }
+  .art-detail-card { overflow-y: auto; }
 }
