@@ -530,7 +530,7 @@ body.drag-look .drag-hint { display: block; }
 .toast {
   position: fixed;
   left: 50%;
-  bottom: 76px;
+  bottom: 62px;
   transform: translateX(-50%) translateY(6px);
   z-index: 46;
   padding: 9px 22px;
@@ -554,7 +554,7 @@ body.drag-look .drag-hint { display: block; }
 .toast {
   position: fixed;
   left: 50%;
-  bottom: 76px;
+  bottom: 62px;
   transform: translateX(-50%) translateY(6px);
   z-index: 46;
   padding: 9px 22px;
@@ -618,7 +618,7 @@ body.drag-look .drag-hint { display: block; }
 .prompt {
   position: fixed;
   left: 50%;
-  bottom: 96px;
+  bottom: 112px;
   transform: translateX(-50%);
   z-index: 44;
   padding: 8px 20px;
