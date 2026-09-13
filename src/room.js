@@ -213,10 +213,7 @@ function buildSculpture(sc) {
   // 基座正面的作品牌，面朝走廊来的方向
   if (sc.title) {
     const tex = makeLabelTexture(sc.title, sc.artist || '', sc.year || '');
-    const plaqueMat = STD({
-      map: tex, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: 0.3,
-      roughness: 0.85, metalness: 0,
-    });
+    const plaqueMat = new THREE.MeshBasicMaterial({ map: tex });
     plaqueMat.userData.keepMap = true;
     const pw = 0.6, ph = pw * (160 / 512);
     const plaque = new THREE.Mesh(new THREE.PlaneGeometry(pw, ph), plaqueMat);
@@ -356,10 +353,8 @@ function buildThemeLabel(room, plan, corridor) {
   const tex = makeThemeLabelTexture(
     room.name, room.blurb || '', room.arts?.length || 0, room.yearRange || '',
   );
-  const labelMat = STD({
-    map: tex, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: 0.26,
-    roughness: 0.85, metalness: 0,
-  });
+  // BasicMaterial：不受光照影响，恒定亮度，避免走动时灯光切换闪烁
+  const labelMat = new THREE.MeshBasicMaterial({ map: tex });
   labelMat.userData.keepMap = true;
   const panel = new THREE.Mesh(new THREE.PlaneGeometry(PW, PH), labelMat);
   panel.position.set(pos.x, Y, pos.z);
@@ -441,14 +436,7 @@ function buildArtworks(room, plan, lights, artSlots, artTargets) {
       const labelTex = makeLabelTexture(a.title, a.artist || '', a.year || '');
       const labelW = Math.min(Math.max(a.size.width * 0.78, 0.62), 1.05);
       const labelH = labelW * (160 / 512);
-      const labelMat = STD({
-        map: labelTex,
-        emissive: 0xffffff,
-        emissiveMap: labelTex,
-        emissiveIntensity: 0.35,
-        roughness: 0.85,
-        metalness: 0,
-      });
+      const labelMat = new THREE.MeshBasicMaterial({ map: labelTex });
       labelMat.userData.keepMap = true;
       const label = new THREE.Mesh(new THREE.PlaneGeometry(labelW, labelH), labelMat);
       label.position.set(0, -(a.size.height / 2) - labelH / 2 - 0.22, 0.05);
@@ -499,10 +487,8 @@ function buildGallerySign(room, plan, corridor) {
   }
 
   const tex = makeRoomSignTexture(room.name, `${room.arts.length} 幅作品`);
-  const signMat = STD({
-    map: tex, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: 0.28,
-    roughness: 0.8, metalness: 0,
-  });
+  // 用 BasicMaterial：标识牌不受场景光照影响，永远恒定亮度，避免走动时灯光切换导致的闪烁
+  const signMat = new THREE.MeshBasicMaterial({ map: tex });
   signMat.userData.keepMap = true;
   const sign = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 0.5), signMat);
   sign.position.set(x, plan.openingHeight + 0.55, z);
@@ -521,10 +507,8 @@ function buildEntranceSigns(room) {
         })),
         room.id,
       );
-      const boardMat = STD({
-        map: tex, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: 0.32,
-        roughness: 0.85, metalness: 0,
-      });
+      // BasicMaterial：不受光照影响，恒定亮度，避免走动时灯光切换闪烁
+      const boardMat = new THREE.MeshBasicMaterial({ map: tex });
       boardMat.userData.keepMap = true;
       const board = new THREE.Mesh(
         new THREE.PlaneGeometry(sign.size.width, sign.size.height), boardMat,
