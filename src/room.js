@@ -133,6 +133,11 @@ function buildDoorCasing(op, plan) {
   const owner = plan.byId.get(op.rooms[0]);
   const accent = owner?.materials?.accentColor ?? 0x6B5B45;
   const doorMat = mat(accent, { roughness: 0.62, metalness: 0.16 });
+  // 门套横梁的底面和门楣墙段的底面都在洞口高度上，完全共面 → z-fighting。
+  // polygonOffset 让门套在深度测试中稳定压过墙体（几何位置不变）。
+  doorMat.polygonOffset = true;
+  doorMat.polygonOffsetFactor = -1;
+  doorMat.polygonOffsetUnits = -1;
 
   const g = new THREE.Group();
   if (op.axis === 'x') {
@@ -142,7 +147,8 @@ function buildDoorCasing(op, plan) {
       g.add(jamb);
     });
     const head = new THREE.Mesh(BOX(depth, t, op.width + t * 2), doorMat);
-    head.position.set(op.at, op.height + t / 2, (op.from + op.to) / 2);
+    // 比洞口高度再压低 12mm：墙门楣段的底面正好在洞口高度上，共面会 z-fighting
+    head.position.set(op.at, op.height + t / 2 - 0.012, (op.from + op.to) / 2);
     g.add(head);
   } else {
     [-1, 1].forEach((s) => {
@@ -151,7 +157,7 @@ function buildDoorCasing(op, plan) {
       g.add(jamb);
     });
     const head = new THREE.Mesh(BOX(op.width + t * 2, t, depth), doorMat);
-    head.position.set((op.from + op.to) / 2, op.height + t / 2, op.at);
+    head.position.set((op.from + op.to) / 2, op.height + t / 2 - 0.012, op.at);
     g.add(head);
   }
   g.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
