@@ -236,7 +236,7 @@ def build_lights(key, r, t, ceiling_count=2):
     zs = [-r["d"] * 0.22, r["d"] * 0.22] if ceiling_count == 2 else [0.0]
     for i, dz in enumerate(zs):
         lights.append({
-            "id": f"{key}-light-{i + 1}", "name": f"顶灯{i + 1}", "type": "ceiling",
+            "id": f"{key}-light-{i + 1}", "name": f"灯槽{i + 1}", "type": "cove",
             "position": {"x": round(r["x"], 2), "y": round(r["h"] - 0.06, 2), "z": round(r["z"] + dz, 2)},
             "rotation": {"x": 0, "y": 0, "z": 0},
             "color": t["lightColor"], "intensity": round((70 if i == 0 else 54) * k, 1),
@@ -319,11 +319,11 @@ def build_museum(src):
     corridor_lights = []
     for i in range(4):
         corridor_lights.append({
-            "id": f"corridor-light-{i + 1}", "name": f"走廊顶灯{i + 1}", "type": "ceiling",
+            "id": f"corridor-light-{i + 1}", "name": f"走廊灯槽{i + 1}", "type": "cove",
             "position": {"x": 12.0 + i * 12.0, "y": round(CORRIDOR["h"] - 0.06, 2), "z": CORRIDOR["z"]},
             "rotation": {"x": 0, "y": 0, "z": 0},
-            "color": "#fff6ea", "intensity": round(34 * ((CORRIDOR["h"] - 0.5) / 6.0) ** 2, 1),
-            "range": 13, "angle": 1.3, "penumbra": 0.62, "enabled": True,
+            "color": "#fff6ea", "intensity": round(58 * ((CORRIDOR["h"] - 0.5) / 6.0) ** 2, 1),
+            "range": 17, "angle": 1.42, "penumbra": 0.85, "enabled": True,
         })
     rooms.append({
         "id": "corridor", "kind": "corridor", "name": "主廊",
@@ -340,6 +340,24 @@ def build_museum(src):
         "lights": corridor_lights,
         "arts": [],
         "signs": [],
+        # 走廊 41.5m 是很大的一片空间，光秃秃的会很空。
+        # 长椅走 benches（自动获得碰撞 + 坐下交互），绿植走 furniture。
+        "benches": [
+            {"x": 12.8, "z": CORRIDOR["z"] - 1.5, "rotY": 0.0, "facing": math.pi,
+             "w": 2.1, "d": 0.5, "seatY": 0.44},
+            {"x": 28.0, "z": CORRIDOR["z"] + 1.5, "rotY": 0.0, "facing": 0.0,
+             "w": 2.1, "d": 0.5, "seatY": 0.44},
+            {"x": 43.8, "z": CORRIDOR["z"] - 1.5, "rotY": 0.0, "facing": math.pi,
+             "w": 2.1, "d": 0.5, "seatY": 0.44},
+        ],
+        "furniture": [
+            {"kind": "planter", "x": 9.7, "z": CORRIDOR["z"] + 1.72},
+            {"kind": "planter", "x": 9.7, "z": CORRIDOR["z"] - 1.72},
+            {"kind": "planter", "x": 49.9, "z": CORRIDOR["z"] + 1.72},
+            {"kind": "planter", "x": 49.9, "z": CORRIDOR["z"] - 1.72},
+            {"kind": "planter", "x": 22.2, "z": CORRIDOR["z"] - 1.72},
+            {"kind": "planter", "x": 32.0, "z": CORRIDOR["z"] + 1.72},
+        ],
         "sculpture": {
             "x": 45.4, "z": CORRIDOR["z"],
             "plinth": 0.92, "plinthH": 0.72, "height": 2.0,

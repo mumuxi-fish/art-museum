@@ -68,6 +68,88 @@ function wallBox(room, wall, wallT) {
   }
 }
 
+// 天花板灯槽：沿房间长轴嵌一条发光带。
+// 真实美术馆的天花是"面发光"而不是几个点光源，这条带子负责把
+// 天花板和墙的交界照亮，空间才不会显得压抑。
+function buildLightCove(room) {
+  const along = room.w >= room.d ? 'x' : 'z';
+  const len = (along === 'x' ? room.w : room.d) * 0.84;
+  const wide = 0.36;
+  const y = room.height - 0.055;
+
+  const geo = along === 'x'
+    ? new THREE.PlaneGeometry(len, wide)
+    : new THREE.PlaneGeometry(wide, len);
+  const strip = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xfff2dd }));
+  strip.rotation.x = Math.PI / 2; // 法线朝下
+  strip.position.set(room.cx, y, room.cz);
+  museumGroup.add(strip);
+
+  // 灯槽两侧的挡板：让光带看起来是"嵌"在天花里的，而不是贴了张白纸
+  const lipMat = mat(room.materials.ceilingColor || room.materials.wallColor, { roughness: 0.95 });
+  for (const s of [-1, 1]) {
+    const lip = new THREE.Mesh(
+      along === 'x' ? BOX(len, 0.07, 0.03) : BOX(0.03, 0.07, len),
+      lipMat,
+    );
+    const off = wide / 2 + 0.015;
+    lip.position.set(
+      room.cx + (along === 'x' ? 0 : s * off),
+      y - 0.035,
+      room.cz + (along === 'x' ? s * off : 0),
+    );
+    museumGroup.add(lip);
+  }
+}
+
+// 盆栽：陶土花盆 + 一丛绿叶。程序生成，不引入模型文件。
+// 叶球的位置写死（不用 Math.random），保证每次刷新长得一样。
+const LEAF_SPOTS = [
+  [0.00, 0.60, 0.00, 0.21], [-0.13, 0.67, 0.08, 0.17], [0.12, 0.64, -0.07, 0.18],
+  [-0.04, 0.79, -0.11, 0.155], [0.08, 0.82, 0.10, 0.15], [-0.11, 0.54, -0.10, 0.16],
+  [0.05, 0.91, 0.02, 0.13], [-0.02, 0.71, 0.14, 0.16],
+];
+
+function buildPlanter(f) {
+  const g = new THREE.Group();
+
+  const potMat = STD({ color: 0xB3A190, roughness: 0.86, metalness: 0.02 });
+  const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.29, 0.21, 0.48, 20), potMat);
+  pot.position.y = 0.24;
+  g.add(pot);
+
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(0.29, 0.026, 8, 22), potMat);
+  rim.position.y = 0.47;
+  rim.rotation.x = Math.PI / 2;
+  g.add(rim);
+
+  const soil = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.265, 0.265, 0.04, 20),
+    STD({ color: 0x382C22, roughness: 1 }),
+  );
+  soil.position.y = 0.455;
+  g.add(soil);
+
+  const dark = STD({ color: 0x3C6742, roughness: 0.92, metalness: 0 });
+  const light = STD({ color: 0x517F55, roughness: 0.92, metalness: 0 });
+  LEAF_SPOTS.forEach(([dx, y, dz, r], i) => {
+    const leaf = new THREE.Mesh(new THREE.SphereGeometry(r, 10, 8), i % 2 ? light : dark);
+    leaf.scale.set(1, 0.74, 1);
+    leaf.position.set(dx, y, dz);
+    g.add(leaf);
+  });
+
+  g.position.set(f.x, 0, f.z);
+  museumGroup.add(g);
+}
+
+// 走廊家具：目前只有盆栽（长椅走 benches，复用展厅那套）
+function buildFurniture(room) {
+  for (const f of room.furniture || []) {
+    if (f.kind === 'planter') buildPlanter(f);
+  }
+}
+
 function buildRoomShell(room, plan, lights, floorMats) {
   const wallT = plan.wallThickness;
   const m = room.materials;
@@ -85,9 +167,18 @@ function buildRoomShell(room, plan, lights, floorMats) {
   floor.receiveShadow = true;
   museumGroup.add(floor);
 
+  // 天花板：给一点自发光。所有灯都朝下照，天花板本身收不到光，
+  // 纯色材质会变成一块黑顶，很压抑。真实馆里的天花是被漫射光洗亮的。
+  const ceilCol = new THREE.Color(m.ceilingColor || m.wallColor);
   const ceil = new THREE.Mesh(
     new THREE.PlaneGeometry(room.w, room.d),
-    STD({ color: m.ceilingColor || m.wallColor, roughness: 1, metalness: 0 }),
+    STD({
+      color: ceilCol,
+      emissive: ceilCol,
+      emissiveIntensity: 0.16,
+      roughness: 1,
+      metalness: 0,
+    }),
   );
   ceil.rotation.x = Math.PI / 2;
   ceil.position.set(room.cx, room.height, room.cz);
@@ -576,6 +667,10 @@ export function buildMuseum(plan) {
       benches.push(entry);
     }
     if (room.sculpture) lights.push(buildSculpture(room.sculpture));
+
+    // 走廊和展厅都嵌灯槽；门厅空间小，靠顶灯就够
+    if (room.kind === 'corridor' || room.kind === 'gallery') buildLightCove(room);
+    buildFurniture(room);
 
     if (room.kind === 'gallery' && corridor) {
       buildGallerySign(room, plan, corridor);

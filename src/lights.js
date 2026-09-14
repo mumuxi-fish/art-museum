@@ -93,13 +93,22 @@ function createWallLightFixture(color = '#ffe8d0') {
 export function buildRoomLights(room, group, out) {
   (room.lights || []).forEach((ld) => {
     const useSpot = ld.type === 'ceiling';
-    const fixture = useSpot ? createCeilingLightFixture(ld.color) : createWallLightFixture(ld.color);
+    // cove：灯槽灯。光带本身是几何体（room.js 的 buildLightCove），
+    // 这里只出光源不出灯具模型，否则灯具会叠在光带上很难看。
+    const isCove = ld.type === 'cove';
+
     const pos = ld.position || { x: 0, y: 3, z: 0 };
-    fixture.position.set(pos.x, pos.y, pos.z);
-    if (ld.rotation) {
-      fixture.rotation.set(ld.rotation.x || 0, ld.rotation.y || 0, ld.rotation.z || 0);
+    const dir = new THREE.Vector3(0, -1, 0);
+
+    if (!isCove) {
+      const fixture = useSpot ? createCeilingLightFixture(ld.color) : createWallLightFixture(ld.color);
+      fixture.position.set(pos.x, pos.y, pos.z);
+      if (ld.rotation) {
+        fixture.rotation.set(ld.rotation.x || 0, ld.rotation.y || 0, ld.rotation.z || 0);
+      }
+      group.add(fixture);
+      dir.applyQuaternion(fixture.quaternion);
     }
-    group.add(fixture);
 
     const color = new THREE.Color(ld.color);
     const light = new THREE.SpotLight(
@@ -110,11 +119,10 @@ export function buildRoomLights(room, group, out) {
       ld.penumbra ?? 0.4,
       2,
     );
-    light.position.copy(fixture.position);
+    light.position.set(pos.x, pos.y, pos.z);
 
-    const dir = new THREE.Vector3(0, -1, 0).applyQuaternion(fixture.quaternion);
     const target = new THREE.Object3D();
-    target.position.copy(fixture.position).add(dir);
+    target.position.set(pos.x, pos.y, pos.z).add(dir);
     group.add(target);
     light.target = target;
 

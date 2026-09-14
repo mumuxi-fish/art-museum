@@ -142,6 +142,12 @@ export function buildPlan(data) {
         x1: room.sculpture.x + p, z1: room.sculpture.z + p,
       });
     }
+    // 盆栽也要绕开
+    for (const f of room.furniture || []) {
+      if (f.kind !== 'planter') continue;
+      const r = 0.34;
+      obstacles.push({ x0: f.x - r, z0: f.z - r, x1: f.x + r, z1: f.z + r });
+    }
   }
 
   // ---- 可行走判定 ----
