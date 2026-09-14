@@ -46,6 +46,11 @@ THEMES = {
         "blurb": "十九世纪法国的人物与日常。雷诺阿、德加、马奈、莫里索——闲坐、舞蹈、读书的午后。",
         "hue": 0.07,
         "rect": {"x": 35.5, "z": 8.25, "w": 14.0, "d": 16.5, "h": 7.0},
+        # 一道不到顶的独立展墙：进门后正前方被挡住，要往东绕过去才看得到主墙。
+        # 高 3.6m 是刻意的 —— 挡得住视线，又不会撞到 7m 高的天花灯槽。
+        "partitions": [
+            {"x0": 28.5, "z0": 7.9, "x1": 35.2, "z1": 8.2, "h": 3.6},
+        ],
         "ambientIntensity": 0.55,
         "materials": {
             "wallColor": 0xEFE0CE, "ceilingColor": 0xCAC0B1, "accentColor": 0xB08454,
@@ -74,6 +79,10 @@ THEMES = {
         "blurb": "从罗萨的巫术之夜到丘奇的荒野暮色，三百年的夜、黄昏与海。",
         "hue": 0.66,
         "rect": {"x": 37.0, "z": 28.0, "w": 14.0, "d": 14.0, "h": 7.6},
+        # 同上，从东墙伸出，进门要往西绕
+        "partitions": [
+            {"x0": 37.4, "z0": 27.85, "x1": 44.0, "z1": 28.15, "h": 3.6},
+        ],
         "ambientIntensity": 0.62,
         "materials": {
             "wallColor": 0x2A3040, "ceilingColor": 0x1E222E, "accentColor": 0x6E7BA8,
@@ -198,6 +207,10 @@ def build_arts(key, items, r):
     arts += place_on_wall(ordered_main, main, r, 2.7, 4.2, hero=True)
     arts += place_on_wall(a_items, sides[0], r, 2.4, 3.4)
     arts += place_on_wall(b_items, sides[1], r, 2.4, 3.4)
+    # 统一重编 id。place_on_wall 里的序号是"每面墙内"的，
+    # 三面墙拼起来会出现 art-01/02/03 各重复几次，id 撞车。
+    for i, a in enumerate(arts):
+        a["id"] = f"{key}-art-{i + 1:02d}"
     return arts
 
 
@@ -387,6 +400,7 @@ def build_museum(src):
             "blurb": t["blurb"],
             "yearRange": year_range(arts),
             "benches": [bench_for(key, r)],
+            "partitions": t.get("partitions", []),
             "arts": arts,
             "signs": [],
             "entranceSide": ENTRANCE_SIDE[key],

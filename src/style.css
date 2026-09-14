@@ -778,3 +778,48 @@ body.drag-look .drag-hint { display: block; }
   .detail-desc { max-height: none; }
   .art-detail-card { overflow-y: auto; }
 }
+
+/* 作品详情：相关作品 */
+.detail-related { margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.1); }
+.detail-related.hidden { display: none; }
+.detail-related-title {
+  margin: 0 0 10px !important;
+  font-size: 11px !important;
+  letter-spacing: 0.14em;
+  color: rgba(240, 235, 227, 0.4) !important;
+}
+.detail-related-list { display: flex; gap: 10px; flex-wrap: wrap; }
+.related-card {
+  width: 78px;
+  padding: 0;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+  font: inherit;
+  text-align: left;
+}
+.related-card:hover {
+  border-color: rgba(127, 212, 196, 0.55);
+  background: rgba(127, 212, 196, 0.09);
+  transform: translateY(-2px);
+}
+.related-card img {
+  width: 100%;
+  height: 56px;
+  object-fit: cover;
+  display: block;
+  background: #0b0b0f;
+}
+.related-card span {
+  display: block;
+  padding: 5px 6px 6px;
+  font-size: 10px;
+  line-height: 1.35;
+  color: rgba(240, 235, 227, 0.66);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

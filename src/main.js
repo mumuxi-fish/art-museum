@@ -56,6 +56,8 @@ let currentRoomId = null;
 let started = false;
 let warmupQueue = null;
 let detailOpen = false;
+// 全馆作品索引（含世界坐标），供详情浮层的"相关作品"跳转用
+let artIndex = [];
 
 // 轻量提示：借移动端那个 toast 元素，桌面端也能用
 let toastTimer = null;
@@ -213,8 +215,77 @@ function openArtDetail(art) {
       detailLink.classList.add('hidden');
     }
   }
+  renderRelated(art);
   detailEl.classList.remove('hidden');
   if (controls?.isLocked) controls.unlock();
+}
+
+// ---- 相关作品 ----
+// 同作者优先，不够再用同展厅的补齐。点一下直接走到那幅画前面。
+const relatedBox = document.getElementById('detail-related');
+const relatedList = document.getElementById('detail-related-list');
+
+function renderRelated(art) {
+  if (!relatedBox || !relatedList) return;
+
+  // art 是从 3D 场景的 userData 里拿的，不带 roomId，用 id 回索引里查
+  const self = artIndex.find((a) => a.id === art.id);
+  const roomId = self?.roomId;
+
+  const sameArtist = artIndex.filter(
+    (a) => a.id !== art.id && art.artist && a.artist === art.artist,
+  );
+  const taken = new Set(sameArtist.map((a) => a.id));
+  const sameRoom = roomId
+    ? artIndex.filter((a) => a.id !== art.id && a.roomId === roomId && !taken.has(a.id))
+    : [];
+  const picks = [...sameArtist, ...sameRoom].slice(0, 4);
+
+  if (!picks.length) {
+    relatedBox.classList.add('hidden');
+    return;
+  }
+
+  relatedList.innerHTML = '';
+  for (const p of picks) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'related-card';
+    btn.title = `${p.title || '无题'} · ${p.artist || '佚名'}`;
+    const img = document.createElement('img');
+    img.src = `art/${p.image}`;
+    img.alt = '';
+    img.loading = 'lazy';
+    const cap = document.createElement('span');
+    cap.textContent = p.title || '无题';
+    btn.append(img, cap);
+    btn.addEventListener('click', () => goToArtwork(p));
+    relatedList.appendChild(btn);
+  }
+  relatedBox.classList.remove('hidden');
+}
+
+// 站到画心外侧，面朝画。距离从 2.4m 起试，走不通就往前挪。
+function goToArtwork(a) {
+  closeArtDetail();
+
+  const p = a.position;
+  if (!p) return;
+  const nx = Math.sin(a.rotY);
+  const nz = Math.cos(a.rotY);
+  let x = p.x + nx * 2.4;
+  let z = p.z + nz * 2.4;
+  for (let d = 2.4; d >= 1.0; d -= 0.2) {
+    const tx = p.x + nx * d;
+    const tz = p.z + nz * d;
+    if (!plan || plan.canStand(tx, tz)) { x = tx; z = tz; break; }
+  }
+
+  placePlayer(x, z, Math.atan2(nx, nz));
+  currentRoomId = null;
+  updateRoom();
+  prevPos.copy(camera.position);
+  stepAccum = 0;
 }
 
 function closeArtDetail() {
@@ -390,6 +461,19 @@ async function bootstrap() {
     // 抛光地板的环境反射（拍一次，不是每帧）
     applyFloorReflection(built.floorMats);
 
+    // 建作品索引：详情浮层里点"相关作品"要能算出该站到哪儿。
+    // 直接写回原对象（而不是做副本）—— 3D 场景里 canvas.userData.art
+    // 挂的就是这些对象，写回去它才带着 roomId 和 rotY。
+    artIndex = [];
+    for (const room of plan.rooms) {
+      for (const a of room.arts || []) {
+        a.roomId = room.id;
+        a.roomName = room.name;
+        a.rotY = a.rotation?.y ?? 0;
+        artIndex.push(a);
+      }
+    }
+
     placePlayer(plan.spawn.x, plan.spawn.z, plan.spawn.yaw);
     prevPos.copy(camera.position);
     currentRoomId = plan.roomAt(plan.spawn.x, plan.spawn.z)?.id ?? plan.rooms[0].id;
@@ -452,6 +536,7 @@ window.__artMuseum = {
   get lights() { return lights; },
   get renderer() { return renderer; },
   get activeLightCount() { return lights.filter((l) => l.visible).length; },
+  get artIndex() { return artIndex; },
   get stats() {
     const i = renderer.info;
     return {

@@ -17,6 +17,52 @@ function mulberry32(seed) {
 }
 
 // 把任意字符串散列成 32 位种子(FNV-1a)
+// 墙面抹灰纹理：作为 bumpMap 用。纯色墙面太平了，加一点凹凸才有"涂料"的质感。
+// 大块斑驳 = 滚涂痕迹，细密噪点 = 砂粒。确定性生成，不引入图片。
+let plasterBase = null;
+export function getPlasterTexture() {
+  if (plasterBase) return plasterBase;
+
+  const S = 512;
+  const c = document.createElement('canvas');
+  c.width = c.height = S;
+  const ctx = c.getContext('2d');
+  const rnd = rngFrom('plaster');
+
+  ctx.fillStyle = '#808080';
+  ctx.fillRect(0, 0, S, S);
+
+  // 大块斑驳
+  for (let i = 0; i < 130; i++) {
+    const x = rnd() * S;
+    const y = rnd() * S;
+    const r = 22 + rnd() * 78;
+    const v = (128 + (rnd() - 0.5) * 26) | 0;
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+    g.addColorStop(0, `rgba(${v},${v},${v},0.45)`);
+    g.addColorStop(1, 'rgba(128,128,128,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // 细密砂粒
+  const img = ctx.getImageData(0, 0, S, S);
+  const d = img.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const n = (rnd() - 0.5) * 24;
+    d[i] += n;
+    d[i + 1] += n;
+    d[i + 2] += n;
+  }
+  ctx.putImageData(img, 0, 0);
+
+  plasterBase = new THREE.CanvasTexture(c);
+  plasterBase.wrapS = plasterBase.wrapT = THREE.RepeatWrapping;
+  return plasterBase;
+}
+
 export function hashSeed(str) {
   let h = 0x811c9dc5;
   const s = String(str);

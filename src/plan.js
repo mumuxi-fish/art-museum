@@ -142,6 +142,10 @@ export function buildPlan(data) {
         x1: room.sculpture.x + p, z1: room.sculpture.z + p,
       });
     }
+    // 独立展墙也要绕开
+    for (const p of room.partitions || []) {
+      obstacles.push({ x0: p.x0, z0: p.z0, x1: p.x1, z1: p.z1 });
+    }
     // 盆栽也要绕开
     for (const f of room.furniture || []) {
       if (f.kind !== 'planter') continue;

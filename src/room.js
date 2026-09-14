@@ -15,6 +15,7 @@ import {
   makeRoomSignTexture,
   makeDirectoryBoardTexture,
   makeThemeLabelTexture,
+  getPlasterTexture,
 } from './textures.js';
 import { buildRoomLights } from './lights.js';
 
@@ -150,6 +151,62 @@ function buildFurniture(room) {
   }
 }
 
+// 独立展墙：不到顶的隔断，把大展厅的动线切成 L 形 ——
+// 进门看不到主墙，得绕过去。用和墙一样的材质，看起来才是建筑的一部分。
+function buildPartitions(room) {
+  for (const p of room.partitions || []) {
+    const w = p.x1 - p.x0;
+    const d = p.z1 - p.z0;
+    const h = p.h || 3.6;
+    const cx = (p.x0 + p.x1) / 2;
+    const cz = (p.z0 + p.z1) / 2;
+
+    const wall = new THREE.Mesh(BOX(w, h, d), mat(room.materials.wallColor));
+    wall.position.set(cx, h / 2, cz);
+    wall.receiveShadow = true;
+    museumGroup.add(wall);
+
+    // 顶部压条：让它读起来是"一道墙"，而不是悬空的盒子
+    const cap = new THREE.Mesh(
+      BOX(w + 0.05, 0.055, d + 0.05),
+      mat(new THREE.Color(room.materials.wallColor).multiplyScalar(0.8).getHex(), { roughness: 0.9 }),
+    );
+    cap.position.set(cx, h + 0.027, cz);
+    museumGroup.add(cap);
+
+    // 底部踢脚，和房间的踢脚线呼应
+    const base = new THREE.Mesh(
+      BOX(w + 0.03, 0.11, d + 0.03),
+      mat(new THREE.Color(room.materials.wallColor).multiplyScalar(0.7).getHex(), { roughness: 0.85 }),
+    );
+    base.position.set(cx, 0.055, cz);
+    museumGroup.add(base);
+
+    // 正面挂一块大的展厅导言板。独立展墙不挂画（会打乱编年），
+    // 改成导言板 —— 真实美术馆的独立展墙也常这么用。
+    if (room.blurb) {
+      const tex = makeThemeLabelTexture(
+        room.name, room.blurb, room.arts?.length || 0, room.yearRange || '',
+      );
+      const boardW = Math.min(w * 0.62, 2.2);
+      const boardH = boardW * (560 / 768);
+      const boardMat = new THREE.MeshBasicMaterial({ map: tex });
+      boardMat.userData.keepMap = true;
+      const board = new THREE.Mesh(new THREE.PlaneGeometry(boardW, boardH), boardMat);
+      // 挂在长边那一侧的墙面上
+      const longSide = w >= d;
+      const y = 1.62;
+      if (longSide) {
+        board.position.set(cx, y, p.z1 + 0.012);
+      } else {
+        board.position.set(p.x1 + 0.012, y, cz);
+        board.rotation.y = Math.PI / 2;
+      }
+      museumGroup.add(board);
+    }
+  }
+}
+
 function buildRoomShell(room, plan, lights, floorMats) {
   const wallT = plan.wallThickness;
   const m = room.materials;
@@ -185,7 +242,11 @@ function buildRoomShell(room, plan, lights, floorMats) {
   ceil.receiveShadow = true;
   museumGroup.add(ceil);
 
-  const wallMat = mat(m.wallColor);
+  // 墙面加抹灰凹凸。repeat 按房间尺寸算，否则大房间的纹理会被拉糊
+  const wallTex = getPlasterTexture().clone();
+  wallTex.needsUpdate = true;
+  wallTex.repeat.set(Math.max(1, room.w / 3.2), Math.max(1, room.d / 3.2));
+  const wallMat = mat(m.wallColor, { bumpMap: wallTex, bumpScale: 0.22 });
   const baseColor = new THREE.Color(m.wallColor).multiplyScalar(0.72);
   const baseMat = mat(baseColor.getHex(), { roughness: 0.8 });
 
@@ -469,6 +530,40 @@ function buildThemeLabel(room, plan, corridor) {
   museumGroup.add(frame);
 }
 
+// 体积光：给射灯加一个可见的光锥，让"光"有实体感。
+// 用加色混合 + 顶点色渐隐（灯口亮、远端暗，additive 下暗就等于透明），
+// 强度压得很低 —— 过强会把画面糊掉。
+function buildLightShaft(fromWorld, toWorld, farRadius, tint = 0xfff0d8) {
+  const dir = new THREE.Vector3().subVectors(toWorld, fromWorld);
+  const len = dir.length();
+  if (len < 0.4) return null;
+
+  const geo = new THREE.CylinderGeometry(farRadius, 0.05, len, 12, 1, true);
+  const pos = geo.attributes.position;
+  const col = new Float32Array(pos.count * 3);
+  for (let i = 0; i < pos.count; i++) {
+    const t = (pos.getY(i) + len / 2) / len; // 0 = 灯口, 1 = 远端
+    const v = (1 - t) ** 1.5;
+    col[i * 3] = v;
+    col[i * 3 + 1] = v;
+    col[i * 3 + 2] = v;
+  }
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+
+  const mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+    color: tint,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.07,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+  }));
+  mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize());
+  mesh.position.copy(dir).multiplyScalar(0.5);
+  return mesh;
+}
+
 // 画作射灯：按画面宽度反算锥角，让光锥刚好罩住画面，墙上不留光晕
 function addArtSpotlight(pos, rotY, artWidth, hero, artLight, roomId) {
   const nx = Math.sin(rotY);
@@ -492,6 +587,11 @@ function addArtSpotlight(pos, rotY, artWidth, hero, artLight, roomId) {
   light.target = target;
   light.userData.roomId = roomId;
   museumGroup.add(light);
+
+  // 体积光锥挂在灯上，灯一隐藏它就跟着隐藏
+  const shaft = buildLightShaft(light.position, target.position, halfW * 0.85);
+  if (shaft) light.add(shaft);
+
   return light;
 }
 
@@ -655,6 +755,7 @@ export function buildMuseum(plan) {
   const floorMats = [];
 
   for (const room of plan.rooms) buildRoomShell(room, plan, lights, floorMats);
+  for (const room of plan.rooms) buildPartitions(room);
   for (const op of plan.openings) buildDoorCasing(op, plan);
 
   const corridor = plan.rooms.find((r) => r.kind === 'corridor');

@@ -481,6 +481,7 @@
           "seatY": 0.46
         }
       ],
+      "partitions": [],
       "arts": [
         {
           "id": "dawn-art-01",
@@ -573,7 +574,7 @@
           "hero": false
         },
         {
-          "id": "dawn-art-01",
+          "id": "dawn-art-04",
           "title": "Edge of the Woods Near L'Hermitage, Pontoise",
           "artist": "Camille Pissarro",
           "year": "1879",
@@ -603,7 +604,7 @@
           "hero": false
         },
         {
-          "id": "dawn-art-02",
+          "id": "dawn-art-05",
           "title": "Saint-Mammès, Loing Canal",
           "artist": "Alfred Sisley",
           "year": "1885",
@@ -633,7 +634,7 @@
           "hero": false
         },
         {
-          "id": "dawn-art-03",
+          "id": "dawn-art-06",
           "title": "Gardener's House at Antibes",
           "artist": "Claude Monet",
           "year": "1888",
@@ -663,7 +664,7 @@
           "hero": false
         },
         {
-          "id": "dawn-art-01",
+          "id": "dawn-art-07",
           "title": "Water Lilies (Agapanthus)",
           "artist": "Claude Monet",
           "year": "c. 1915–26",
@@ -693,7 +694,7 @@
           "hero": false
         },
         {
-          "id": "dawn-art-02",
+          "id": "dawn-art-08",
           "title": "Fishmarket",
           "artist": "Camille Pissarro",
           "year": "1902",
@@ -855,6 +856,15 @@
           "seatY": 0.46
         }
       ],
+      "partitions": [
+        {
+          "x0": 28.5,
+          "z0": 7.9,
+          "x1": 35.2,
+          "z1": 8.2,
+          "h": 3.6
+        }
+      ],
       "arts": [
         {
           "id": "sun-art-01",
@@ -947,7 +957,7 @@
           "hero": false
         },
         {
-          "id": "sun-art-01",
+          "id": "sun-art-04",
           "title": "Boats at Berck-sur-Mer",
           "artist": "Édouard Manet",
           "year": "1873",
@@ -977,7 +987,7 @@
           "hero": false
         },
         {
-          "id": "sun-art-02",
+          "id": "sun-art-05",
           "title": "Reading",
           "artist": "Berthe Morisot",
           "year": "1873",
@@ -1007,7 +1017,7 @@
           "hero": false
         },
         {
-          "id": "sun-art-03",
+          "id": "sun-art-06",
           "title": "Roses in a Vase",
           "artist": "Pierre-Auguste Renoir",
           "year": "c. 1890",
@@ -1037,7 +1047,7 @@
           "hero": false
         },
         {
-          "id": "sun-art-01",
+          "id": "sun-art-07",
           "title": "Young Woman Arranging Her Earring",
           "artist": "Pierre-Auguste Renoir",
           "year": "1905",
@@ -1067,7 +1077,7 @@
           "hero": false
         },
         {
-          "id": "sun-art-02",
+          "id": "sun-art-08",
           "title": "Frieze of Dancers",
           "artist": "Edgar Degas",
           "year": "c. 1895",
@@ -1229,6 +1239,7 @@
           "seatY": 0.46
         }
       ],
+      "partitions": [],
       "arts": [
         {
           "id": "minimal-art-01",
@@ -1321,7 +1332,7 @@
           "hero": false
         },
         {
-          "id": "minimal-art-01",
+          "id": "minimal-art-04",
           "title": "Rain Below the Mountain (from the series Thirty-six Views of Mt. Fuji)",
           "artist": "Katsushika Hokusai",
           "year": "early 1830s",
@@ -1351,7 +1362,7 @@
           "hero": false
         },
         {
-          "id": "minimal-art-02",
+          "id": "minimal-art-05",
           "title": "The Monkey Bridge",
           "artist": "Katsushika Taito II",
           "year": "early 1830s",
@@ -1381,7 +1392,7 @@
           "hero": false
         },
         {
-          "id": "minimal-art-03",
+          "id": "minimal-art-06",
           "title": "Driving Rain at Shōno, from Fifty-Three Stations of the Tokaidō",
           "artist": "Utagawa Hiroshige",
           "year": "1833",
@@ -1411,7 +1422,7 @@
           "hero": false
         },
         {
-          "id": "minimal-art-01",
+          "id": "minimal-art-07",
           "title": "Full Moon on Kanazawa, Musashi",
           "artist": "Utagawa Hiroshige",
           "year": "1857",
@@ -1441,7 +1452,7 @@
           "hero": false
         },
         {
-          "id": "minimal-art-02",
+          "id": "minimal-art-08",
           "title": "Eight Views of Kanazawa at Night",
           "artist": "Utagawa Hiroshige",
           "year": "1857",
@@ -1603,6 +1614,15 @@
           "seatY": 0.46
         }
       ],
+      "partitions": [
+        {
+          "x0": 37.4,
+          "z0": 27.85,
+          "x1": 44.0,
+          "z1": 28.15,
+          "h": 3.6
+        }
+      ],
       "arts": [
         {
           "id": "night-art-01",
@@ -1695,7 +1715,7 @@
           "hero": false
         },
         {
-          "id": "night-art-01",
+          "id": "night-art-04",
           "title": "Nocturne",
           "artist": "James McNeill Whistler",
           "year": "1878",
@@ -1725,7 +1745,7 @@
           "hero": false
         },
         {
-          "id": "night-art-02",
+          "id": "night-art-05",
           "title": "Nocturne: Palaces",
           "artist": "James McNeill Whistler",
           "year": "1879–80",
@@ -1755,7 +1775,7 @@
           "hero": false
         },
         {
-          "id": "night-art-03",
+          "id": "night-art-06",
           "title": "Gray and Silver: A Nocturne",
           "artist": "Walter Greaves",
           "year": "c. 1880–1900",
@@ -1785,7 +1805,7 @@
           "hero": false
         },
         {
-          "id": "night-art-01",
+          "id": "night-art-07",
           "title": "Evening Mood-Lidingö",
           "artist": "Eugène Jansson",
           "year": "1900",
@@ -1815,7 +1835,7 @@
           "hero": false
         },
         {
-          "id": "night-art-02",
+          "id": "night-art-08",
           "title": "Drying the Linen, or Moonrise at the Priory",
           "artist": "Maurice Denis",
           "year": "1894",
@@ -1977,6 +1997,7 @@
           "seatY": 0.46
         }
       ],
+      "partitions": [],
       "arts": [
         {
           "id": "flora-art-01",
@@ -2069,7 +2090,7 @@
           "hero": false
         },
         {
-          "id": "flora-art-01",
+          "id": "flora-art-04",
           "title": "Flowers in a Vase",
           "artist": "Simon Verelst",
           "year": "c. 1669",
@@ -2099,7 +2120,7 @@
           "hero": false
         },
         {
-          "id": "flora-art-02",
+          "id": "flora-art-05",
           "title": "Herbaceous Peony",
           "artist": "Yun Shouping",
           "year": "1685",
@@ -2129,7 +2150,7 @@
           "hero": false
         },
         {
-          "id": "flora-art-03",
+          "id": "flora-art-06",
           "title": "Vase of Flowers",
           "artist": "Odilon Redon",
           "year": "c. 1905",
@@ -2159,7 +2180,7 @@
           "hero": false
         },
         {
-          "id": "flora-art-01",
+          "id": "flora-art-07",
           "title": "Fruits and Flowers",
           "artist": "Henry Lee McFee",
           "year": "1927",
@@ -2189,7 +2210,7 @@
           "hero": false
         },
         {
-          "id": "flora-art-02",
+          "id": "flora-art-08",
           "title": "Chrysanthemum",
           "artist": "Piet Mondrian",
           "year": "1906–42",
