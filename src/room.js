@@ -144,10 +144,182 @@ function buildPlanter(f) {
   museumGroup.add(g);
 }
 
-// 走廊家具：目前只有盆栽（长椅走 benches，复用展厅那套）
+// 服务台：一个长条台面 + 前挡板 + 台面上的几样小东西
+function buildCounter(f, room) {
+  const g = new THREE.Group();
+  const wood = mat(room.materials.frameColor || 0x5A4632, { roughness: 0.6, metalness: 0.06 });
+  const top = mat(0xEDE7DC, { roughness: 0.45, metalness: 0.03 });
+
+  const body = new THREE.Mesh(BOX(f.w, f.h - 0.06, f.d), wood);
+  body.position.y = (f.h - 0.06) / 2;
+  g.add(body);
+
+  const slab = new THREE.Mesh(BOX(f.w + 0.1, 0.06, f.d + 0.1), top);
+  slab.position.y = f.h - 0.03;
+  g.add(slab);
+
+  // 台面上：一叠宣传册 + 一盏小台灯
+  const stack = new THREE.Mesh(BOX(0.34, 0.07, 0.24), mat(0xF2EDE3, { roughness: 0.85 }));
+  stack.position.set(-f.w * 0.28, f.h + 0.035, 0);
+  g.add(stack);
+
+  const lampBase = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 0.03, 12), mat(0x33322F));
+  lampBase.position.set(f.w * 0.3, f.h + 0.015, 0);
+  g.add(lampBase);
+  const lampPole = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.42, 8), mat(0x33322F));
+  lampPole.position.set(f.w * 0.3, f.h + 0.22, 0);
+  g.add(lampPole);
+  const lampShade = new THREE.Mesh(
+    new THREE.ConeGeometry(0.14, 0.16, 14, 1, true),
+    STD({ color: 0xF6EFE2, roughness: 0.7, side: THREE.DoubleSide }),
+  );
+  lampShade.position.set(f.w * 0.3, f.h + 0.48, 0);
+  g.add(lampShade);
+
+  g.position.set(f.x, 0, f.z);
+  g.rotation.y = f.rotY || 0;
+  museumGroup.add(g);
+}
+
+// 寄存柜：一排带门的柜子。门用略深色的薄片贴在正面，做出分格。
+function buildLockers(f, room) {
+  const g = new THREE.Group();
+  const shell = mat(0x8C857A, { roughness: 0.72, metalness: 0.14 });
+  const door = mat(0x7B746A, { roughness: 0.62, metalness: 0.2 });
+
+  const body = new THREE.Mesh(BOX(f.w, f.h, f.d), shell);
+  body.position.y = f.h / 2;
+  g.add(body);
+
+  const cap = new THREE.Mesh(BOX(f.w + 0.04, 0.05, f.d + 0.04), mat(0x6E6A62, { roughness: 0.7, metalness: 0.2 }));
+  cap.position.y = f.h + 0.025;
+  g.add(cap);
+
+  // 门片 + 把手：沿宽边分 3 格，每格上下两扇
+  const cols = 3;
+  const rows = 2;
+  const cw = f.w / cols;
+  const rh = (f.h - 0.12) / rows;
+  const face = f.d / 2 + 0.012;
+  for (let c = 0; c < cols; c++) {
+    for (let r = 0; r < rows; r++) {
+      const panel = new THREE.Mesh(BOX(cw - 0.05, rh - 0.05, 0.02), door);
+      panel.position.set(-f.w / 2 + cw * (c + 0.5), 0.08 + rh * (r + 0.5), face);
+      g.add(panel);
+      const knob = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.03, 8), mat(0xB9B2A6, { metalness: 0.5, roughness: 0.4 }));
+      knob.rotation.x = Math.PI / 2;
+      knob.position.set(-f.w / 2 + cw * (c + 0.5) + cw * 0.28, 0.08 + rh * (r + 0.5), face + 0.025);
+      g.add(knob);
+    }
+  }
+
+  g.position.set(f.x, 0, f.z);
+  g.rotation.y = f.rotY || 0;
+  museumGroup.add(g);
+}
+
+// 沙发：坐垫 + 靠背 + 两侧扶手
+function buildSofa(f, room) {
+  const g = new THREE.Group();
+  const fabric = mat(0x6E6A63, { roughness: 0.94, metalness: 0 });
+  const cushion = mat(0x7C776F, { roughness: 0.95, metalness: 0 });
+
+  const seatH = 0.42;
+  const seat = new THREE.Mesh(BOX(f.w, 0.22, f.d - 0.16), cushion);
+  seat.position.set(0, seatH - 0.11, 0.08);
+  g.add(seat);
+
+  const base = new THREE.Mesh(BOX(f.w, seatH - 0.22, f.d - 0.16), fabric);
+  base.position.set(0, (seatH - 0.22) / 2, 0.08);
+  g.add(base);
+
+  const back = new THREE.Mesh(BOX(f.w, 0.52, 0.16), fabric);
+  back.position.set(0, seatH + 0.24, -f.d / 2 + 0.08);
+  g.add(back);
+
+  for (const s of [-1, 1]) {
+    const arm = new THREE.Mesh(BOX(0.16, 0.28, f.d - 0.16), fabric);
+    arm.position.set(s * (f.w / 2 - 0.08), seatH + 0.14, 0.08);
+    g.add(arm);
+  }
+
+  g.position.set(f.x, 0, f.z);
+  g.rotation.y = f.rotY || 0;
+  museumGroup.add(g);
+}
+
+// 茶几：一块薄台面 + 四条细腿
+function buildTable(f, room) {
+  const g = new THREE.Group();
+  const wood = mat(0x4A3F36, { roughness: 0.6, metalness: 0.05 });
+  const h = f.h || 0.42;
+
+  const top = new THREE.Mesh(BOX(f.w, 0.05, f.d), wood);
+  top.position.y = h;
+  g.add(top);
+
+  for (const sx of [-1, 1]) {
+    for (const sz of [-1, 1]) {
+      const leg = new THREE.Mesh(BOX(0.06, h, 0.06), wood);
+      leg.position.set(sx * (f.w / 2 - 0.09), h / 2, sz * (f.d / 2 - 0.09));
+      g.add(leg);
+    }
+  }
+
+  g.position.set(f.x, 0, f.z);
+  g.rotation.y = f.rotY || 0;
+  museumGroup.add(g);
+}
+
+// 伞架：细高圆筒 + 几把伞
+function buildUmbrellaStand(f) {
+  const g = new THREE.Group();
+  const steel = mat(0x6A655D, { roughness: 0.5, metalness: 0.45 });
+
+  const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.12, 0.46, 16), steel);
+  pot.position.y = 0.23;
+  g.add(pot);
+
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.014, 8, 18), steel);
+  rim.position.y = 0.46;
+  rim.rotation.x = Math.PI / 2;
+  g.add(rim);
+
+  // 三把伞，各自略微倾斜
+  const COLORS = [0x3B4A5A, 0x5A3B3B, 0x3F4A3B];
+  const TILT = [[0.16, 0.05], [-0.13, 0.10], [0.04, -0.15]];
+  COLORS.forEach((c, i) => {
+    const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.9, 8), mat(0x2E2C29));
+    const [tx, tz] = TILT[i];
+    shaft.position.set(tx * 0.6, 0.6, tz * 0.6);
+    shaft.rotation.set(tz, 0, -tx);
+    g.add(shaft);
+
+    const canopy = new THREE.Mesh(
+      new THREE.ConeGeometry(0.07, 0.3, 10, 1, true),
+      STD({ color: c, roughness: 0.85, side: THREE.DoubleSide }),
+    );
+    canopy.position.set(tx * 1.5, 0.88, tz * 1.5);
+    canopy.rotation.set(tz, 0, -tx);
+    g.add(canopy);
+  });
+
+  g.position.set(f.x, 0, f.z);
+  museumGroup.add(g);
+}
+
+// 门厅/走廊家具：按 kind 分发
 function buildFurniture(room) {
   for (const f of room.furniture || []) {
-    if (f.kind === 'planter') buildPlanter(f);
+    switch (f.kind) {
+      case 'planter': buildPlanter(f); break;
+      case 'counter': buildCounter(f, room); break;
+      case 'lockers': buildLockers(f, room); break;
+      case 'sofa': buildSofa(f, room); break;
+      case 'table': buildTable(f, room); break;
+      case 'umbrella': buildUmbrellaStand(f); break;
+      default: break;
+    }
   }
 }
 
@@ -654,7 +826,11 @@ function buildArtworks(room, plan, lights, artSlots, artTargets) {
     ));
 
     if (a.image && !artSlots.has(a.image)) {
-      artSlots.set(a.image, { material: canvasMat, fallbackSeed: seed, hue: a.hue ?? 0.5 });
+      artSlots.set(a.image, {
+        material: canvasMat, fallbackSeed: seed, hue: a.hue ?? 0.5,
+        // 给加载器排序用：id 是按编年编的，每厅前 3 幅挂在进门正对的主墙上
+        id: a.id,
+      });
     }
     // 供交互系统射线拾取：瞄到画布就能弹出详情
     canvas.userData.art = a;
@@ -769,8 +945,8 @@ export function buildMuseum(plan) {
     }
     if (room.sculpture) lights.push(buildSculpture(room.sculpture));
 
-    // 走廊和展厅都嵌灯槽；门厅空间小，靠顶灯就够
-    if (room.kind === 'corridor' || room.kind === 'gallery') buildLightCove(room);
+    // 每个空间都嵌天花灯槽
+    buildLightCove(room);
     buildFurniture(room);
 
     if (room.kind === 'gallery' && corridor) {

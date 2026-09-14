@@ -310,6 +310,18 @@ def build_museum(src):
             for i, (dx, dz) in enumerate([(-1, -1), (1, -1), (-1, 1), (1, 1)])
         ],
         "arts": [],
+        # 门厅是 9×9，两侧原来是大面积白墙。补服务台 / 寄存柜 / 休息区 / 绿植，
+        # 位置都避开东墙的门洞（z 17.15–20.35）和出生点 (3.4, 18.9)。
+        "furniture": [
+            {"kind": "counter", "x": 4.6, "z": 22.85, "w": 3.4, "d": 0.72, "h": 1.05, "rotY": 0},
+            {"kind": "lockers", "x": 8.32, "z": 21.8, "w": 2.6, "d": 0.55, "h": 1.9, "rotY": 0},
+            {"kind": "sofa", "x": 6.7, "z": 15.55, "w": 2.2, "d": 0.85, "rotY": 0},
+            {"kind": "table", "x": 6.7, "z": 16.95, "w": 1.1, "d": 0.6, "h": 0.42, "rotY": 0},
+            {"kind": "umbrella", "x": 0.78, "z": 16.3},
+            {"kind": "planter", "x": 0.85, "z": 15.25},
+            {"kind": "planter", "x": 0.85, "z": 22.75},
+            {"kind": "planter", "x": 8.25, "z": 15.25},
+        ],
         "signs": [{
             "kind": "directory", "wall": "north",
             "position": {

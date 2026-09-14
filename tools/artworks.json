@@ -1,7 +1,7 @@
 {
   "dawn": [
     {
-      "file": "dawn-01.jpg",
+      "file": "dawn-01.webp",
       "title": "Water Lilies (Agapanthus)",
       "artist": "Claude Monet",
       "year": "c. 1915–26",
@@ -21,7 +21,7 @@
       "sortYearEnd": 1926
     },
     {
-      "file": "dawn-02.jpg",
+      "file": "dawn-02.webp",
       "title": "Gardener's House at Antibes",
       "artist": "Claude Monet",
       "year": "1888",
@@ -41,7 +41,7 @@
       "sortYearEnd": 1888
     },
     {
-      "file": "dawn-03.jpg",
+      "file": "dawn-03.webp",
       "title": "Spring Flowers",
       "artist": "Claude Monet",
       "year": "1864",
@@ -61,7 +61,7 @@
       "sortYearEnd": 1864
     },
     {
-      "file": "dawn-04.jpg",
+      "file": "dawn-04.webp",
       "title": "Villerville Seen from Le Ratier",
       "artist": "Charles François Daubigny",
       "year": "1855",
@@ -81,7 +81,7 @@
       "sortYearEnd": 1855
     },
     {
-      "file": "dawn-05.jpg",
+      "file": "dawn-05.webp",
       "title": "Saint-Mammès, Loing Canal",
       "artist": "Alfred Sisley",
       "year": "1885",
@@ -101,7 +101,7 @@
       "sortYearEnd": 1885
     },
     {
-      "file": "dawn-06.jpg",
+      "file": "dawn-06.webp",
       "title": "Edge of the Woods Near L'Hermitage, Pontoise",
       "artist": "Camille Pissarro",
       "year": "1879",
@@ -121,7 +121,7 @@
       "sortYearEnd": 1879
     },
     {
-      "file": "dawn-07.jpg",
+      "file": "dawn-07.webp",
       "title": "The Lock at Pontoise",
       "artist": "Camille Pissarro",
       "year": "1872",
@@ -141,7 +141,7 @@
       "sortYearEnd": 1872
     },
     {
-      "file": "dawn-08.jpg",
+      "file": "dawn-08.webp",
       "title": "Fishmarket",
       "artist": "Camille Pissarro",
       "year": "1902",
@@ -163,7 +163,7 @@
   ],
   "sun": [
     {
-      "file": "sun-01.jpg",
+      "file": "sun-01.webp",
       "title": "Romaine Lacaux",
       "artist": "Pierre-Auguste Renoir",
       "year": "1864",
@@ -183,7 +183,7 @@
       "sortYearEnd": 1864
     },
     {
-      "file": "sun-02.jpg",
+      "file": "sun-02.webp",
       "title": "Young Woman Arranging Her Earring",
       "artist": "Pierre-Auguste Renoir",
       "year": "1905",
@@ -203,7 +203,7 @@
       "sortYearEnd": 1905
     },
     {
-      "file": "sun-03.jpg",
+      "file": "sun-03.webp",
       "title": "Roses in a Vase",
       "artist": "Pierre-Auguste Renoir",
       "year": "c. 1890",
@@ -223,7 +223,7 @@
       "sortYearEnd": 1910
     },
     {
-      "file": "sun-04.jpg",
+      "file": "sun-04.webp",
       "title": "Frieze of Dancers",
       "artist": "Edgar Degas",
       "year": "c. 1895",
@@ -243,7 +243,7 @@
       "sortYearEnd": 1900
     },
     {
-      "file": "sun-05.jpg",
+      "file": "sun-05.webp",
       "title": "Paul Lafond and Alphonse Cherfils Examining a Painting",
       "artist": "Edgar Degas",
       "year": "c. 1878–80",
@@ -263,7 +263,7 @@
       "sortYearEnd": 1885
     },
     {
-      "file": "sun-06.jpg",
+      "file": "sun-06.webp",
       "title": "Berthe Morisot with a Muff",
       "artist": "Édouard Manet",
       "year": "c. 1871–72",
@@ -283,7 +283,7 @@
       "sortYearEnd": 1872
     },
     {
-      "file": "sun-07.jpg",
+      "file": "sun-07.webp",
       "title": "Boats at Berck-sur-Mer",
       "artist": "Édouard Manet",
       "year": "1873",
@@ -303,7 +303,7 @@
       "sortYearEnd": 1873
     },
     {
-      "file": "sun-08.jpg",
+      "file": "sun-08.webp",
       "title": "Reading",
       "artist": "Berthe Morisot",
       "year": "1873",
@@ -325,7 +325,7 @@
   ],
   "minimal": [
     {
-      "file": "minimal-01.jpg",
+      "file": "minimal-01.webp",
       "title": "South Wind, Clear Sky, from Thirty-Six Views of Mount Fuji",
       "artist": "Katsushika Hokusai",
       "year": "early 1830s",
@@ -345,7 +345,7 @@
       "sortYearEnd": 1835
     },
     {
-      "file": "minimal-02.jpg",
+      "file": "minimal-02.webp",
       "title": "Rain Below the Mountain (from the series Thirty-six Views of Mt. Fuji)",
       "artist": "Katsushika Hokusai",
       "year": "early 1830s",
@@ -365,7 +365,7 @@
       "sortYearEnd": 1834
     },
     {
-      "file": "minimal-03.jpg",
+      "file": "minimal-03.webp",
       "title": "Basket of Peonies",
       "artist": "Katsushika Hokusai",
       "year": "1810 or 1814",
@@ -385,7 +385,7 @@
       "sortYearEnd": 1814
     },
     {
-      "file": "minimal-04.jpg",
+      "file": "minimal-04.webp",
       "title": "The Monkey Bridge",
       "artist": "Katsushika Taito II",
       "year": "early 1830s",
@@ -405,7 +405,7 @@
       "sortYearEnd": 1834
     },
     {
-      "file": "minimal-05.jpg",
+      "file": "minimal-05.webp",
       "title": "Driving Rain at Shōno, from Fifty-Three Stations of the Tokaidō",
       "artist": "Utagawa Hiroshige",
       "year": "1833",
@@ -425,7 +425,7 @@
       "sortYearEnd": 1833
     },
     {
-      "file": "minimal-06.jpg",
+      "file": "minimal-06.webp",
       "title": "Eight Views of Kanazawa at Night",
       "artist": "Utagawa Hiroshige",
       "year": "1857",
@@ -445,7 +445,7 @@
       "sortYearEnd": 1857
     },
     {
-      "file": "minimal-07.jpg",
+      "file": "minimal-07.webp",
       "title": "Full Moon on Kanazawa, Musashi",
       "artist": "Utagawa Hiroshige",
       "year": "1857",
@@ -465,7 +465,7 @@
       "sortYearEnd": 1857
     },
     {
-      "file": "minimal-08.jpg",
+      "file": "minimal-08.webp",
       "title": "The Flirtatious Type, from Ten Types in the Physiognomy of Women",
       "artist": "Kitagawa Utamaro",
       "year": "c. 1793",
@@ -487,7 +487,7 @@
   ],
   "night": [
     {
-      "file": "night-01.jpg",
+      "file": "night-01.webp",
       "title": "Twilight in the Wilderness",
       "artist": "Frederic Edwin Church",
       "year": "1860",
@@ -507,7 +507,7 @@
       "sortYearEnd": 1860
     },
     {
-      "file": "night-02.jpg",
+      "file": "night-02.webp",
       "title": "Evening Mood-Lidingö",
       "artist": "Eugène Jansson",
       "year": "1900",
@@ -527,7 +527,7 @@
       "sortYearEnd": 1900
     },
     {
-      "file": "night-03.jpg",
+      "file": "night-03.webp",
       "title": "Gray and Silver: A Nocturne",
       "artist": "Walter Greaves",
       "year": "c. 1880–1900",
@@ -547,7 +547,7 @@
       "sortYearEnd": 1900
     },
     {
-      "file": "night-04.jpg",
+      "file": "night-04.webp",
       "title": "The Marl Pit at Mulcent: Evening",
       "artist": "Antoine Chintreuil",
       "year": "after 1857",
@@ -567,7 +567,7 @@
       "sortYearEnd": 1867
     },
     {
-      "file": "night-05.jpg",
+      "file": "night-05.webp",
       "title": "Drying the Linen, or Moonrise at the Priory",
       "artist": "Maurice Denis",
       "year": "1894",
@@ -587,7 +587,7 @@
       "sortYearEnd": 1894
     },
     {
-      "file": "night-06.jpg",
+      "file": "night-06.webp",
       "title": "Scenes of Witchcraft: Evening",
       "artist": "Salvator Rosa",
       "year": "c. 1645–49",
@@ -607,7 +607,7 @@
       "sortYearEnd": 1654
     },
     {
-      "file": "night-07.jpg",
+      "file": "night-07.webp",
       "title": "Nocturne",
       "artist": "James McNeill Whistler",
       "year": "1878",
@@ -627,7 +627,7 @@
       "sortYearEnd": 1878
     },
     {
-      "file": "night-08.jpg",
+      "file": "night-08.webp",
       "title": "Nocturne: Palaces",
       "artist": "James McNeill Whistler",
       "year": "1879–80",
@@ -649,7 +649,7 @@
   ],
   "flora": [
     {
-      "file": "flora-01.jpg",
+      "file": "flora-01.webp",
       "title": "Flowers in a Glass",
       "artist": "Ambrosius Bosschaert",
       "year": "1606",
@@ -669,7 +669,7 @@
       "sortYearEnd": 1606
     },
     {
-      "file": "flora-02.jpg",
+      "file": "flora-02.webp",
       "title": "Vase of Flowers",
       "artist": "Odilon Redon",
       "year": "c. 1905",
@@ -689,7 +689,7 @@
       "sortYearEnd": 1910
     },
     {
-      "file": "flora-03.jpg",
+      "file": "flora-03.webp",
       "title": "Flowers in a Vase",
       "artist": "Simon Verelst",
       "year": "c. 1669",
@@ -709,7 +709,7 @@
       "sortYearEnd": 1674
     },
     {
-      "file": "flora-04.jpg",
+      "file": "flora-04.webp",
       "title": "Herbaceous Peony",
       "artist": "Yun Shouping",
       "year": "1685",
@@ -729,7 +729,7 @@
       "sortYearEnd": 1685
     },
     {
-      "file": "flora-05.jpg",
+      "file": "flora-05.webp",
       "title": "Chrysanthemum",
       "artist": "Piet Mondrian",
       "year": "1906–42",
@@ -749,7 +749,7 @@
       "sortYearEnd": 1942
     },
     {
-      "file": "flora-06.jpg",
+      "file": "flora-06.webp",
       "title": "Paintings after Ancient Masters: Chrysanthemum and Rock",
       "artist": "Chen Hongshou",
       "year": "1598–1652",
@@ -769,7 +769,7 @@
       "sortYearEnd": 1652
     },
     {
-      "file": "flora-07.jpg",
+      "file": "flora-07.webp",
       "title": "Fruits and Flowers",
       "artist": "Henry Lee McFee",
       "year": "1927",
@@ -789,7 +789,7 @@
       "sortYearEnd": 1927
     },
     {
-      "file": "flora-08.jpg",
+      "file": "flora-08.webp",
       "title": "Birds and Flowers in a Landscape of the Four Seasons",
       "artist": "Sesshū Tōyō",
       "year": "second half of the 1500s",

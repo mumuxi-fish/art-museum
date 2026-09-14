@@ -146,11 +146,17 @@ export function buildPlan(data) {
     for (const p of room.partitions || []) {
       obstacles.push({ x0: p.x0, z0: p.z0, x1: p.x1, z1: p.z1 });
     }
-    // 盆栽也要绕开
+    // 家具也要绕开。盆栽/伞架没有 w/d，用固定半径兜底。
     for (const f of room.furniture || []) {
-      if (f.kind !== 'planter') continue;
-      const r = 0.34;
-      obstacles.push({ x0: f.x - r, z0: f.z - r, x1: f.x + r, z1: f.z + r });
+      if (f.w && f.d) {
+        const rot = Math.abs(Math.sin(f.rotY || 0)) > 0.5;
+        const hw = (rot ? f.d : f.w) / 2;
+        const hd = (rot ? f.w : f.d) / 2;
+        obstacles.push({ x0: f.x - hw, z0: f.z - hd, x1: f.x + hw, z1: f.z + hd });
+      } else {
+        const r = f.kind === 'umbrella' ? 0.22 : 0.34;
+        obstacles.push({ x0: f.x - r, z0: f.z - r, x1: f.x + r, z1: f.z + r });
+      }
     }
   }
 
