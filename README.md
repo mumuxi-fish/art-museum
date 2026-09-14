@@ -18,6 +18,7 @@
 - 📋 **走廊展签** - 每个展厅门旁一块导言展签：展厅名 + 主题介绍 + 年代区间
 - 🪑 **长凳与坐下** - 每个展厅一条长凳，走过去按 <kbd>E</kbd> 坐下看画
 - 🗿 **走廊尽头端景** - 真 3D 扫描雕塑立在石基座上，配顶部射灯
+- 🗺️ **导览小地图** - 左下角实时平面图，标出所在位置、朝向和展厅编号
 - 🔊 **空间声音** - Web Audio 纯合成：环境底噪、按地面材质变化的脚步声、混响
 - 💡 **逐幅射灯** - 每幅画配一盏柔和射灯，锥角按画面宽度反算
 - 🌐 **纯静态** - 无需后端服务器
@@ -234,13 +235,16 @@ art-museum/
 │   ├── lights.js               # 灯具模型与光源创建
 │   ├── controls.js             # 指针锁定 + 拖动转视角 + 碰撞
 │   ├── interact.js             # 视线拾取、坐下/起身、作品详情触发
+│   ├── minimap.js              # 左下角导览小地图（Canvas 2D，实时位置与朝向）
 │   ├── audio.js                # Web Audio 合成：环境音 / 脚步 / 交互音 / 混响
 │   ├── flashlight.js           # 手电筒（双层锥 + 手持阻尼）
 │   └── style.css               # HUD / 浮层 / 提示样式
 ├── tools/
-│   ├── fetch-artworks.py       # 从 Cleveland Open Access 抓画作
+│   ├── fetch-artworks.py       # 从 Cleveland Open Access 抓画作（直接输出 WebP）
 │   ├── enrich-artworks.py      # 补策展文案（可反复跑）
+│   ├── to-webp.py              # 把已有的 JPG 批量转 WebP 并同步元数据
 │   ├── fetch-sculpture.py      # 从 Met 抓 3D 雕塑
+│   ├── shrink-sculpture.py     # 压缩 GLB 里的嵌入纹理
 │   ├── build-galleries.py      # 排版引擎：生成 museum.json + CREDITS.md
 │   ├── artworks.json           # 画作清单（数据源）
 │   └── sculpture.json          # 雕塑元数据（数据源）

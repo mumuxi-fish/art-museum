@@ -823,3 +823,32 @@ body.drag-look .drag-hint { display: block; }
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* 导览小地图：左下角 */
+.minimap {
+  position: fixed;
+  left: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 6;
+  padding: 8px 8px 6px;
+  border-radius: 12px;
+  background: rgba(10, 10, 14, 0.52);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(6px);
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.minimap.hidden { display: none; }
+.minimap canvas { display: block; width: 220px; height: 135px; }
+.minimap-room {
+  margin-top: 5px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: rgba(240, 235, 227, 0.62);
+  text-align: center;
+}
+@media (max-width: 768px) {
+  .minimap { left: 0.6rem; bottom: 132px; padding: 5px; border-radius: 9px; }
+  .minimap canvas { width: 132px; height: 81px; }
+  .minimap-room { font-size: 9px; margin-top: 3px; }
+}

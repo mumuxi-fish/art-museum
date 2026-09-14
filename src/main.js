@@ -12,6 +12,7 @@ import { initControls, controls, updateMovement, enterMobileMode } from './contr
 import { initPlayer, updatePlayer } from './player.js';
 import { initFlashlight, updateFlashlight, toggle } from './flashlight.js';
 import { initInteract, updateInteract, activate, isSeated, stand } from './interact.js';
+import { initMinimap, updateMinimap } from './minimap.js';
 import {
   initAudio, setAudioEnabled, toggleMute, footstep, sitSound, clickSound,
 } from './audio.js';
@@ -28,6 +29,9 @@ const galleryMenu = document.getElementById('gallery-menu');
 const galleryMenuBtn = document.getElementById('galleryMenuBtn');
 const galleryCards = document.getElementById('gallery-cards');
 const flashBtn = document.getElementById('flashBtn');
+const minimapEl = document.getElementById('minimap');
+const minimapCanvas = document.getElementById('minimap-canvas');
+const minimapRoom = document.getElementById('minimap-room');
 const loadingEl = document.getElementById('loading');
 const fatalEl = document.getElementById('fatal');
 const progressEl = document.getElementById('art-progress');
@@ -432,6 +436,7 @@ function animate() {
   const dt = Math.min(clock.getDelta(), 0.05);
   if (!menuOpen() && !detailOpen && !isSeated()) updateMovement(dt);
   updateRoom();
+  updateMinimap(camera, currentRoomId, plan);
   if (!detailOpen) updateInteract();
   updatePlayer();
   updateFlashlight(dt);
@@ -478,6 +483,10 @@ async function bootstrap() {
     prevPos.copy(camera.position);
     currentRoomId = plan.roomAt(plan.spawn.x, plan.spawn.z)?.id ?? plan.rooms[0].id;
     applyLightBudget(currentRoomId);
+
+    // 导览小地图
+    initMinimap(plan, minimapCanvas, minimapRoom);
+    minimapEl?.classList.remove('hidden');
 
     renderGalleryMenu();
     animate();
