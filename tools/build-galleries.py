@@ -295,9 +295,11 @@ def build_museum(src):
         },
         # 门厅 4 盏（2×2）。原来只有 1 盏，可见灯数比走廊少（5 vs 8），
         # 穿过门洞时画面会突然变亮。灯数对齐后过渡就平了。
+        # type 用 cove：门厅现在也有灯槽了，再挂实体灯具会叠在一起
+        # （从下面看只剩两个圆环，很突兀）。
         "lights": [
             {
-                "id": f"entrance-light-{i + 1}", "name": f"门厅顶灯{i + 1}", "type": "ceiling",
+                "id": f"entrance-light-{i + 1}", "name": f"门厅灯槽{i + 1}", "type": "cove",
                 "position": {
                     "x": ENTRANCE["x"] + dx * 2.2,
                     "y": round(ENTRANCE["h"] - 0.06, 2),
@@ -314,7 +316,8 @@ def build_museum(src):
         # 位置都避开东墙的门洞（z 17.15–20.35）和出生点 (3.4, 18.9)。
         "furniture": [
             {"kind": "counter", "x": 4.6, "z": 22.85, "w": 3.4, "d": 0.72, "h": 1.05, "rotY": 0},
-            {"kind": "lockers", "x": 8.32, "z": 21.8, "w": 2.6, "d": 0.55, "h": 1.9, "rotY": 0},
+            # 柜门在 +z 面，贴东墙要转到朝西（门厅内侧）
+            {"kind": "lockers", "x": 8.32, "z": 21.8, "w": 2.6, "d": 0.55, "h": 1.9, "rotY": -1.5708},
             {"kind": "sofa", "x": 6.7, "z": 15.55, "w": 2.2, "d": 0.85, "rotY": 0},
             {"kind": "table", "x": 6.7, "z": 16.95, "w": 1.1, "d": 0.6, "h": 0.42, "rotY": 0},
             {"kind": "umbrella", "x": 0.78, "z": 16.3},

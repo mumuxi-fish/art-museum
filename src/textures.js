@@ -1,6 +1,7 @@
 // 纹理生成与画作纹理加载
 import * as THREE from 'three';
 import { renderer, textureLoader } from './scene.js';
+import { ART_CDN_BASE } from './config.js';
 
 export const paintingTextureCache = new Map();
 
@@ -226,33 +227,39 @@ export function getFallbackTexture(hue, seed) {
   return tex;
 }
 
-// 加载画作图片；失败时 reject（交给调用方重试），没有图片时才用程序化纹理兜底。
+// 加载画作图片。按顺序试多个源：生产环境先走 CDN，再回退本地相对路径；
+// 开发环境只用本地。全都失败才 reject，交给调用方重试。
 //
 // forceRetry：跳过缓存再试一次。之前失败的结果会被缓存成 fallback 纹理，
 // 不绕过缓存的话重试永远拿到那个色块。
-export function loadPaintingTexture(imagePath, hue = 0.5, seed = 'untitled', forceRetry = false) {
-  if (!imagePath) return Promise.resolve(getFallbackTexture(hue, seed));
+function loadOneTexture(url) {
+  return new Promise((resolve, reject) => textureLoader.load(url, resolve, undefined, reject));
+}
+
+export async function loadPaintingTexture(imagePath, hue = 0.5, seed = 'untitled', forceRetry = false) {
+  if (!imagePath) return getFallbackTexture(hue, seed);
   if (!forceRetry && paintingTextureCache.has(imagePath)) {
-    return Promise.resolve(paintingTextureCache.get(imagePath));
+    return paintingTextureCache.get(imagePath);
   }
-  return new Promise((resolve, reject) => {
-    // 相对路径(兼容子路径部署),而非硬编码 /art/
-    textureLoader.load(
-      `art/${imagePath}`,
-      (tex) => {
-        tex.colorSpace = THREE.SRGBColorSpace;
-        tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-        paintingTextureCache.set(imagePath, tex);
-        resolve(tex);
-      },
-      undefined,
-      (err) => {
-        // 不在这里缓存 fallback —— 调用方会重试，缓存了就拿不到真图了。
-        // 重试都失败的话，画作保持建馆时那层程序化纹理，视觉上不会开天窗。
-        reject(err);
-      },
-    );
-  });
+
+  // 相对路径(兼容子路径部署),而非硬编码 /art/
+  const sources = import.meta.env.PROD && ART_CDN_BASE
+    ? [`${ART_CDN_BASE}${imagePath}`, `art/${imagePath}`]
+    : [`art/${imagePath}`];
+
+  let lastErr;
+  for (const url of sources) {
+    try {
+      const tex = await loadOneTexture(url);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+      paintingTextureCache.set(imagePath, tex);
+      return tex;
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+  throw lastErr;
 }
 
 // 圆形粒子贴图 —— PointsMaterial 不给 map 时 WebGL 会把点渲染成硬边方块
