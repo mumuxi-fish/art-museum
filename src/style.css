@@ -292,29 +292,7 @@ canvas {
     font-size: 0.7rem;
   }
 
-  #soundBtn {
-  position: fixed;
-  top: 1.25rem;
-  right: 4.5rem;
-  z-index: 5;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(10, 10, 14, 0.5);
-  color: rgba(240, 235, 227, 0.8);
-  font-size: 16px;
-  cursor: pointer;
-  line-height: 1;
-  transition: background 0.2s, border-color 0.2s;
-}
-#soundBtn:hover { background: rgba(30, 30, 38, 0.8); }
-#soundBtn.active { border-color: rgba(127, 212, 196, 0.5); }
-@media (max-width: 768px) {
-  #soundBtn { top: 12px; right: 64px; width: 36px; height: 36px; }
-}
-
-#galleryMenuBtn {
+  #galleryMenuBtn {
     top: 12px;
     right: 12px;
     width: 38px;

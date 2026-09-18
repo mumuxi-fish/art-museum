@@ -50,7 +50,6 @@ const detailTechnique = document.getElementById('detail-technique');
 const detailDimensions = document.getElementById('detail-dimensions');
 const detailCredit = document.getElementById('detail-credit');
 const introHint = document.getElementById('intro-hint');
-const soundBtn = document.getElementById('soundBtn');
 
 const GALLERY_ICONS = ['🌅', '☀️', '🖼️', '🌌', '🌸', '🏛', '🎨', '🌿', '🔥', '💧'];
 
@@ -373,7 +372,7 @@ detailEl?.addEventListener('click', (e) => {
 
 window.addEventListener('keydown', (e) => {
   if (e.code === 'KeyF') toggle();
-  if (e.code === 'KeyM') soundBtn?.click();
+  if (e.code === 'KeyM') toggleSound();
   if (e.code === 'KeyE') activate();
   if (e.code === 'Escape') {
     if (detailOpen) closeArtDetail();
@@ -386,19 +385,20 @@ let audioStarted = false;
 const startAudio = () => {
   if (audioStarted) return;
   audioStarted = true;
-  if (setAudioEnabled(true)) soundBtn?.classList.add('active');
+  setAudioEnabled(true);
 };
 window.addEventListener('pointerdown', startAudio);
 window.addEventListener('keydown', startAudio);
 
-soundBtn?.addEventListener('click', (e) => {
-  e.stopPropagation();
+// 声音开关只留 M 键。
+// 原来还有个右上角的 🔊 按钮，但它的定位样式被误写进了 @media 块里，
+// 桌面端根本没生效 —— 按钮掉进文档流，在左上角变成个没背景的小图标。
+// 与其修位置，不如直接去掉，桌面端按 M 更顺手。
+function toggleSound() {
   startAudio();
   const isMuted = toggleMute();
-  soundBtn.textContent = isMuted ? '🔇' : '🔊';
-  soundBtn.classList.toggle('active', !isMuted);
   toast(isMuted ? '声音已关' : '声音已开');
-});
+}
 
 initFlashlight(flashBtn, {
   onToggle: (isOn) => toast(isOn ? '手电筒已开' : '手电筒已关'),

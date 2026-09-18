@@ -2,7 +2,9 @@
 import { loadPaintingTexture } from './textures.js';
 
 export async function loadMuseum() {
-  const response = await fetch('data/museum.json');
+  // 带构建 ID：museum.json 在 public/ 下，vite 不会给它加 hash，
+  // 不加版本号的话换了图或改了数据，浏览器会一直吃旧缓存。
+  const response = await fetch(`data/museum.json?v=${__BUILD_ID__}`);
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   const data = await response.json();
   if (!data.rooms?.length) throw new Error('平面图数据为空');
@@ -11,10 +13,9 @@ export async function loadMuseum() {
 
 // 背景流式加载：每张图到位就立刻换到对应材质上，不阻塞首屏。
 //
-// 分两批，而不是一次 Promise.all 拉完 40 张 —— 那样进门就占满带宽，
-// 慢网下首屏要等十几秒。
-//   第一批 = 每个展厅主墙上的 3 幅（进门正对着看的那面墙），15 张，全并发
-//   第二批 = 其余 25 张，限流慢慢补，不跟第一批抢
+// 分两批：主墙 15 张（进门正对着看的那面墙）先来，其余 25 张随后补。
+// 两批都用并发 —— 之前把第二批限流到 4 并发，实测反而更慢：
+// 带宽才是瓶颈，浏览器自己会管连接数，人为限流只是白白拉长了总时长。
 export async function streamArtTextures(artSlots, onReady, onProgress) {
   const entries = [...artSlots.entries()];
   if (!entries.length) return;
@@ -39,9 +40,5 @@ export async function streamArtTextures(artSlots, onReady, onProgress) {
   const rest = entries.filter(([, s]) => !isMainWall(s));
 
   await Promise.all(first.map(loadOne));
-
-  const CONCURRENCY = 4;
-  for (let i = 0; i < rest.length; i += CONCURRENCY) {
-    await Promise.all(rest.slice(i, i + CONCURRENCY).map(loadOne));
-  }
+  await Promise.all(rest.map(loadOne));
 }
