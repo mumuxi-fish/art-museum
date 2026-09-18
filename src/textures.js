@@ -226,11 +226,16 @@ export function getFallbackTexture(hue, seed) {
   return tex;
 }
 
-// 加载画作图片;失败或未提供时用程序化纹理
-export function loadPaintingTexture(imagePath, hue = 0.5, seed = 'untitled') {
+// 加载画作图片；失败时 reject（交给调用方重试），没有图片时才用程序化纹理兜底。
+//
+// forceRetry：跳过缓存再试一次。之前失败的结果会被缓存成 fallback 纹理，
+// 不绕过缓存的话重试永远拿到那个色块。
+export function loadPaintingTexture(imagePath, hue = 0.5, seed = 'untitled', forceRetry = false) {
   if (!imagePath) return Promise.resolve(getFallbackTexture(hue, seed));
-  if (paintingTextureCache.has(imagePath)) return Promise.resolve(paintingTextureCache.get(imagePath));
-  return new Promise((resolve) => {
+  if (!forceRetry && paintingTextureCache.has(imagePath)) {
+    return Promise.resolve(paintingTextureCache.get(imagePath));
+  }
+  return new Promise((resolve, reject) => {
     // 相对路径(兼容子路径部署),而非硬编码 /art/
     textureLoader.load(
       `art/${imagePath}`,
@@ -241,11 +246,10 @@ export function loadPaintingTexture(imagePath, hue = 0.5, seed = 'untitled') {
         resolve(tex);
       },
       undefined,
-      () => {
-        console.warn('[art-museum] 画作加载失败,回退程序化纹理:', imagePath);
-        const fallback = getFallbackTexture(hue, seed);
-        paintingTextureCache.set(imagePath, fallback);
-        resolve(fallback);
+      (err) => {
+        // 不在这里缓存 fallback —— 调用方会重试，缓存了就拿不到真图了。
+        // 重试都失败的话，画作保持建馆时那层程序化纹理，视觉上不会开天窗。
+        reject(err);
       },
     );
   });

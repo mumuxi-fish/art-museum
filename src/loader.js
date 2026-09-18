@@ -14,8 +14,25 @@ export async function loadMuseum() {
 // 背景流式加载：每张图到位就立刻换到对应材质上，不阻塞首屏。
 //
 // 分两批：主墙 15 张（进门正对着看的那面墙）先来，其余 25 张随后补。
-// 两批都用并发 —— 之前把第二批限流到 4 并发，实测反而更慢：
-// 带宽才是瓶颈，浏览器自己会管连接数，人为限流只是白白拉长了总时长。
+//
+// 并发数限制在 6，并且失败会重试。
+// 起因是实测：从国内访问 GitHub Pages 只有 1–11 KB/s，总带宽就那么大，
+// 一次放 40 个请求过去只会互相挤、集体超时（实测并发 4 张全部 timeout）。
+// 限流 + 重试反而能一张一张稳定拿到图。
+const CONCURRENCY = 6;
+const RETRIES = 2;
+
+async function runPool(items, worker, limit) {
+  let cursor = 0;
+  const runners = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (cursor < items.length) {
+      const i = cursor++;
+      await worker(items[i]);
+    }
+  });
+  await Promise.all(runners);
+}
+
 export async function streamArtTextures(artSlots, onReady, onProgress) {
   const entries = [...artSlots.entries()];
   if (!entries.length) return;
@@ -24,11 +41,19 @@ export async function streamArtTextures(artSlots, onReady, onProgress) {
   let done = 0;
 
   const loadOne = async ([image, slot]) => {
-    try {
-      const tex = await loadPaintingTexture(image, slot.hue, slot.fallbackSeed);
-      onReady(slot.material, tex);
-    } catch (err) {
-      console.warn('[art-museum] 画作加载失败:', image, err);
+    for (let attempt = 0; attempt <= RETRIES; attempt++) {
+      try {
+        const tex = await loadPaintingTexture(image, slot.hue, slot.fallbackSeed, attempt > 0);
+        onReady(slot.material, tex);
+        break;
+      } catch (err) {
+        if (attempt === RETRIES) {
+          console.warn('[art-museum] 画作加载失败（已重试）:', image, err);
+        } else {
+          // 慢网络下超时很常见，等一下再试，别急着退化成色块
+          await new Promise((r) => setTimeout(r, 600 * (attempt + 1)));
+        }
+      }
     }
     done += 1;
     onProgress?.(done, total);
@@ -39,6 +64,6 @@ export async function streamArtTextures(artSlots, onReady, onProgress) {
   const first = entries.filter(([, s]) => isMainWall(s));
   const rest = entries.filter(([, s]) => !isMainWall(s));
 
-  await Promise.all(first.map(loadOne));
-  await Promise.all(rest.map(loadOne));
+  await runPool(first, loadOne, CONCURRENCY);
+  await runPool(rest, loadOne, CONCURRENCY);
 }
