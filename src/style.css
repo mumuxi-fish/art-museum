@@ -924,3 +924,61 @@ body.drag-look .drag-hint { display: block; }
   #helpBtn { top: 12px; right: 112px; width: 38px; height: 38px; font-size: 17px; }
   .help-panel { top: 58px; right: 10px; left: 10px; width: auto; }
 }
+
+/* ========== 光线随时间 ========== */
+.daylight {
+  position: fixed;
+  right: 1.25rem;
+  /* 让开右下角的画作加载进度条（它也是 right/bottom 1.25rem） */
+  bottom: 4.3rem;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(10, 10, 14, 0.52);
+  backdrop-filter: blur(6px);
+}
+.daylight.hidden { display: none; }
+.daylight-name {
+  min-width: 2.4em;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: rgba(240, 235, 227, 0.7);
+  text-align: center;
+}
+.daylight-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 128px;
+  height: 3px;
+  border-radius: 2px;
+  /* 正午冷白 → 闭馆暖橙，轨道本身就是那条曲线 */
+  background: linear-gradient(90deg, #f2f4f8, #fff3dd, #ffcf95, #f0a866);
+  outline: none;
+  cursor: pointer;
+}
+.daylight-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #f6f2e8;
+  border: 2px solid rgba(20, 18, 14, 0.55);
+  cursor: pointer;
+}
+.daylight-range::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #f6f2e8;
+  border: 2px solid rgba(20, 18, 14, 0.55);
+  cursor: pointer;
+}
+@media (max-width: 768px) {
+  .daylight { right: 0.6rem; bottom: 0.6rem; padding: 6px 10px; gap: 7px; }
+  .daylight-range { width: 84px; }
+  .daylight-name { font-size: 10px; }
+}

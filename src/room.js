@@ -72,7 +72,7 @@ function wallBox(room, wall, wallT) {
 // 天花板灯槽：沿房间长轴嵌一条发光带。
 // 真实美术馆的天花是"面发光"而不是几个点光源，这条带子负责把
 // 天花板和墙的交界照亮，空间才不会显得压抑。
-function buildLightCove(room) {
+function buildLightCove(room, coveMats) {
   const along = room.w >= room.d ? 'x' : 'z';
   const len = (along === 'x' ? room.w : room.d) * 0.84;
   const wide = 0.36;
@@ -81,7 +81,10 @@ function buildLightCove(room) {
   const geo = along === 'x'
     ? new THREE.PlaneGeometry(len, wide)
     : new THREE.PlaneGeometry(wide, len);
-  const strip = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xfff2dd }));
+  const stripMat = new THREE.MeshBasicMaterial({ color: 0xfff2dd });
+  // 交给 daylight 模块调亮度：白天压暗、接近闭馆拉满
+  if (coveMats) coveMats.push(stripMat);
+  const strip = new THREE.Mesh(geo, stripMat);
   strip.rotation.x = Math.PI / 2; // 法线朝下
   strip.position.set(room.cx, y, room.cz);
   museumGroup.add(strip);
@@ -929,6 +932,7 @@ export function buildMuseum(plan) {
   const benches = [];
   const benchTargets = [];
   const floorMats = [];
+  const coveMats = [];
 
   for (const room of plan.rooms) buildRoomShell(room, plan, lights, floorMats);
   for (const room of plan.rooms) buildPartitions(room);
@@ -946,7 +950,7 @@ export function buildMuseum(plan) {
     if (room.sculpture) lights.push(buildSculpture(room.sculpture));
 
     // 每个空间都嵌天花灯槽
-    buildLightCove(room);
+    buildLightCove(room, coveMats);
     buildFurniture(room);
 
     if (room.kind === 'gallery' && corridor) {
@@ -959,5 +963,5 @@ export function buildMuseum(plan) {
     }
   }
 
-  return { group: museumGroup, lights, artSlots, artTargets, benches, benchTargets, floorMats };
+  return { group: museumGroup, lights, artSlots, artTargets, benches, benchTargets, floorMats, coveMats };
 }

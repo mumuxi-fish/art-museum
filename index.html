@@ -66,6 +66,13 @@
       <div id="minimap-room" class="minimap-room"></div>
     </div>
 
+    <!-- 光线随时间（右下角）。从正午拖到闭馆，整体氛围跟着走 -->
+    <div id="daylight" class="daylight hidden">
+      <span id="daylight-name" class="daylight-name">午后</span>
+      <input id="daylight-range" class="daylight-range" type="range"
+             min="0" max="1000" value="330" aria-label="光线时间" />
+    </div>
+
     <!-- 作品详情浮层 -->
     <div id="art-detail" class="art-detail hidden">
       <div class="art-detail-card">

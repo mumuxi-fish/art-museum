@@ -3,7 +3,7 @@
 // 整座馆是一张连续平面图，一次建好，玩家从门厅一路走进去，没有传送。
 
 import * as THREE from 'three';
-import { scene, camera, renderer } from './scene.js';
+import { scene, camera, renderer, ambient } from './scene.js';
 import { IS_MOBILE } from './config.js';
 import { loadMuseum, streamArtTextures } from './loader.js';
 import { buildPlan } from './plan.js';
@@ -13,6 +13,7 @@ import { initPlayer, updatePlayer } from './player.js';
 import { initFlashlight, updateFlashlight, toggle } from './flashlight.js';
 import { initInteract, updateInteract, activate, isSeated, stand } from './interact.js';
 import { initMinimap, updateMinimap } from './minimap.js';
+import { initDaylight, applyDaylight, daylightLabel } from './daylight.js';
 import {
   initAudio, setAudioEnabled, toggleMute, footstep, sitSound, clickSound,
 } from './audio.js';
@@ -35,6 +36,9 @@ const minimapRoom = document.getElementById('minimap-room');
 const helpBtn = document.getElementById('helpBtn');
 const helpPanel = document.getElementById('help-panel');
 const helpClose = document.getElementById('help-close');
+const daylightEl = document.getElementById('daylight');
+const daylightRange = document.getElementById('daylight-range');
+const daylightName = document.getElementById('daylight-name');
 const loadingEl = document.getElementById('loading');
 const fatalEl = document.getElementById('fatal');
 const progressEl = document.getElementById('art-progress');
@@ -504,6 +508,19 @@ async function bootstrap() {
     // 导览小地图
     initMinimap(plan, minimapCanvas, minimapRoom);
     minimapEl?.classList.remove('hidden');
+
+    // 光线随时间（正午 → 闭馆）
+    initDaylight(scene, ambient, built.coveMats, built.floorMats);
+    daylightEl?.classList.remove('hidden');
+    if (daylightRange) {
+      const onTime = () => {
+        const t = Number(daylightRange.value) / 1000;
+        applyDaylight(t);
+        if (daylightName) daylightName.textContent = daylightLabel(t);
+      };
+      daylightRange.addEventListener('input', onTime);
+      onTime();
+    }
 
     renderGalleryMenu();
     animate();
