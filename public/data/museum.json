@@ -126,58 +126,41 @@
       "furniture": [
         {
           "kind": "counter",
-          "x": 4.6,
-          "z": 22.85,
-          "w": 3.4,
+          "x": 1.5,
+          "z": 22.8,
+          "w": 2.2,
           "d": 0.72,
           "h": 1.05,
           "rotY": 0
         },
         {
           "kind": "lockers",
-          "x": 8.32,
-          "z": 21.8,
-          "w": 2.6,
+          "x": 8.42,
+          "z": 16.0,
+          "w": 2.2,
           "d": 0.55,
           "h": 1.9,
           "rotY": -1.5708
         },
         {
-          "kind": "sofa",
-          "x": 6.7,
-          "z": 15.55,
-          "w": 2.2,
-          "d": 0.85,
-          "rotY": 0
-        },
-        {
-          "kind": "table",
-          "x": 6.7,
-          "z": 16.95,
-          "w": 1.1,
-          "d": 0.6,
-          "h": 0.42,
-          "rotY": 0
-        },
-        {
           "kind": "umbrella",
-          "x": 0.78,
-          "z": 16.3
+          "x": 0.8,
+          "z": 16.0
         },
         {
           "kind": "planter",
           "x": 0.85,
-          "z": 15.25
+          "z": 15.0
         },
         {
           "kind": "planter",
           "x": 0.85,
-          "z": 22.75
+          "z": 22.9
         },
         {
           "kind": "planter",
-          "x": 8.25,
-          "z": 15.25
+          "x": 8.2,
+          "z": 22.9
         }
       ],
       "signs": [
@@ -185,7 +168,7 @@
           "kind": "directory",
           "wall": "north",
           "position": {
-            "x": 5.9,
+            "x": 7.55,
             "y": 1.85,
             "z": 14.68
           },
@@ -194,8 +177,8 @@
             "z": 0
           },
           "size": {
-            "width": 2.9,
-            "height": 1.85
+            "width": 2.6,
+            "height": 1.75
           }
         },
         {
@@ -2299,6 +2282,1506 @@
       ],
       "signs": [],
       "entranceSide": "west"
+    },
+    {
+      "id": "dutch",
+      "kind": "gallery",
+      "name": "展厅六 · 荷兰黄金时代",
+      "center": {
+        "x": 6.0,
+        "z": 7.25
+      },
+      "size": {
+        "w": 12.0,
+        "d": 14.5
+      },
+      "height": 7.2,
+      "ambientIntensity": 0.42,
+      "materials": {
+        "wallColor": 4867132,
+        "ceilingColor": 3814703,
+        "accentColor": 12101770,
+        "floorDark": 7234389,
+        "floorLight": 10984070,
+        "floorType": "stone",
+        "doorColor": 3025444,
+        "frameColor": 9073478,
+        "frameRoughness": 0.62,
+        "frameMetalness": 0.18
+      },
+      "lights": [
+        {
+          "id": "dutch-light-1",
+          "name": "灯槽1",
+          "type": "cove",
+          "position": {
+            "x": 6.0,
+            "y": 7.14,
+            "z": 4.06
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "color": "#ffe9c8",
+          "intensity": 87.3,
+          "range": 21.6,
+          "angle": 1.25,
+          "penumbra": 0.55,
+          "enabled": true
+        },
+        {
+          "id": "dutch-light-2",
+          "name": "灯槽2",
+          "type": "cove",
+          "position": {
+            "x": 6.0,
+            "y": 7.14,
+            "z": 10.44
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "color": "#ffe9c8",
+          "intensity": 67.3,
+          "range": 21.6,
+          "angle": 1.25,
+          "penumbra": 0.55,
+          "enabled": true
+        },
+        {
+          "id": "dutch-wall-1",
+          "name": "west墙灯",
+          "type": "wall",
+          "position": {
+            "x": 0.5,
+            "y": 4.03,
+            "z": 7.25
+          },
+          "rotation": {
+            "x": 0,
+            "y": 1.5707963267948966,
+            "z": 0
+          },
+          "color": "#ffdba8",
+          "intensity": 16,
+          "range": 9,
+          "angle": 1.0,
+          "penumbra": 0.8,
+          "enabled": true
+        },
+        {
+          "id": "dutch-wall-2",
+          "name": "east墙灯",
+          "type": "wall",
+          "position": {
+            "x": 11.5,
+            "y": 4.03,
+            "z": 7.25
+          },
+          "rotation": {
+            "x": 0,
+            "y": -1.5707963267948966,
+            "z": 0
+          },
+          "color": "#ffdba8",
+          "intensity": 16,
+          "range": 9,
+          "angle": 1.0,
+          "penumbra": 0.8,
+          "enabled": true
+        }
+      ],
+      "artLight": {
+        "base": 12.0,
+        "hero": 16.0
+      },
+      "blurb": "十七世纪的荷兰，商人、市长与他们的妻子。伦勃朗与哈尔斯用一束侧光，把一个人的一生写在脸上；鲁伊斯达尔则把整片低地的天空收进画框。",
+      "yearRange": "",
+      "benches": [
+        {
+          "x": 6.0,
+          "z": 8.45,
+          "rotY": 0.0,
+          "facing": 0.0,
+          "w": 1.9,
+          "d": 0.52,
+          "seatY": 0.46
+        }
+      ],
+      "partitions": [],
+      "arts": [
+        {
+          "id": "dutch-art-01",
+          "title": "Portrait of a Woman",
+          "artist": "Rembrandt van Rijn",
+          "year": "1635 or earlier",
+          "image": "dutch-01.webp",
+          "source": "https://www.clevelandart.org/art/1944.90",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "north",
+          "position": {
+            "x": 2.733,
+            "y": 2.2,
+            "z": 0.17
+          },
+          "size": {
+            "width": 1.856,
+            "height": 2.263
+          },
+          "rotation": {
+            "y": 0.0,
+            "z": 0
+          },
+          "hue": 0.08,
+          "hero": false
+        },
+        {
+          "id": "dutch-art-02",
+          "title": "A Young Man with a Chain",
+          "artist": "Rembrandt van Rijn",
+          "year": "c. 1629 or 1632",
+          "image": "dutch-02.webp",
+          "source": "https://www.clevelandart.org/art/1942.644",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "north",
+          "position": {
+            "x": 6.0,
+            "y": 2.2,
+            "z": 0.17
+          },
+          "size": {
+            "width": 2.171,
+            "height": 2.902
+          },
+          "rotation": {
+            "y": 0.0,
+            "z": 0
+          },
+          "hue": 0.08,
+          "hero": true
+        },
+        {
+          "id": "dutch-art-03",
+          "title": "A Bearded Man Wearing a Hat",
+          "artist": "Rembrandt van Rijn",
+          "year": "c. 1655–60",
+          "image": "dutch-03.webp",
+          "source": "https://www.clevelandart.org/art/1950.252",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "north",
+          "position": {
+            "x": 9.267,
+            "y": 2.2,
+            "z": 0.17
+          },
+          "size": {
+            "width": 1.852,
+            "height": 2.268
+          },
+          "rotation": {
+            "y": 0.0,
+            "z": 0
+          },
+          "hue": 0.08,
+          "hero": false
+        },
+        {
+          "id": "dutch-art-04",
+          "title": "An Elderly Man in Prayer",
+          "artist": "Rembrandt van Rijn",
+          "year": "1660s or later",
+          "image": "dutch-04.webp",
+          "source": "https://www.clevelandart.org/art/1967.16",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "east",
+          "position": {
+            "x": 11.83,
+            "y": 2.2,
+            "z": 3.19
+          },
+          "size": {
+            "width": 1.676,
+            "height": 2.029
+          },
+          "rotation": {
+            "y": -1.5708,
+            "z": 0
+          },
+          "hue": 0.08,
+          "hero": false
+        },
+        {
+          "id": "dutch-art-05",
+          "title": "Portrait of Tieleman Roosterman",
+          "artist": "Frans Hals",
+          "year": "1634",
+          "image": "dutch-05.webp",
+          "source": "https://www.clevelandart.org/art/1999.173",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "east",
+          "position": {
+            "x": 11.83,
+            "y": 2.2,
+            "z": 7.25
+          },
+          "size": {
+            "width": 1.591,
+            "height": 2.137
+          },
+          "rotation": {
+            "y": -1.5708,
+            "z": 0
+          },
+          "hue": 0.08,
+          "hero": false
+        },
+        {
+          "id": "dutch-art-06",
+          "title": "Portrait of a Woman, probably Aeltje Dircksdr. Pater",
+          "artist": "Frans Hals",
+          "year": "1638",
+          "image": "dutch-06.webp",
+          "source": "https://www.clevelandart.org/art/1948.137",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "east",
+          "position": {
+            "x": 11.83,
+            "y": 2.2,
+            "z": 11.31
+          },
+          "size": {
+            "width": 1.622,
+            "height": 2.097
+          },
+          "rotation": {
+            "y": -1.5708,
+            "z": 0
+          },
+          "hue": 0.08,
+          "hero": false
+        },
+        {
+          "id": "dutch-art-07",
+          "title": "Landscape with a Windmill",
+          "artist": "Jacob van Ruisdael",
+          "year": "1646",
+          "image": "dutch-08.webp",
+          "source": "https://www.clevelandart.org/art/1967.19",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "west",
+          "position": {
+            "x": 0.17,
+            "y": 2.2,
+            "z": 4.205
+          },
+          "size": {
+            "width": 2.172,
+            "height": 1.566
+          },
+          "rotation": {
+            "y": 1.5708,
+            "z": 0
+          },
+          "hue": 0.08,
+          "hero": false
+        },
+        {
+          "id": "dutch-art-08",
+          "title": "Low Waterfall in a Wooded Landscape with a Dead Beech Tree",
+          "artist": "Jacob van Ruisdael",
+          "year": "c. 1660–70",
+          "image": "dutch-07.webp",
+          "source": "https://www.clevelandart.org/art/1967.63",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "west",
+          "position": {
+            "x": 0.17,
+            "y": 2.2,
+            "z": 10.295
+          },
+          "size": {
+            "width": 2.123,
+            "height": 1.601
+          },
+          "rotation": {
+            "y": 1.5708,
+            "z": 0
+          },
+          "hue": 0.08,
+          "hero": false
+        }
+      ],
+      "signs": [],
+      "entranceSide": "south"
+    },
+    {
+      "id": "barbizon",
+      "kind": "gallery",
+      "name": "展厅七 · 巴比松与写实",
+      "center": {
+        "x": 6.0,
+        "z": 29.25
+      },
+      "size": {
+        "w": 12.0,
+        "d": 11.5
+      },
+      "height": 7.0,
+      "ambientIntensity": 0.56,
+      "materials": {
+        "wallColor": 14079176,
+        "ceilingColor": 11842214,
+        "accentColor": 8026724,
+        "floorDark": 10131338,
+        "floorLight": 14078918,
+        "floorType": "stone",
+        "doorColor": 4078386,
+        "frameColor": 6181432,
+        "frameRoughness": 0.74,
+        "frameMetalness": 0.04
+      },
+      "lights": [
+        {
+          "id": "barbizon-light-1",
+          "name": "灯槽1",
+          "type": "cove",
+          "position": {
+            "x": 6.0,
+            "y": 6.94,
+            "z": 26.72
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "color": "#fff6e6",
+          "intensity": 82.2,
+          "range": 21.0,
+          "angle": 1.25,
+          "penumbra": 0.55,
+          "enabled": true
+        },
+        {
+          "id": "barbizon-light-2",
+          "name": "灯槽2",
+          "type": "cove",
+          "position": {
+            "x": 6.0,
+            "y": 6.94,
+            "z": 31.78
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "color": "#fff6e6",
+          "intensity": 63.4,
+          "range": 21.0,
+          "angle": 1.25,
+          "penumbra": 0.55,
+          "enabled": true
+        },
+        {
+          "id": "barbizon-wall-1",
+          "name": "west墙灯",
+          "type": "wall",
+          "position": {
+            "x": 0.5,
+            "y": 3.92,
+            "z": 29.25
+          },
+          "rotation": {
+            "x": 0,
+            "y": 1.5707963267948966,
+            "z": 0
+          },
+          "color": "#ffeed6",
+          "intensity": 16,
+          "range": 9,
+          "angle": 1.0,
+          "penumbra": 0.8,
+          "enabled": true
+        },
+        {
+          "id": "barbizon-wall-2",
+          "name": "east墙灯",
+          "type": "wall",
+          "position": {
+            "x": 11.5,
+            "y": 3.92,
+            "z": 29.25
+          },
+          "rotation": {
+            "x": 0,
+            "y": -1.5707963267948966,
+            "z": 0
+          },
+          "color": "#ffeed6",
+          "intensity": 16,
+          "range": 9,
+          "angle": 1.0,
+          "penumbra": 0.8,
+          "enabled": true
+        }
+      ],
+      "artLight": {
+        "base": 8.5,
+        "hero": 11.5
+      },
+      "blurb": "在印象派之前，有一群人已经走到户外。柯罗的银灰晨雾、库尔贝的峭壁、道比尼的河岸——他们先把画架搬进了自然里。",
+      "yearRange": "",
+      "benches": [
+        {
+          "x": 6.0,
+          "z": 28.05,
+          "rotY": 0.0,
+          "facing": 3.1416,
+          "w": 1.9,
+          "d": 0.52,
+          "seatY": 0.46
+        }
+      ],
+      "partitions": [],
+      "arts": [
+        {
+          "id": "barbizon-art-01",
+          "title": "The Pond at the Entrance of the Woods",
+          "artist": "Jean Baptiste Camille Corot",
+          "year": "c. 1860–75",
+          "image": "barbizon-03.webp",
+          "source": "https://www.clevelandart.org/art/1951.330",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "south",
+          "position": {
+            "x": 2.733,
+            "y": 2.2,
+            "z": 34.83
+          },
+          "size": {
+            "width": 2.361,
+            "height": 1.779
+          },
+          "rotation": {
+            "y": 3.1416,
+            "z": 0
+          },
+          "hue": 0.22,
+          "hero": false
+        },
+        {
+          "id": "barbizon-art-02",
+          "title": "Woman Meditating",
+          "artist": "Jean Baptiste Camille Corot",
+          "year": "after 1868",
+          "image": "barbizon-02.webp",
+          "source": "https://www.clevelandart.org/art/1949.189",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "south",
+          "position": {
+            "x": 6.0,
+            "y": 2.2,
+            "z": 34.83
+          },
+          "size": {
+            "width": 2.135,
+            "height": 2.951
+          },
+          "rotation": {
+            "y": 3.1416,
+            "z": 0
+          },
+          "hue": 0.22,
+          "hero": true
+        },
+        {
+          "id": "barbizon-art-03",
+          "title": "Lormes: Goat-Girl Sitting Beside a Stream in a Forest",
+          "artist": "Jean Baptiste Camille Corot",
+          "year": "1842",
+          "image": "barbizon-01.webp",
+          "source": "https://www.clevelandart.org/art/1962.35",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "south",
+          "position": {
+            "x": 9.267,
+            "y": 2.2,
+            "z": 34.83
+          },
+          "size": {
+            "width": 2.396,
+            "height": 1.753
+          },
+          "rotation": {
+            "y": 3.1416,
+            "z": 0
+          },
+          "hue": 0.22,
+          "hero": false
+        },
+        {
+          "id": "barbizon-art-04",
+          "title": "Sunset on the River Oise",
+          "artist": "Charles François Daubigny",
+          "year": "1866",
+          "image": "barbizon-04.webp",
+          "source": "https://www.clevelandart.org/art/1964.289",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "east",
+          "position": {
+            "x": 11.83,
+            "y": 2.2,
+            "z": 26.15
+          },
+          "size": {
+            "width": 2.457,
+            "height": 1.384
+          },
+          "rotation": {
+            "y": -1.5708,
+            "z": 0
+          },
+          "hue": 0.22,
+          "hero": false
+        },
+        {
+          "id": "barbizon-art-05",
+          "title": "The Hillsides of Méry-sur-Oise, Opposite Auvers",
+          "artist": "Charles François Daubigny",
+          "year": "1873",
+          "image": "barbizon-05.webp",
+          "source": "https://www.clevelandart.org/art/1916.1048",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "east",
+          "position": {
+            "x": 11.83,
+            "y": 2.2,
+            "z": 29.25
+          },
+          "size": {
+            "width": 2.382,
+            "height": 1.427
+          },
+          "rotation": {
+            "y": -1.5708,
+            "z": 0
+          },
+          "hue": 0.22,
+          "hero": false
+        },
+        {
+          "id": "barbizon-art-06",
+          "title": "Leaving the Forest, Fontainebleau: Setting Sun",
+          "artist": "Théodore Rousseau",
+          "year": "1851",
+          "image": "barbizon-06.webp",
+          "source": "https://www.clevelandart.org/art/1983.70",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "east",
+          "position": {
+            "x": 11.83,
+            "y": 2.2,
+            "z": 32.35
+          },
+          "size": {
+            "width": 2.011,
+            "height": 1.691
+          },
+          "rotation": {
+            "y": -1.5708,
+            "z": 0
+          },
+          "hue": 0.22,
+          "hero": false
+        },
+        {
+          "id": "barbizon-art-07",
+          "title": "Marshlands",
+          "artist": "Théodore Rousseau",
+          "year": "not dated",
+          "image": "barbizon-08.webp",
+          "source": "https://www.clevelandart.org/art/1964.290",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "west",
+          "position": {
+            "x": 0.17,
+            "y": 2.2,
+            "z": 26.925
+          },
+          "size": {
+            "width": 2.293,
+            "height": 1.483
+          },
+          "rotation": {
+            "y": 1.5708,
+            "z": 0
+          },
+          "hue": 0.22,
+          "hero": false
+        },
+        {
+          "id": "barbizon-art-08",
+          "title": "The Oak Tree",
+          "artist": "Théodore Rousseau",
+          "year": "19th century",
+          "image": "barbizon-07.webp",
+          "source": "https://www.clevelandart.org/art/1916.1052",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "west",
+          "position": {
+            "x": 0.17,
+            "y": 2.2,
+            "z": 31.575
+          },
+          "size": {
+            "width": 2.088,
+            "height": 1.628
+          },
+          "rotation": {
+            "y": 1.5708,
+            "z": 0
+          },
+          "hue": 0.22,
+          "hero": false
+        }
+      ],
+      "signs": [],
+      "entranceSide": "north"
+    },
+    {
+      "id": "postimp",
+      "kind": "gallery",
+      "name": "展厅八 · 后印象与纳比",
+      "center": {
+        "x": 46.5,
+        "z": 8.25
+      },
+      "size": {
+        "w": 8.0,
+        "d": 16.5
+      },
+      "height": 7.4,
+      "ambientIntensity": 0.6,
+      "materials": {
+        "wallColor": 15260864,
+        "ceilingColor": 13023904,
+        "accentColor": 11043132,
+        "floorDark": 11047794,
+        "floorLight": 14865848,
+        "floorType": "wood",
+        "doorColor": 5521450,
+        "frameColor": 8020024,
+        "frameRoughness": 0.66,
+        "frameMetalness": 0.08
+      },
+      "lights": [
+        {
+          "id": "postimp-light-1",
+          "name": "灯槽1",
+          "type": "cove",
+          "position": {
+            "x": 46.5,
+            "y": 7.34,
+            "z": 4.62
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "color": "#fff2d8",
+          "intensity": 92.6,
+          "range": 22.2,
+          "angle": 1.25,
+          "penumbra": 0.55,
+          "enabled": true
+        },
+        {
+          "id": "postimp-light-2",
+          "name": "灯槽2",
+          "type": "cove",
+          "position": {
+            "x": 46.5,
+            "y": 7.34,
+            "z": 11.88
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "color": "#fff2d8",
+          "intensity": 71.4,
+          "range": 22.2,
+          "angle": 1.25,
+          "penumbra": 0.55,
+          "enabled": true
+        },
+        {
+          "id": "postimp-wall-1",
+          "name": "west墙灯",
+          "type": "wall",
+          "position": {
+            "x": 43.0,
+            "y": 4.14,
+            "z": 8.25
+          },
+          "rotation": {
+            "x": 0,
+            "y": 1.5707963267948966,
+            "z": 0
+          },
+          "color": "#ffe6bc",
+          "intensity": 16,
+          "range": 9,
+          "angle": 1.0,
+          "penumbra": 0.8,
+          "enabled": true
+        },
+        {
+          "id": "postimp-wall-2",
+          "name": "east墙灯",
+          "type": "wall",
+          "position": {
+            "x": 50.0,
+            "y": 4.14,
+            "z": 8.25
+          },
+          "rotation": {
+            "x": 0,
+            "y": -1.5707963267948966,
+            "z": 0
+          },
+          "color": "#ffe6bc",
+          "intensity": 16,
+          "range": 9,
+          "angle": 1.0,
+          "penumbra": 0.8,
+          "enabled": true
+        }
+      ],
+      "artLight": {
+        "base": 8.5,
+        "hero": 11.5
+      },
+      "blurb": "印象派之后，颜色不再只是描述光，而是自己说话。塞尚把山切成几何，高更把海压成色块，纳比派把一间卧室画成一整面图案。",
+      "yearRange": "",
+      "benches": [
+        {
+          "x": 46.5,
+          "z": 9.45,
+          "rotY": 0.0,
+          "facing": 0.0,
+          "w": 1.9,
+          "d": 0.52,
+          "seatY": 0.46
+        }
+      ],
+      "partitions": [],
+      "arts": [
+        {
+          "id": "postimp-art-01",
+          "title": "Under the Trees (from \"The Public Gardens\")",
+          "artist": "Édouard Vuillard",
+          "year": "1894",
+          "image": "postimp-01.webp",
+          "source": "https://www.clevelandart.org/art/1953.212",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "north",
+          "position": {
+            "x": 44.567,
+            "y": 2.2,
+            "z": 0.17
+          },
+          "size": {
+            "width": 1.222,
+            "height": 2.7
+          },
+          "rotation": {
+            "y": 0.0,
+            "z": 0
+          },
+          "hue": 0.11,
+          "hero": false
+        },
+        {
+          "id": "postimp-art-02",
+          "title": "At the Café",
+          "artist": "Édouard Vuillard",
+          "year": "c. 1897–99",
+          "image": "postimp-02.webp",
+          "source": "https://www.clevelandart.org/art/1958.57",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "north",
+          "position": {
+            "x": 46.5,
+            "y": 2.2,
+            "z": 0.17
+          },
+          "size": {
+            "width": 1.547,
+            "height": 1.625
+          },
+          "rotation": {
+            "y": 0.0,
+            "z": 0
+          },
+          "hue": 0.11,
+          "hero": true
+        },
+        {
+          "id": "postimp-art-03",
+          "title": "Luncheon (Annette and Her Grandmother)",
+          "artist": "Édouard Vuillard",
+          "year": "1899",
+          "image": "postimp-03.webp",
+          "source": "https://www.clevelandart.org/art/2020.118",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "north",
+          "position": {
+            "x": 48.433,
+            "y": 2.2,
+            "z": 0.17
+          },
+          "size": {
+            "width": 1.547,
+            "height": 1.435
+          },
+          "rotation": {
+            "y": 0.0,
+            "z": 0
+          },
+          "hue": 0.11,
+          "hero": false
+        },
+        {
+          "id": "postimp-art-04",
+          "title": "Café Wepler",
+          "artist": "Édouard Vuillard",
+          "year": "c. 1908–10, reworked in 1912",
+          "image": "postimp-04.webp",
+          "source": "https://www.clevelandart.org/art/1950.90",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "east",
+          "position": {
+            "x": 50.33,
+            "y": 2.2,
+            "z": 3.63
+          },
+          "size": {
+            "width": 2.374,
+            "height": 1.432
+          },
+          "rotation": {
+            "y": -1.5708,
+            "z": 0
+          },
+          "hue": 0.11,
+          "hero": false
+        },
+        {
+          "id": "postimp-art-05",
+          "title": "Blessing of a Yacht on the Belon River",
+          "artist": "Maurice Denis",
+          "year": "1899",
+          "image": "postimp-05.webp",
+          "source": "https://www.clevelandart.org/art/2020.110",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "east",
+          "position": {
+            "x": 50.33,
+            "y": 2.2,
+            "z": 8.25
+          },
+          "size": {
+            "width": 1.906,
+            "height": 1.784
+          },
+          "rotation": {
+            "y": -1.5708,
+            "z": 0
+          },
+          "hue": 0.11,
+          "hero": false
+        },
+        {
+          "id": "postimp-art-06",
+          "title": "Eva Meurier in a Green Dress",
+          "artist": "Maurice Denis",
+          "year": "1891",
+          "image": "postimp-06.webp",
+          "source": "https://www.clevelandart.org/art/2002.92",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "east",
+          "position": {
+            "x": 50.33,
+            "y": 2.2,
+            "z": 12.87
+          },
+          "size": {
+            "width": 1.536,
+            "height": 2.213
+          },
+          "rotation": {
+            "y": -1.5708,
+            "z": 0
+          },
+          "hue": 0.11,
+          "hero": false
+        },
+        {
+          "id": "postimp-art-07",
+          "title": "Procession or Pardon at Perros-Guirec",
+          "artist": "Maurice Denis",
+          "year": "1891",
+          "image": "postimp-08.webp",
+          "source": "https://www.clevelandart.org/art/2020.108",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "west",
+          "position": {
+            "x": 42.67,
+            "y": 2.2,
+            "z": 4.785
+          },
+          "size": {
+            "width": 1.672,
+            "height": 2.033
+          },
+          "rotation": {
+            "y": 1.5708,
+            "z": 0
+          },
+          "hue": 0.11,
+          "hero": false
+        },
+        {
+          "id": "postimp-art-08",
+          "title": "The Orange Christ",
+          "artist": "Maurice Denis",
+          "year": "1889",
+          "image": "postimp-07.webp",
+          "source": "https://www.clevelandart.org/art/2020.107",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "west",
+          "position": {
+            "x": 42.67,
+            "y": 2.2,
+            "z": 11.715
+          },
+          "size": {
+            "width": 1.655,
+            "height": 2.054
+          },
+          "rotation": {
+            "y": 1.5708,
+            "z": 0
+          },
+          "hue": 0.11,
+          "hero": false
+        }
+      ],
+      "signs": [],
+      "entranceSide": "south"
+    },
+    {
+      "id": "american",
+      "kind": "gallery",
+      "name": "展厅九 · 美国绘画",
+      "center": {
+        "x": 47.25,
+        "z": 28.0
+      },
+      "size": {
+        "w": 6.5,
+        "d": 14.0
+      },
+      "height": 7.0,
+      "ambientIntensity": 0.56,
+      "materials": {
+        "wallColor": 14997958,
+        "ceilingColor": 12629410,
+        "accentColor": 9072720,
+        "floorDark": 10259056,
+        "floorLight": 14207924,
+        "floorType": "wood",
+        "doorColor": 4864038,
+        "frameColor": 7231032,
+        "frameRoughness": 0.72,
+        "frameMetalness": 0.05
+      },
+      "lights": [
+        {
+          "id": "american-light-1",
+          "name": "灯槽1",
+          "type": "cove",
+          "position": {
+            "x": 47.25,
+            "y": 6.94,
+            "z": 24.92
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "color": "#fff4e2",
+          "intensity": 82.2,
+          "range": 21.0,
+          "angle": 1.25,
+          "penumbra": 0.55,
+          "enabled": true
+        },
+        {
+          "id": "american-light-2",
+          "name": "灯槽2",
+          "type": "cove",
+          "position": {
+            "x": 47.25,
+            "y": 6.94,
+            "z": 31.08
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "color": "#fff4e2",
+          "intensity": 63.4,
+          "range": 21.0,
+          "angle": 1.25,
+          "penumbra": 0.55,
+          "enabled": true
+        },
+        {
+          "id": "american-wall-1",
+          "name": "west墙灯",
+          "type": "wall",
+          "position": {
+            "x": 44.5,
+            "y": 3.92,
+            "z": 28.0
+          },
+          "rotation": {
+            "x": 0,
+            "y": 1.5707963267948966,
+            "z": 0
+          },
+          "color": "#ffe8cc",
+          "intensity": 16,
+          "range": 9,
+          "angle": 1.0,
+          "penumbra": 0.8,
+          "enabled": true
+        },
+        {
+          "id": "american-wall-2",
+          "name": "east墙灯",
+          "type": "wall",
+          "position": {
+            "x": 50.0,
+            "y": 3.92,
+            "z": 28.0
+          },
+          "rotation": {
+            "x": 0,
+            "y": -1.5707963267948966,
+            "z": 0
+          },
+          "color": "#ffe8cc",
+          "intensity": 16,
+          "range": 9,
+          "angle": 1.0,
+          "penumbra": 0.8,
+          "enabled": true
+        }
+      ],
+      "artLight": {
+        "base": 8.5,
+        "hero": 11.5
+      },
+      "blurb": "新大陆的风景与面孔。英尼斯的雾、荷马的浪、蔡斯的肖像——他们用欧洲的技法，画一片欧洲人没见过的光。",
+      "yearRange": "",
+      "benches": [
+        {
+          "x": 47.25,
+          "z": 26.8,
+          "rotY": 0.0,
+          "facing": 3.1416,
+          "w": 1.9,
+          "d": 0.52,
+          "seatY": 0.46
+        }
+      ],
+      "partitions": [],
+      "arts": [
+        {
+          "id": "american-art-01",
+          "title": "In the Woods",
+          "artist": "George Inness",
+          "year": "1866",
+          "image": "american-03.webp",
+          "source": "https://www.clevelandart.org/art/1938.40",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "south",
+          "position": {
+            "x": 45.817,
+            "y": 2.2,
+            "z": 34.83
+          },
+          "size": {
+            "width": 1.147,
+            "height": 1.531
+          },
+          "rotation": {
+            "y": 3.1416,
+            "z": 0
+          },
+          "hue": 0.1,
+          "hero": false
+        },
+        {
+          "id": "american-art-02",
+          "title": "Landscape",
+          "artist": "George Inness",
+          "year": "1888",
+          "image": "american-02.webp",
+          "source": "https://www.clevelandart.org/art/1929.464",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "south",
+          "position": {
+            "x": 47.25,
+            "y": 2.2,
+            "z": 34.83
+          },
+          "size": {
+            "width": 1.147,
+            "height": 0.944
+          },
+          "rotation": {
+            "y": 3.1416,
+            "z": 0
+          },
+          "hue": 0.1,
+          "hero": true
+        },
+        {
+          "id": "american-art-03",
+          "title": "Harvest Time",
+          "artist": "George Inness",
+          "year": "1864",
+          "image": "american-01.webp",
+          "source": "https://www.clevelandart.org/art/1939.234",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "south",
+          "position": {
+            "x": 48.683,
+            "y": 2.2,
+            "z": 34.83
+          },
+          "size": {
+            "width": 1.147,
+            "height": 0.839
+          },
+          "rotation": {
+            "y": 3.1416,
+            "z": 0
+          },
+          "hue": 0.1,
+          "hero": false
+        },
+        {
+          "id": "american-art-04",
+          "title": "The Wood Chopper",
+          "artist": "George Inness",
+          "year": "1849",
+          "image": "american-04.webp",
+          "source": "https://www.clevelandart.org/art/1963.501",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "east",
+          "position": {
+            "x": 50.33,
+            "y": 2.2,
+            "z": 24.08
+          },
+          "size": {
+            "width": 2.028,
+            "height": 1.677
+          },
+          "rotation": {
+            "y": -1.5708,
+            "z": 0
+          },
+          "hue": 0.1,
+          "hero": false
+        },
+        {
+          "id": "american-art-05",
+          "title": "Portrait of Dora Wheeler",
+          "artist": "William Merritt Chase",
+          "year": "1882–83",
+          "image": "american-05.webp",
+          "source": "https://www.clevelandart.org/art/1921.1239",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "east",
+          "position": {
+            "x": 50.33,
+            "y": 2.2,
+            "z": 28.0
+          },
+          "size": {
+            "width": 1.885,
+            "height": 1.804
+          },
+          "rotation": {
+            "y": -1.5708,
+            "z": 0
+          },
+          "hue": 0.1,
+          "hero": false
+        },
+        {
+          "id": "american-art-06",
+          "title": "The Old Road to the Sea",
+          "artist": "William Merritt Chase",
+          "year": "c. 1893",
+          "image": "american-06.webp",
+          "source": "https://www.clevelandart.org/art/1938.333",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "east",
+          "position": {
+            "x": 50.33,
+            "y": 2.2,
+            "z": 31.92
+          },
+          "size": {
+            "width": 2.063,
+            "height": 1.648
+          },
+          "rotation": {
+            "y": -1.5708,
+            "z": 0
+          },
+          "hue": 0.1,
+          "hero": false
+        },
+        {
+          "id": "american-art-07",
+          "title": "Gray Day on the Bay",
+          "artist": "William Merritt Chase",
+          "year": "c. 1886",
+          "image": "american-08.webp",
+          "source": "https://www.clevelandart.org/art/1957.423",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "west",
+          "position": {
+            "x": 44.17,
+            "y": 2.2,
+            "z": 25.06
+          },
+          "size": {
+            "width": 2.235,
+            "height": 1.521
+          },
+          "rotation": {
+            "y": 1.5708,
+            "z": 0
+          },
+          "hue": 0.1,
+          "hero": false
+        },
+        {
+          "id": "american-art-08",
+          "title": "Portrait of My Daughter Alice",
+          "artist": "William Merritt Chase",
+          "year": "c. 1895",
+          "image": "american-07.webp",
+          "source": "https://www.clevelandart.org/art/1920.254",
+          "sortYear": null,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "",
+          "dimensions": "",
+          "creditline": "",
+          "wall": "west",
+          "position": {
+            "x": 44.17,
+            "y": 2.2,
+            "z": 30.94
+          },
+          "size": {
+            "width": 1.501,
+            "height": 2.265
+          },
+          "rotation": {
+            "y": 1.5708,
+            "z": 0
+          },
+          "hue": 0.1,
+          "hero": false
+        }
+      ],
+      "signs": [],
+      "entranceSide": "north"
     }
   ]
 }

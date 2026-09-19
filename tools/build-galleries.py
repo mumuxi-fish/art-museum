@@ -107,6 +107,73 @@ THEMES = {
         },
         "lightColor": "#fff3e0", "wallLightColor": "#ffe9d0",
     },
+
+    # ---- 以下四厅按「画派」划分，和上面按题材分的五厅互补 ----
+    # 前五厅是「看什么」（光、人、花、夜、浮世绘），后四厅是「谁在画、属于哪一派」。
+    # 时代从 17 世纪荷兰一路到 20 世纪美国，走完一圈是一条完整的艺术史脉络。
+    # 位置：门厅南北各一个（门厅变成枢纽），走廊东西两端的南北侧各一个。
+    "dutch": {
+        "name": "展厅六 · 荷兰黄金时代",
+        "blurb": "十七世纪的荷兰，商人、市长与他们的妻子。伦勃朗与哈尔斯用一束侧光，"
+                 "把一个人的一生写在脸上；鲁伊斯达尔则把整片低地的天空收进画框。",
+        "hue": 0.08,
+        "rect": {"x": 6.0, "z": 7.25, "w": 12.0, "d": 14.5, "h": 7.2},
+        # 深墙：十七世纪绘画靠一束侧光造型，浅色墙会把那束光吃掉
+        "ambientIntensity": 0.42,
+        "materials": {
+            "wallColor": 0x4A443C, "ceilingColor": 0x3A352F, "accentColor": 0xB8A88A,
+            "floorDark": 0x6E6355, "floorLight": 0xA79A86, "floorType": "stone",
+            "doorColor": 0x2E2A24, "frameColor": 0x8A7346,
+            "frameRoughness": 0.62, "frameMetalness": 0.18,
+        },
+        "lightColor": "#ffe9c8", "wallLightColor": "#ffdba8",
+        "artLight": {"base": 12.0, "hero": 16.0},
+    },
+    "barbizon": {
+        "name": "展厅七 · 巴比松与写实",
+        "blurb": "在印象派之前，有一群人已经走到户外。柯罗的银灰晨雾、库尔贝的峭壁、"
+                 "道比尼的河岸——他们先把画架搬进了自然里。",
+        "hue": 0.22,
+        "rect": {"x": 6.0, "z": 29.25, "w": 12.0, "d": 11.5, "h": 7.0},
+        "ambientIntensity": 0.56,
+        "materials": {
+            "wallColor": 0xD6D4C8, "ceilingColor": 0xB4B2A6, "accentColor": 0x7A7A64,
+            "floorDark": 0x9A978A, "floorLight": 0xD6D3C6, "floorType": "stone",
+            "doorColor": 0x3E3B32, "frameColor": 0x5E5238,
+            "frameRoughness": 0.74, "frameMetalness": 0.04,
+        },
+        "lightColor": "#fff6e6", "wallLightColor": "#ffeed6",
+    },
+    "postimp": {
+        "name": "展厅八 · 后印象与纳比",
+        "blurb": "印象派之后，颜色不再只是描述光，而是自己说话。塞尚把山切成几何，"
+                 "高更把海压成色块，纳比派把一间卧室画成一整面图案。",
+        "hue": 0.11,
+        "rect": {"x": 46.5, "z": 8.25, "w": 8.0, "d": 16.5, "h": 7.4},
+        "ambientIntensity": 0.60,
+        "materials": {
+            "wallColor": 0xE8DCC0, "ceilingColor": 0xC6BAA0, "accentColor": 0xA8813C,
+            "floorDark": 0xA89372, "floorLight": 0xE2D5B8, "floorType": "wood",
+            "doorColor": 0x54402A, "frameColor": 0x7A6038,
+            "frameRoughness": 0.66, "frameMetalness": 0.08,
+        },
+        "lightColor": "#fff2d8", "wallLightColor": "#ffe6bc",
+    },
+    "american": {
+        "name": "展厅九 · 美国绘画",
+        "blurb": "新大陆的风景与面孔。英尼斯的雾、荷马的浪、蔡斯的肖像——"
+                 "他们用欧洲的技法，画一片欧洲人没见过的光。",
+        "hue": 0.10,
+        "rect": {"x": 47.25, "z": 28.0, "w": 6.5, "d": 14.0, "h": 7.0},
+        "ambientIntensity": 0.56,
+        "materials": {
+            "wallColor": 0xE4D9C6, "ceilingColor": 0xC0B5A2, "accentColor": 0x8A7050,
+            "floorDark": 0x9C8A70, "floorLight": 0xD8CBB4, "floorType": "wood",
+            "doorColor": 0x4A3826, "frameColor": 0x6E5638,
+            "frameRoughness": 0.72, "frameMetalness": 0.05,
+        },
+        "lightColor": "#fff4e2", "wallLightColor": "#ffe8cc",
+    },
 }
 
 # 每个展厅的入口在哪一面 —— 决定主墙（入口对面那面）和挂画布局
@@ -116,6 +183,12 @@ ENTRANCE_SIDE = {
     "minimal": "north",  # 门开在北墙 → 主墙是南墙
     "night": "north",
     "flora": "west",     # 门开在西墙 → 主墙是东墙
+    # 新增四厅：dutch / postimp 从走廊（或门厅）的北侧进入，门开在南墙；
+    # barbizon / american 在南侧，门开在北墙
+    "dutch": "south",
+    "barbizon": "north",
+    "postimp": "south",
+    "american": "north",
 }
 
 OPPOSITE = {"north": "south", "south": "north", "east": "west", "west": "east"}
@@ -315,24 +388,23 @@ def build_museum(src):
         # 门厅是 9×9，两侧原来是大面积白墙。补服务台 / 寄存柜 / 休息区 / 绿植，
         # 位置都避开东墙的门洞（z 17.15–20.35）和出生点 (3.4, 18.9)。
         "furniture": [
-            {"kind": "counter", "x": 4.6, "z": 22.85, "w": 3.4, "d": 0.72, "h": 1.05, "rotY": 0},
+            {"kind": "counter", "x": 1.5, "z": 22.8, "w": 2.2, "d": 0.72, "h": 1.05, "rotY": 0},
             # 柜门在 +z 面，贴东墙要转到朝西（门厅内侧）
-            {"kind": "lockers", "x": 8.32, "z": 21.8, "w": 2.6, "d": 0.55, "h": 1.9, "rotY": -1.5708},
-            {"kind": "sofa", "x": 6.7, "z": 15.55, "w": 2.2, "d": 0.85, "rotY": 0},
-            {"kind": "table", "x": 6.7, "z": 16.95, "w": 1.1, "d": 0.6, "h": 0.42, "rotY": 0},
-            {"kind": "umbrella", "x": 0.78, "z": 16.3},
-            {"kind": "planter", "x": 0.85, "z": 15.25},
-            {"kind": "planter", "x": 0.85, "z": 22.75},
-            {"kind": "planter", "x": 8.25, "z": 15.25},
+            {"kind": "lockers", "x": 8.42, "z": 16.0, "w": 2.2, "d": 0.55, "h": 1.9, "rotY": -1.5708},
+            {"kind": "umbrella", "x": 0.8, "z": 16.0},
+            {"kind": "planter", "x": 0.85, "z": 15.0},
+            {"kind": "planter", "x": 0.85, "z": 22.9},
+            {"kind": "planter", "x": 8.2, "z": 22.9},
         ],
         "signs": [{
             "kind": "directory", "wall": "north",
             "position": {
-                "x": ENTRANCE["x"] + 1.4, "y": 1.85,
+                # 北墙中点 x 4.5 现在是通往荷兰厅的门洞，导览牌让到东侧
+                "x": ENTRANCE["x"] + 3.05, "y": 1.85,
                 "z": round(ENTRANCE["z"] - ENTRANCE["d"] / 2 + WALL_T / 2 + 0.03, 3),
             },
             "rotation": {"y": 0, "z": 0},
-            "size": {"width": 2.9, "height": 1.85},
+            "size": {"width": 2.6, "height": 1.75},
         }, {
             "kind": "frontdoors", "wall": "west",
             "position": {

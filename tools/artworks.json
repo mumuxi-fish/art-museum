@@ -808,5 +808,365 @@
       "sortYear": 1550,
       "sortYearEnd": 1599
     }
+  ],
+  "dutch": [
+    {
+      "file": "dutch-01.webp",
+      "title": "Portrait of a Woman",
+      "artist": "Rembrandt van Rijn",
+      "year": "1635 or earlier",
+      "w": 984,
+      "h": 1200,
+      "bytes": 51566,
+      "source": "https://www.clevelandart.org/art/1944.90",
+      "credit": "The Cleveland Museum of Art, 1944.90"
+    },
+    {
+      "file": "dutch-02.webp",
+      "title": "A Young Man with a Chain",
+      "artist": "Rembrandt van Rijn",
+      "year": "c. 1629 or 1632",
+      "w": 898,
+      "h": 1200,
+      "bytes": 20500,
+      "source": "https://www.clevelandart.org/art/1942.644",
+      "credit": "The Cleveland Museum of Art, 1942.644"
+    },
+    {
+      "file": "dutch-03.webp",
+      "title": "A Bearded Man Wearing a Hat",
+      "artist": "Rembrandt van Rijn",
+      "year": "c. 1655–60",
+      "w": 980,
+      "h": 1200,
+      "bytes": 28242,
+      "source": "https://www.clevelandart.org/art/1950.252",
+      "credit": "The Cleveland Museum of Art, 1950.252"
+    },
+    {
+      "file": "dutch-04.webp",
+      "title": "An Elderly Man in Prayer",
+      "artist": "Rembrandt van Rijn",
+      "year": "1660s or later",
+      "w": 991,
+      "h": 1200,
+      "bytes": 42882,
+      "source": "https://www.clevelandart.org/art/1967.16",
+      "credit": "The Cleveland Museum of Art, 1967.16"
+    },
+    {
+      "file": "dutch-05.webp",
+      "title": "Portrait of Tieleman Roosterman",
+      "artist": "Frans Hals",
+      "year": "1634",
+      "w": 893,
+      "h": 1200,
+      "bytes": 29870,
+      "source": "https://www.clevelandart.org/art/1999.173",
+      "credit": "The Cleveland Museum of Art, 1999.173"
+    },
+    {
+      "file": "dutch-06.webp",
+      "title": "Portrait of a Woman, probably Aeltje Dircksdr. Pater",
+      "artist": "Frans Hals",
+      "year": "1638",
+      "w": 928,
+      "h": 1200,
+      "bytes": 105394,
+      "source": "https://www.clevelandart.org/art/1948.137",
+      "credit": "The Cleveland Museum of Art, 1948.137"
+    },
+    {
+      "file": "dutch-07.webp",
+      "title": "Low Waterfall in a Wooded Landscape with a Dead Beech Tree",
+      "artist": "Jacob van Ruisdael",
+      "year": "c. 1660–70",
+      "w": 1200,
+      "h": 905,
+      "bytes": 66152,
+      "source": "https://www.clevelandart.org/art/1967.63",
+      "credit": "The Cleveland Museum of Art, 1967.63"
+    },
+    {
+      "file": "dutch-08.webp",
+      "title": "Landscape with a Windmill",
+      "artist": "Jacob van Ruisdael",
+      "year": "1646",
+      "w": 1200,
+      "h": 865,
+      "bytes": 78920,
+      "source": "https://www.clevelandart.org/art/1967.19",
+      "credit": "The Cleveland Museum of Art, 1967.19"
+    }
+  ],
+  "barbizon": [
+    {
+      "file": "barbizon-01.webp",
+      "title": "Lormes: Goat-Girl Sitting Beside a Stream in a Forest",
+      "artist": "Jean Baptiste Camille Corot",
+      "year": "1842",
+      "w": 1200,
+      "h": 878,
+      "bytes": 64512,
+      "source": "https://www.clevelandart.org/art/1962.35",
+      "credit": "The Cleveland Museum of Art, 1962.35"
+    },
+    {
+      "file": "barbizon-02.webp",
+      "title": "Woman Meditating",
+      "artist": "Jean Baptiste Camille Corot",
+      "year": "after 1868",
+      "w": 868,
+      "h": 1200,
+      "bytes": 45470,
+      "source": "https://www.clevelandart.org/art/1949.189",
+      "credit": "The Cleveland Museum of Art, 1949.189"
+    },
+    {
+      "file": "barbizon-03.webp",
+      "title": "The Pond at the Entrance of the Woods",
+      "artist": "Jean Baptiste Camille Corot",
+      "year": "c. 1860–75",
+      "w": 1200,
+      "h": 904,
+      "bytes": 88218,
+      "source": "https://www.clevelandart.org/art/1951.330",
+      "credit": "The Cleveland Museum of Art, 1951.330"
+    },
+    {
+      "file": "barbizon-04.webp",
+      "title": "Sunset on the River Oise",
+      "artist": "Charles François Daubigny",
+      "year": "1866",
+      "w": 1200,
+      "h": 676,
+      "bytes": 61912,
+      "source": "https://www.clevelandart.org/art/1964.289",
+      "credit": "The Cleveland Museum of Art, 1964.289"
+    },
+    {
+      "file": "barbizon-05.webp",
+      "title": "The Hillsides of Méry-sur-Oise, Opposite Auvers",
+      "artist": "Charles François Daubigny",
+      "year": "1873",
+      "w": 1200,
+      "h": 719,
+      "bytes": 66542,
+      "source": "https://www.clevelandart.org/art/1916.1048",
+      "credit": "The Cleveland Museum of Art, 1916.1048"
+    },
+    {
+      "file": "barbizon-06.webp",
+      "title": "Leaving the Forest, Fontainebleau: Setting Sun",
+      "artist": "Théodore Rousseau",
+      "year": "1851",
+      "w": 1200,
+      "h": 1009,
+      "bytes": 136816,
+      "source": "https://www.clevelandart.org/art/1983.70",
+      "credit": "The Cleveland Museum of Art, 1983.70"
+    },
+    {
+      "file": "barbizon-07.webp",
+      "title": "The Oak Tree",
+      "artist": "Théodore Rousseau",
+      "year": "19th century",
+      "w": 1200,
+      "h": 936,
+      "bytes": 140382,
+      "source": "https://www.clevelandart.org/art/1916.1052",
+      "credit": "The Cleveland Museum of Art, 1916.1052"
+    },
+    {
+      "file": "barbizon-08.webp",
+      "title": "Marshlands",
+      "artist": "Théodore Rousseau",
+      "year": "not dated",
+      "w": 1200,
+      "h": 776,
+      "bytes": 139830,
+      "source": "https://www.clevelandart.org/art/1964.290",
+      "credit": "The Cleveland Museum of Art, 1964.290"
+    }
+  ],
+  "postimp": [
+    {
+      "file": "postimp-01.webp",
+      "title": "Under the Trees (from \"The Public Gardens\")",
+      "artist": "Édouard Vuillard",
+      "year": "1894",
+      "w": 543,
+      "h": 1200,
+      "bytes": 92024,
+      "source": "https://www.clevelandart.org/art/1953.212",
+      "credit": "The Cleveland Museum of Art, 1953.212"
+    },
+    {
+      "file": "postimp-02.webp",
+      "title": "At the Café",
+      "artist": "Édouard Vuillard",
+      "year": "c. 1897–99",
+      "w": 1142,
+      "h": 1200,
+      "bytes": 124040,
+      "source": "https://www.clevelandart.org/art/1958.57",
+      "credit": "The Cleveland Museum of Art, 1958.57"
+    },
+    {
+      "file": "postimp-03.webp",
+      "title": "Luncheon (Annette and Her Grandmother)",
+      "artist": "Édouard Vuillard",
+      "year": "1899",
+      "w": 1200,
+      "h": 1113,
+      "bytes": 245360,
+      "source": "https://www.clevelandart.org/art/2020.118",
+      "credit": "The Cleveland Museum of Art, 2020.118"
+    },
+    {
+      "file": "postimp-04.webp",
+      "title": "Café Wepler",
+      "artist": "Édouard Vuillard",
+      "year": "c. 1908–10, reworked in 1912",
+      "w": 1200,
+      "h": 724,
+      "bytes": 166398,
+      "source": "https://www.clevelandart.org/art/1950.90",
+      "credit": "The Cleveland Museum of Art, 1950.90"
+    },
+    {
+      "file": "postimp-05.webp",
+      "title": "Blessing of a Yacht on the Belon River",
+      "artist": "Maurice Denis",
+      "year": "1899",
+      "w": 1200,
+      "h": 1123,
+      "bytes": 251516,
+      "source": "https://www.clevelandart.org/art/2020.110",
+      "credit": "The Cleveland Museum of Art, 2020.110"
+    },
+    {
+      "file": "postimp-06.webp",
+      "title": "Eva Meurier in a Green Dress",
+      "artist": "Maurice Denis",
+      "year": "1891",
+      "w": 833,
+      "h": 1200,
+      "bytes": 179858,
+      "source": "https://www.clevelandart.org/art/2002.92",
+      "credit": "The Cleveland Museum of Art, 2002.92"
+    },
+    {
+      "file": "postimp-07.webp",
+      "title": "The Orange Christ",
+      "artist": "Maurice Denis",
+      "year": "1889",
+      "w": 967,
+      "h": 1200,
+      "bytes": 195812,
+      "source": "https://www.clevelandart.org/art/2020.107",
+      "credit": "The Cleveland Museum of Art, 2020.107"
+    },
+    {
+      "file": "postimp-08.webp",
+      "title": "Procession or Pardon at Perros-Guirec",
+      "artist": "Maurice Denis",
+      "year": "1891",
+      "w": 987,
+      "h": 1200,
+      "bytes": 187374,
+      "source": "https://www.clevelandart.org/art/2020.108",
+      "credit": "The Cleveland Museum of Art, 2020.108"
+    }
+  ],
+  "american": [
+    {
+      "file": "american-01.webp",
+      "title": "Harvest Time",
+      "artist": "George Inness",
+      "year": "1864",
+      "w": 1200,
+      "h": 878,
+      "bytes": 221742,
+      "source": "https://www.clevelandart.org/art/1939.234",
+      "credit": "The Cleveland Museum of Art, 1939.234"
+    },
+    {
+      "file": "american-02.webp",
+      "title": "Landscape",
+      "artist": "George Inness",
+      "year": "1888",
+      "w": 1200,
+      "h": 988,
+      "bytes": 127592,
+      "source": "https://www.clevelandart.org/art/1929.464",
+      "credit": "The Cleveland Museum of Art, 1929.464"
+    },
+    {
+      "file": "american-03.webp",
+      "title": "In the Woods",
+      "artist": "George Inness",
+      "year": "1866",
+      "w": 899,
+      "h": 1200,
+      "bytes": 83644,
+      "source": "https://www.clevelandart.org/art/1938.40",
+      "credit": "The Cleveland Museum of Art, 1938.40"
+    },
+    {
+      "file": "american-04.webp",
+      "title": "The Wood Chopper",
+      "artist": "George Inness",
+      "year": "1849",
+      "w": 1200,
+      "h": 992,
+      "bytes": 130840,
+      "source": "https://www.clevelandart.org/art/1963.501",
+      "credit": "The Cleveland Museum of Art, 1963.501"
+    },
+    {
+      "file": "american-05.webp",
+      "title": "Portrait of Dora Wheeler",
+      "artist": "William Merritt Chase",
+      "year": "1882–83",
+      "w": 1200,
+      "h": 1148,
+      "bytes": 132184,
+      "source": "https://www.clevelandart.org/art/1921.1239",
+      "credit": "The Cleveland Museum of Art, 1921.1239"
+    },
+    {
+      "file": "american-06.webp",
+      "title": "The Old Road to the Sea",
+      "artist": "William Merritt Chase",
+      "year": "c. 1893",
+      "w": 1200,
+      "h": 959,
+      "bytes": 76982,
+      "source": "https://www.clevelandart.org/art/1938.333",
+      "credit": "The Cleveland Museum of Art, 1938.333"
+    },
+    {
+      "file": "american-07.webp",
+      "title": "Portrait of My Daughter Alice",
+      "artist": "William Merritt Chase",
+      "year": "c. 1895",
+      "w": 795,
+      "h": 1200,
+      "bytes": 48908,
+      "source": "https://www.clevelandart.org/art/1920.254",
+      "credit": "The Cleveland Museum of Art, 1920.254"
+    },
+    {
+      "file": "american-08.webp",
+      "title": "Gray Day on the Bay",
+      "artist": "William Merritt Chase",
+      "year": "c. 1886",
+      "w": 1200,
+      "h": 817,
+      "bytes": 89150,
+      "source": "https://www.clevelandart.org/art/1957.423",
+      "credit": "The Cleveland Museum of Art, 1957.423"
+    }
   ]
 }

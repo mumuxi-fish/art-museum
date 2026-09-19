@@ -81,3 +81,63 @@
 | Vase of Flowers | Odilon Redon | c. 1905 | [CMA 1935.233](https://www.clevelandart.org/art/1935.233) |
 | Fruits and Flowers | Henry Lee McFee | 1927 | [CMA 1928.258](https://www.clevelandart.org/art/1928.258) |
 | Chrysanthemum | Piet Mondrian | 1906–42 | [CMA 1958.38](https://www.clevelandart.org/art/1958.38) |
+
+## 展厅六 · 荷兰黄金时代
+
+位置：12.0 × 14.5 m，层高 7.2 m
+
+| 作品 | 作者 | 年代 | 来源 |
+| --- | --- | --- | --- |
+| Portrait of a Woman | Rembrandt van Rijn | 1635 or earlier | [CMA 1944.90](https://www.clevelandart.org/art/1944.90) |
+| A Young Man with a Chain | Rembrandt van Rijn | c. 1629 or 1632 | [CMA 1942.644](https://www.clevelandart.org/art/1942.644) |
+| A Bearded Man Wearing a Hat | Rembrandt van Rijn | c. 1655–60 | [CMA 1950.252](https://www.clevelandart.org/art/1950.252) |
+| An Elderly Man in Prayer | Rembrandt van Rijn | 1660s or later | [CMA 1967.16](https://www.clevelandart.org/art/1967.16) |
+| Portrait of Tieleman Roosterman | Frans Hals | 1634 | [CMA 1999.173](https://www.clevelandart.org/art/1999.173) |
+| Portrait of a Woman, probably Aeltje Dircksdr. Pater | Frans Hals | 1638 | [CMA 1948.137](https://www.clevelandart.org/art/1948.137) |
+| Landscape with a Windmill | Jacob van Ruisdael | 1646 | [CMA 1967.19](https://www.clevelandart.org/art/1967.19) |
+| Low Waterfall in a Wooded Landscape with a Dead Beech Tree | Jacob van Ruisdael | c. 1660–70 | [CMA 1967.63](https://www.clevelandart.org/art/1967.63) |
+
+## 展厅七 · 巴比松与写实
+
+位置：12.0 × 11.5 m，层高 7.0 m
+
+| 作品 | 作者 | 年代 | 来源 |
+| --- | --- | --- | --- |
+| The Pond at the Entrance of the Woods | Jean Baptiste Camille Corot | c. 1860–75 | [CMA 1951.330](https://www.clevelandart.org/art/1951.330) |
+| Woman Meditating | Jean Baptiste Camille Corot | after 1868 | [CMA 1949.189](https://www.clevelandart.org/art/1949.189) |
+| Lormes: Goat-Girl Sitting Beside a Stream in a Forest | Jean Baptiste Camille Corot | 1842 | [CMA 1962.35](https://www.clevelandart.org/art/1962.35) |
+| Sunset on the River Oise | Charles François Daubigny | 1866 | [CMA 1964.289](https://www.clevelandart.org/art/1964.289) |
+| The Hillsides of Méry-sur-Oise, Opposite Auvers | Charles François Daubigny | 1873 | [CMA 1916.1048](https://www.clevelandart.org/art/1916.1048) |
+| Leaving the Forest, Fontainebleau: Setting Sun | Théodore Rousseau | 1851 | [CMA 1983.70](https://www.clevelandart.org/art/1983.70) |
+| Marshlands | Théodore Rousseau | not dated | [CMA 1964.290](https://www.clevelandart.org/art/1964.290) |
+| The Oak Tree | Théodore Rousseau | 19th century | [CMA 1916.1052](https://www.clevelandart.org/art/1916.1052) |
+
+## 展厅八 · 后印象与纳比
+
+位置：8.0 × 16.5 m，层高 7.4 m
+
+| 作品 | 作者 | 年代 | 来源 |
+| --- | --- | --- | --- |
+| Under the Trees (from "The Public Gardens") | Édouard Vuillard | 1894 | [CMA 1953.212](https://www.clevelandart.org/art/1953.212) |
+| At the Café | Édouard Vuillard | c. 1897–99 | [CMA 1958.57](https://www.clevelandart.org/art/1958.57) |
+| Luncheon (Annette and Her Grandmother) | Édouard Vuillard | 1899 | [CMA 2020.118](https://www.clevelandart.org/art/2020.118) |
+| Café Wepler | Édouard Vuillard | c. 1908–10, reworked in 1912 | [CMA 1950.90](https://www.clevelandart.org/art/1950.90) |
+| Blessing of a Yacht on the Belon River | Maurice Denis | 1899 | [CMA 2020.110](https://www.clevelandart.org/art/2020.110) |
+| Eva Meurier in a Green Dress | Maurice Denis | 1891 | [CMA 2002.92](https://www.clevelandart.org/art/2002.92) |
+| Procession or Pardon at Perros-Guirec | Maurice Denis | 1891 | [CMA 2020.108](https://www.clevelandart.org/art/2020.108) |
+| The Orange Christ | Maurice Denis | 1889 | [CMA 2020.107](https://www.clevelandart.org/art/2020.107) |
+
+## 展厅九 · 美国绘画
+
+位置：6.5 × 14.0 m，层高 7.0 m
+
+| 作品 | 作者 | 年代 | 来源 |
+| --- | --- | --- | --- |
+| In the Woods | George Inness | 1866 | [CMA 1938.40](https://www.clevelandart.org/art/1938.40) |
+| Landscape | George Inness | 1888 | [CMA 1929.464](https://www.clevelandart.org/art/1929.464) |
+| Harvest Time | George Inness | 1864 | [CMA 1939.234](https://www.clevelandart.org/art/1939.234) |
+| The Wood Chopper | George Inness | 1849 | [CMA 1963.501](https://www.clevelandart.org/art/1963.501) |
+| Portrait of Dora Wheeler | William Merritt Chase | 1882–83 | [CMA 1921.1239](https://www.clevelandart.org/art/1921.1239) |
+| The Old Road to the Sea | William Merritt Chase | c. 1893 | [CMA 1938.333](https://www.clevelandart.org/art/1938.333) |
+| Gray Day on the Bay | William Merritt Chase | c. 1886 | [CMA 1957.423](https://www.clevelandart.org/art/1957.423) |
+| Portrait of My Daughter Alice | William Merritt Chase | c. 1895 | [CMA 1920.254](https://www.clevelandart.org/art/1920.254) |

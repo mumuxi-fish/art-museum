@@ -23,7 +23,10 @@ API = "https://openaccess-api.clevelandart.org/api/artworks/"
 OUT_DIR = sys.argv[1] if len(sys.argv) > 1 else "public/art"
 META_OUT = sys.argv[2] if len(sys.argv) > 2 else "tools/artworks.json"
 
-MAX_EDGE = 1400
+MAX_EDGE = 1200
+# 1200 而不是 1400：详情浮层里大图的显示高度约 608px，1200 长边已接近 1:1，
+# 再大只是白白增加下载量（实测 1400→1200 省了 57% 体积）。
+# 已有的 40 幅是用 tools/to-webp.py 降到 1200 的，这里保持一致。
 # 挂在墙上的画不能太扁或太瘦。3400x231 的长卷铺满整面墙会很怪,直接挡掉。
 MIN_ASPECT = 0.34
 MAX_ASPECT = 3.05
@@ -97,6 +100,52 @@ THEMES = [
         "types": ["Painting"],
         "title_re": r"(?i)(flower|bouquet|vase|rose|blossom|chrysanthem|peony|dahlia|hortensia|iris|tulip|still life|garland|jasmine|azalea|pansy|fruit)",
         "max_per_artist": 2,
+    },
+
+    # ---- 以下四厅按「画派」划分，和上面按题材分的五厅互补 ----
+    # 时代跨度从 17 世纪荷兰一直到 20 世纪美国，走一圈是一条完整的艺术史脉络。
+    # artists 白名单是必须的：Cleveland 的搜索是模糊匹配，
+    # 搜 "ruisdael" 会把 van Dyck、van Beyeren 一起捞出来（实测过）。
+    {
+        "key": "dutch",
+        "name": "展厅六 · 荷兰黄金时代",
+        "queries": ["rembrandt", "frans hals", "jacob van ruisdael",
+                    "salomon van ruysdael", "jan steen"],
+        "artists": ["rembrandt", "hals", "ruisdael", "ruysdael", "steen", "flinck"],
+        "types": ["Painting"],
+        "title_re": r".*",
+        "max_per_artist": 4,
+    },
+    {
+        "key": "barbizon",
+        "name": "展厅七 · 巴比松与写实",
+        "queries": ["corot", "courbet", "daubigny", "theodore rousseau",
+                    "millet", "bonvin"],
+        "artists": ["corot", "courbet", "daubigny", "rousseau", "millet",
+                    "bonvin", "meissonier"],
+        "types": ["Painting"],
+        "title_re": r"(?i)^(?!.*(portrait of|self-portrait)).*$",
+        "max_per_artist": 3,
+    },
+    {
+        "key": "postimp",
+        "name": "展厅八 · 后印象与纳比",
+        "queries": ["cezanne", "gauguin", "vuillard", "bonnard", "denis", "seurat"],
+        "artists": ["cezanne", "gauguin", "vuillard", "bonnard", "denis",
+                    "seurat", "guillaumin", "maufra"],
+        "types": ["Painting"],
+        "title_re": r".*",
+        "max_per_artist": 4,
+    },
+    {
+        "key": "american",
+        "name": "展厅九 · 美国绘画",
+        "queries": ["george inness", "winslow homer", "william merritt chase",
+                    "john singer sargent", "childe hassam"],
+        "artists": ["inness", "homer", "chase", "sargent", "hassam"],
+        "types": ["Painting"],
+        "title_re": r".*",
+        "max_per_artist": 4,
     },
 ]
 
@@ -218,10 +267,16 @@ def main():
     used = set()
     if only and os.path.exists(META_OUT):
         result = json.load(open(META_OUT, encoding="utf-8"))
-        for items in result.values():
+        for key, items in result.items():
+            # 要重跑的主题不能算进 used —— 否则它上次自己抓的结果会被当成
+            # "别的厅已经用过了"而去重掉，重跑一次反而越抓越少（实测 dutch
+            # 从 8 幅掉到 4 幅）。
+            if key in only:
+                continue
             for it in items:
                 used.add(dedupe_key(it["title"]))
-        print(f"沿用已有 {sum(len(v) for v in result.values())} 幅,重跑 {sorted(only)}")
+        print(f"沿用已有 {sum(len(v) for k, v in result.items() if k not in only)} 幅,"
+              f"重跑 {sorted(only)}")
 
     for theme in THEMES:
         if only and theme["key"] not in only:
