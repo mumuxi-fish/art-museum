@@ -8,8 +8,14 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="description" content="沉浸式 3D 虚拟艺术馆 · 40 幅克利夫兰艺术博物馆 CC0 公版画作 · 门厅、主廊与五个展厅" />
     <meta property="og:title" content="Art Museum · 沉浸式 3D 艺术馆" />
-    <meta property="og:description" content="走进去，逛一圈。40 幅公版画作，五个展厅。" />
+    <meta property="og:description" content="走进去，逛一圈。72 幅公版画作，九个展厅。" />
     <meta property="og:type" content="website" />
+    <!-- og:image 必须是绝对地址，分享出去才抓得到 -->
+    <meta property="og:image" content="https://mumuxi-fish.github.io/art-museum/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://mumuxi-fish.github.io/art-museum/og-image.jpg" />
     <title>Art Museum · 沉浸式 3D 艺术馆</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎨</text></svg>">
     <link rel="stylesheet" href="/src/style.css" />
@@ -22,10 +28,27 @@
     </div>
     <button id="bodyToggle" title="显示/隐藏人物">👤</button>
     <button id="galleryMenuBtn" title="展厅列表">🏛</button>
+    <button id="helpBtn" title="操作说明（H）">?</button>
+
+    <!-- 操作说明。开场提示几秒后就没地方查了，这里给一个常驻入口 -->
+    <div id="help-panel" class="help-panel hidden">
+      <button id="help-close" class="help-close" title="关闭">✕</button>
+      <h2>怎么逛</h2>
+      <dl class="help-list">
+        <div><dt><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></dt><dd>走动</dd></div>
+        <div><dt>鼠标</dt><dd>转动视角（点一下画面进入沉浸模式）</dd></div>
+        <div><dt><kbd>E</kbd></dt><dd>看向画作时打开作品详情；走到长凳前坐下</dd></div>
+        <div><dt><kbd>F</kbd></dt><dd>手电筒</dd></div>
+        <div><dt><kbd>M</kbd></dt><dd>声音开关</dd></div>
+        <div><dt><kbd>H</kbd></dt><dd>打开 / 关闭这份说明</dd></div>
+        <div><dt><kbd>ESC</kbd></dt><dd>关闭浮层 / 起身 / 退出沉浸模式</dd></div>
+      </dl>
+      <p class="help-note">馆内九个展厅：前五厅按题材，后四厅按画派。<br>左下角的小地图会跟着你走。</p>
+    </div>
 
     <!-- 开场提示，几秒后自动淡出 -->
     <div id="intro-hint" class="intro-hint">
-      <p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 走动 · 鼠标转视角 · <kbd>E</kbd> 看作品 / 坐下 · <kbd>F</kbd> 手电筒 · <kbd>M</kbd> 声音</p>
+      <p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 走动 · 鼠标转视角 · <kbd>E</kbd> 看作品 / 坐下 · <kbd>F</kbd> 手电筒 · <kbd>M</kbd> 声音 · <kbd>H</kbd> 全部操作</p>
     </div>
 
     <!-- 可交互提示（桌面上按 E，移动端直接点） -->

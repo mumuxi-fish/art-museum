@@ -32,6 +32,9 @@ const flashBtn = document.getElementById('flashBtn');
 const minimapEl = document.getElementById('minimap');
 const minimapCanvas = document.getElementById('minimap-canvas');
 const minimapRoom = document.getElementById('minimap-room');
+const helpBtn = document.getElementById('helpBtn');
+const helpPanel = document.getElementById('help-panel');
+const helpClose = document.getElementById('help-close');
 const loadingEl = document.getElementById('loading');
 const fatalEl = document.getElementById('fatal');
 const progressEl = document.getElementById('art-progress');
@@ -373,9 +376,11 @@ detailEl?.addEventListener('click', (e) => {
 window.addEventListener('keydown', (e) => {
   if (e.code === 'KeyF') toggle();
   if (e.code === 'KeyM') toggleSound();
+  if (e.code === 'KeyH') toggleHelp();
   if (e.code === 'KeyE') activate();
   if (e.code === 'Escape') {
-    if (detailOpen) closeArtDetail();
+    if (!helpPanel?.classList.contains('hidden')) toggleHelp(false);
+    else if (detailOpen) closeArtDetail();
     else if (isSeated()) stand();
   }
 });
@@ -399,6 +404,18 @@ function toggleSound() {
   const isMuted = toggleMute();
   toast(isMuted ? '声音已关' : '声音已开');
 }
+
+// 操作说明面板。开场提示几秒后就没了，这里给个常驻入口（按钮或 H 键）。
+function toggleHelp(force) {
+  if (!helpPanel) return;
+  const show = force ?? helpPanel.classList.contains('hidden');
+  helpPanel.classList.toggle('hidden', !show);
+  helpBtn?.classList.toggle('active', show);
+  // 面板要能用鼠标点，所以打开时先退出指针锁定
+  if (show && controls?.isLocked) controls.unlock();
+}
+helpBtn?.addEventListener('click', (e) => { e.stopPropagation(); toggleHelp(); });
+helpClose?.addEventListener('click', () => toggleHelp(false));
 
 initFlashlight(flashBtn, {
   onToggle: (isOn) => toast(isOn ? '手电筒已开' : '手电筒已关'),

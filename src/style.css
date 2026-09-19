@@ -830,3 +830,97 @@ body.drag-look .drag-hint { display: block; }
   .minimap canvas { width: 132px; height: 81px; }
   .minimap-room { font-size: 9px; margin-top: 3px; }
 }
+
+/* ========== 操作说明 ========== */
+#helpBtn {
+  position: fixed;
+  top: 16px;
+  right: 62px;
+  z-index: 20;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+#helpBtn:hover { background: rgba(0, 0, 0, 0.8); transform: scale(1.08); }
+
+.help-panel {
+  position: fixed;
+  top: 70px;
+  right: 16px;
+  z-index: 30;
+  width: 300px;
+  padding: 20px 22px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(10, 10, 14, 0.88);
+  backdrop-filter: blur(14px);
+  color: rgba(240, 235, 227, 0.88);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+  animation: helpIn 0.18s ease-out;
+}
+.help-panel.hidden { display: none; }
+@keyframes helpIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: none; }
+}
+.help-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  border: none;
+  background: none;
+  color: rgba(240, 235, 227, 0.45);
+  font-size: 15px;
+  cursor: pointer;
+}
+.help-close:hover { color: #fff; }
+.help-panel h2 {
+  margin: 0 0 14px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #fff;
+}
+.help-list { margin: 0; }
+.help-list > div {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 10px;
+  padding: 6px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+.help-list > div:first-child { border-top: none; }
+.help-list dt { color: rgba(127, 212, 196, 0.9); font-size: 12px; }
+.help-list dd { margin: 0; font-size: 12px; line-height: 1.5; color: rgba(240, 235, 227, 0.7); }
+.help-list kbd {
+  display: inline-block;
+  min-width: 18px;
+  margin-right: 2px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  font: inherit;
+  font-size: 11px;
+  text-align: center;
+}
+.help-note {
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  font-size: 11px;
+  line-height: 1.6;
+  color: rgba(240, 235, 227, 0.42);
+}
+@media (max-width: 768px) {
+  #helpBtn { top: 12px; right: 112px; width: 38px; height: 38px; font-size: 17px; }
+  .help-panel { top: 58px; right: 10px; left: 10px; width: auto; }
+}
