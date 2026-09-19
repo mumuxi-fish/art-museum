@@ -67,10 +67,20 @@ export function buildPlan(data) {
     b.openings.push(op);
   };
 
+  // 只有「交通空间 ↔ 展厅」之间才开门。
+  //
+  // 起因：新加四个展厅后，它们和已有展厅共享了墙（比如 dawn 的西墙 x=12
+  // 正好是 dutch 的东墙），于是这里给展厅之间也开了门洞 —— 而侧墙是挂画的
+  // 地方，结果就是「有的画挂在门里」。
+  //
+  // 展厅之间本来就不该直接连通：逛展的动线是「展厅 → 走廊 → 展厅」。
+  const isTransport = (r) => r.kind === 'entrance' || r.kind === 'corridor';
+
   for (let i = 0; i < rooms.length; i++) {
     for (let j = i + 1; j < rooms.length; j++) {
       const a = rooms[i];
       const b = rooms[j];
+      if (!isTransport(a) && !isTransport(b)) continue; // 展厅之间不开门
       // 竖直贴合（共享一条 x 边）
       if (Math.abs(a.x1 - b.x0) < EPS) {
         const lo = Math.max(a.z0, b.z0);
