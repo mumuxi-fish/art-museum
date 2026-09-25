@@ -2400,7 +2400,7 @@
         "hero": 16.0
       },
       "blurb": "十七世纪的荷兰，商人、市长与他们的妻子。伦勃朗与哈尔斯用一束侧光，把一个人的一生写在脸上；鲁伊斯达尔则把整片低地的天空收进画框。",
-      "yearRange": "",
+      "yearRange": "1625–1660",
       "benches": [
         {
           "x": 6.0,
@@ -2416,17 +2416,17 @@
       "arts": [
         {
           "id": "dutch-art-01",
-          "title": "Portrait of a Woman",
+          "title": "A Young Man with a Chain",
           "artist": "Rembrandt van Rijn",
-          "year": "1635 or earlier",
-          "image": "dutch-01.webp",
-          "source": "https://www.clevelandart.org/art/1944.90",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "year": "c. 1629 or 1632",
+          "image": "dutch-02.webp",
+          "source": "https://www.clevelandart.org/art/1942.644",
+          "sortYear": 1625,
+          "description": "This painting is an example of a tronie, a Dutch word meaning “head” or “facial expression.” Tronies were not intended to be identifiable portraits, but artistic investigations of facial appearance and fanciful costume. Particularly in the years around 1630, Rembrandt used this popular format to explore different lighting effects and facial expressions. Here, the strong contrast of light and shade shapes the contours of the young man’s face; unusual accessories such as the striped scarf and glittering pendant on a jeweled chain add an exotic touch. Although this painting bears Rembrandt’s monogram, the authorship is not certain. Some scholars have attributed it to Isaac de Joudreville (1613–1648), a pupil and associate of Rembrandt who painted comparable tronies in a similarly smooth and elegant style.",
+          "didYouKnow": "Once identified as Rembrandt himself, the sitter is now considered an anonymous study of human character.",
+          "technique": "oil on wood",
+          "dimensions": "未装框 43.8 × 57.8 cm（17 × 22 in）",
+          "creditline": "Bequest of John L. Severance",
           "wall": "north",
           "position": {
             "x": 2.733,
@@ -2434,8 +2434,8 @@
             "z": 0.17
           },
           "size": {
-            "width": 1.856,
-            "height": 2.263
+            "width": 1.773,
+            "height": 2.369
           },
           "rotation": {
             "y": 0.0,
@@ -2446,17 +2446,17 @@
         },
         {
           "id": "dutch-art-02",
-          "title": "A Young Man with a Chain",
+          "title": "Portrait of a Woman",
           "artist": "Rembrandt van Rijn",
-          "year": "c. 1629 or 1632",
-          "image": "dutch-02.webp",
-          "source": "https://www.clevelandart.org/art/1942.644",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "year": "1635 or earlier",
+          "image": "dutch-01.webp",
+          "source": "https://www.clevelandart.org/art/1944.90",
+          "sortYear": 1630,
+          "description": "At the age of 25, Rembrandt moved from his hometown of Leiden to the bustling city of Amsterdam. Within a few years he had become one of the city’s most successful portrait painters, creating remarkably vivid likenesses that seemed to express the personality and soul of the sitter. Here, Rembrandt used smooth, fluid brushstrokes to recreate the soft texture of the woman’s skin. In contrast, thicker, more textured strokes draw attention to the lavish display of her lace collar and gold jewelry—details sure to please a wealthy client. The extraordinary demand at that time for a portrait by Rembrandt meant that in many cases (including, probably, this painting) he called upon assistants to help complete the work.",
+          "didYouKnow": "This painting is probably a pendant to a portrait of a man that is now at the Kawamura Memorial Museum of Art in Japan. Both were cut down from their original rectangular shape.",
+          "technique": "oil on wood",
+          "dimensions": "未装框 64.8 × 77.5 cm（25 × 30 in）",
+          "creditline": "The Elisabeth Severance Prentiss Collection",
           "wall": "north",
           "position": {
             "x": 6.0,
@@ -2464,8 +2464,8 @@
             "z": 0.17
           },
           "size": {
-            "width": 2.171,
-            "height": 2.902
+            "width": 2.273,
+            "height": 2.772
           },
           "rotation": {
             "y": 0.0,
@@ -2476,17 +2476,17 @@
         },
         {
           "id": "dutch-art-03",
-          "title": "A Bearded Man Wearing a Hat",
-          "artist": "Rembrandt van Rijn",
-          "year": "c. 1655–60",
-          "image": "dutch-03.webp",
-          "source": "https://www.clevelandart.org/art/1950.252",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "title": "Portrait of Tieleman Roosterman",
+          "artist": "Frans Hals",
+          "year": "1634",
+          "image": "dutch-05.webp",
+          "source": "https://www.clevelandart.org/art/1999.173",
+          "sortYear": 1634,
+          "description": "An extremely wealthy linen and silk merchant in Haarlem, Tieleman Roosterman was 36 years old when Frans Hals painted his portrait. Unlike many Dutch painters of the period, Hals favored strong, visible brushstrokes that convey the vitality of his sitters. Roosterman strikes a confident pose, his costume sober but luxurious: his sleeves are decorated with braid and buttons, and ribbon rosettes encircle the waist of his doublet. The rich black of his suit is offset by the broad linen collar and lace-edged cuffs—fashionable details befitting a successful cloth merchant.",
+          "didYouKnow": "Roosterman may have ordered this portrait--and one of his wife--to commemorate their wedding in 1631.",
+          "technique": "oil on canvas",
+          "dimensions": "未装框 87.0 × 117.0 cm（34 × 46 in）",
+          "creditline": "Leonard C. Hanna Jr. Fund",
           "wall": "north",
           "position": {
             "x": 9.267,
@@ -2494,8 +2494,8 @@
             "z": 0.17
           },
           "size": {
-            "width": 1.852,
-            "height": 2.268
+            "width": 1.768,
+            "height": 2.376
           },
           "rotation": {
             "y": 0.0,
@@ -2506,82 +2506,22 @@
         },
         {
           "id": "dutch-art-04",
-          "title": "An Elderly Man in Prayer",
-          "artist": "Rembrandt van Rijn",
-          "year": "1660s or later",
-          "image": "dutch-04.webp",
-          "source": "https://www.clevelandart.org/art/1967.16",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
-          "wall": "east",
-          "position": {
-            "x": 11.83,
-            "y": 2.2,
-            "z": 3.19
-          },
-          "size": {
-            "width": 1.676,
-            "height": 2.029
-          },
-          "rotation": {
-            "y": -1.5708,
-            "z": 0
-          },
-          "hue": 0.08,
-          "hero": false
-        },
-        {
-          "id": "dutch-art-05",
-          "title": "Portrait of Tieleman Roosterman",
-          "artist": "Frans Hals",
-          "year": "1634",
-          "image": "dutch-05.webp",
-          "source": "https://www.clevelandart.org/art/1999.173",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
-          "wall": "east",
-          "position": {
-            "x": 11.83,
-            "y": 2.2,
-            "z": 7.25
-          },
-          "size": {
-            "width": 1.591,
-            "height": 2.137
-          },
-          "rotation": {
-            "y": -1.5708,
-            "z": 0
-          },
-          "hue": 0.08,
-          "hero": false
-        },
-        {
-          "id": "dutch-art-06",
           "title": "Portrait of a Woman, probably Aeltje Dircksdr. Pater",
           "artist": "Frans Hals",
           "year": "1638",
           "image": "dutch-06.webp",
           "source": "https://www.clevelandart.org/art/1948.137",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "sortYear": 1638,
+          "description": "Portraits by Hals often feature bold, jagged brushstrokes. This portrait shows him experimenting with the “wet-into-wet,” technique, in which layers of paint were added in succession without being allowed to dry in between. Note the blended strokes used at the woman’s hairline to suggest individual strands of hair. The sitter has been tentatively identified as Aeltje Dircksdr. Pater (1597–1678), wife of the Haarlem brewer and burgomaster (mayor) Jan de Wael (1594–1663). An inscription states she was 41 when Hals painted her.",
+          "didYouKnow": "Jewelry, lace, and sumptuous fabrics show off this woman's wealth—and the artist's skill in painting them.",
+          "technique": "oil on canvas",
+          "dimensions": "未装框 52.3 × 66.5 cm（20 × 26 in）",
+          "creditline": "Purchase from the J. H. Wade Fund",
           "wall": "east",
           "position": {
             "x": 11.83,
             "y": 2.2,
-            "z": 11.31
+            "z": 3.19
           },
           "size": {
             "width": 1.622,
@@ -2595,18 +2535,78 @@
           "hero": false
         },
         {
-          "id": "dutch-art-07",
+          "id": "dutch-art-05",
           "title": "Landscape with a Windmill",
           "artist": "Jacob van Ruisdael",
           "year": "1646",
           "image": "dutch-08.webp",
           "source": "https://www.clevelandart.org/art/1967.19",
-          "sortYear": null,
-          "description": "",
+          "sortYear": 1646,
+          "description": "Even this early work by Jacob van Ruisdael—painted while he was still a teenager—shows his unique approach to landscape that made the simplest motifs seem grand and heroic. Dark forms are massed in the foreground, creating a stark contrast to the expansive, sunlit plain at left.",
+          "didYouKnow": "Look closely at the field across from the windmill: white linens are naturally bleached in the sun, a process that would have taken several months.",
+          "technique": "oil on wood",
+          "dimensions": "未装框 68.5 × 49.5 cm（26 × 19 in）",
+          "creditline": "Mr. and Mrs. William H. Marlatt Fund",
+          "wall": "east",
+          "position": {
+            "x": 11.83,
+            "y": 2.2,
+            "z": 7.25
+          },
+          "size": {
+            "width": 2.172,
+            "height": 1.566
+          },
+          "rotation": {
+            "y": -1.5708,
+            "z": 0
+          },
+          "hue": 0.08,
+          "hero": false
+        },
+        {
+          "id": "dutch-art-06",
+          "title": "A Bearded Man Wearing a Hat",
+          "artist": "Rembrandt van Rijn",
+          "year": "c. 1655–60",
+          "image": "dutch-03.webp",
+          "source": "https://www.clevelandart.org/art/1950.252",
+          "sortYear": 1655,
+          "description": "Amsterdam of the early 1600s was a religiously tolerant city, attracting many Jewish settlers of both Sephardic (Spanish and Portuguese) origin and Ashkenazic (Eastern European) descent. Rembrandt lived among both denominations and found inspiration in the manner and dress of the Ashkenazim, who maintained traditional comportment and attire and were less affluent than their Sephardim counterparts. As a result, many of the unidentified portraits from Rembrandt's late period once carried Jewish associations, but because of a lack of sufficient evidence, those assignations have since been reconsidered. Such is the case with Portrait of a Man, which was once considered a portrait of the Dutch Jewish philosopher Baruch Spinoza (1632–1677) as well as a representation of a Jewish student. Rembrandt's authorship of the painting has also undergone reassessment. The broad and thinly painted cloak and hat suggests the painting is likely a workshop product and while it does display Rembrandt's characteristic interest in a sitter's introspection, the figure's thoughtfulness remains comparatively superficial.",
           "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "technique": "oil on canvas",
+          "dimensions": "未装框 69.2 × 84.5 cm（27 × 33 in）",
+          "creditline": "Gift of the Hanna Fund",
+          "wall": "east",
+          "position": {
+            "x": 11.83,
+            "y": 2.2,
+            "z": 11.31
+          },
+          "size": {
+            "width": 1.666,
+            "height": 2.04
+          },
+          "rotation": {
+            "y": -1.5708,
+            "z": 0
+          },
+          "hue": 0.08,
+          "hero": false
+        },
+        {
+          "id": "dutch-art-07",
+          "title": "Low Waterfall in a Wooded Landscape with a Dead Beech Tree",
+          "artist": "Jacob van Ruisdael",
+          "year": "c. 1660–70",
+          "image": "dutch-07.webp",
+          "source": "https://www.clevelandart.org/art/1967.63",
+          "sortYear": 1660,
+          "description": "Jutting from a dune in the foreground, the massive silvery trunk of a dead tree leads the eye across a waterfall and toward a distant sunlit field where travelers and a dog traverse a sandy path. Partly masked by trees, a ruined building is turned gold by the sun. In Jacob van Ruisdael’s landscapes, dead trees, waterfalls, and ruined buildings were visual expressions of the passage of time. Ruisdael devoted equal attention to the cloud-filled skies looming above the land, creating dramatic patterns of light and shadow and revealing the unseen movements of the wind.",
+          "didYouKnow": "Jacob van Ruisdael was inspired by trees in various states of decay, observed from nature.",
+          "technique": "oil on canvas",
+          "dimensions": "未装框 131.0 × 99.2 cm（51 × 39 in）",
+          "creditline": "Mr. and Mrs. William H. Marlatt Fund",
           "wall": "west",
           "position": {
             "x": 0.17,
@@ -2614,8 +2614,8 @@
             "z": 4.205
           },
           "size": {
-            "width": 2.172,
-            "height": 1.566
+            "width": 2.123,
+            "height": 1.601
           },
           "rotation": {
             "y": 1.5708,
@@ -2626,17 +2626,17 @@
         },
         {
           "id": "dutch-art-08",
-          "title": "Low Waterfall in a Wooded Landscape with a Dead Beech Tree",
-          "artist": "Jacob van Ruisdael",
-          "year": "c. 1660–70",
-          "image": "dutch-07.webp",
-          "source": "https://www.clevelandart.org/art/1967.63",
-          "sortYear": null,
-          "description": "",
+          "title": "An Elderly Man in Prayer",
+          "artist": "Rembrandt van Rijn",
+          "year": "1660s or later",
+          "image": "dutch-04.webp",
+          "source": "https://www.clevelandart.org/art/1967.16",
+          "sortYear": 1660,
+          "description": "Toward the end of his life, Rembrandt explored religious themes from an intimate perspective, producing a number of works for a possible Apostle series. The personal religiosity of An Elderly Man in Prayer, formerly attributed to Rembrandt, bears resemblance to such late works. Seated with eyes nearly closed and hands clasped in prayer over a large book, the figure appears still and introspective. While the dramatic lighting and dark color palette are reminiscent of Rembrandt's late works, this painting, formerly attributed to the artist, has since been assigned to a follower or a later eighteenth-century imitator of Rembrandt's style for reasons associated with the broad, flat brushwork of the garment, the poor handling of shadow on the hands, and the uniform treatment of the hair.",
           "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "technique": "oil on canvas",
+          "dimensions": "未装框 72.0 × 87.3 cm（28 × 34 in）",
+          "creditline": "Leonard C. Hanna Jr. Fund",
           "wall": "west",
           "position": {
             "x": 0.17,
@@ -2644,8 +2644,8 @@
             "z": 10.295
           },
           "size": {
-            "width": 2.123,
-            "height": 1.601
+            "width": 1.676,
+            "height": 2.029
           },
           "rotation": {
             "y": 1.5708,
@@ -2775,7 +2775,7 @@
         "hero": 11.5
       },
       "blurb": "在印象派之前，有一群人已经走到户外。柯罗的银灰晨雾、库尔贝的峭壁、道比尼的河岸——他们先把画架搬进了自然里。",
-      "yearRange": "",
+      "yearRange": "1800–1873",
       "benches": [
         {
           "x": 6.0,
@@ -2791,80 +2791,20 @@
       "arts": [
         {
           "id": "barbizon-art-01",
-          "title": "The Pond at the Entrance of the Woods",
-          "artist": "Jean Baptiste Camille Corot",
-          "year": "c. 1860–75",
-          "image": "barbizon-03.webp",
-          "source": "https://www.clevelandart.org/art/1951.330",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
-          "wall": "south",
-          "position": {
-            "x": 2.733,
-            "y": 2.2,
-            "z": 34.83
-          },
-          "size": {
-            "width": 2.361,
-            "height": 1.779
-          },
-          "rotation": {
-            "y": 3.1416,
-            "z": 0
-          },
-          "hue": 0.22,
-          "hero": false
-        },
-        {
-          "id": "barbizon-art-02",
-          "title": "Woman Meditating",
-          "artist": "Jean Baptiste Camille Corot",
-          "year": "after 1868",
-          "image": "barbizon-02.webp",
-          "source": "https://www.clevelandart.org/art/1949.189",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
-          "wall": "south",
-          "position": {
-            "x": 6.0,
-            "y": 2.2,
-            "z": 34.83
-          },
-          "size": {
-            "width": 2.135,
-            "height": 2.951
-          },
-          "rotation": {
-            "y": 3.1416,
-            "z": 0
-          },
-          "hue": 0.22,
-          "hero": true
-        },
-        {
-          "id": "barbizon-art-03",
           "title": "Lormes: Goat-Girl Sitting Beside a Stream in a Forest",
           "artist": "Jean Baptiste Camille Corot",
           "year": "1842",
           "image": "barbizon-01.webp",
           "source": "https://www.clevelandart.org/art/1962.35",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "sortYear": 1842,
+          "description": "Camille Corot painted this charming woodland scene during the summer of 1842 while visiting Lormes, a small village in the Morvan region of Burgundy. The area was known for its dense woodlands and picturesque falls. Corot included a seated goat shepherd leaning against a curving tree trunk, but instead of commanding the viewers attention, the human presence is overshadowed by the dynamic interlacing forms of the tree trunks and branches that stretch up and across the canvas.",
+          "didYouKnow": "Claude Monet once said: \"There is only one master here—Corot. We are nothing compared to him, nothing.\"",
+          "technique": "oil on fabric",
+          "dimensions": "未装框 70.3 × 52.3 cm（27 × 20 in）",
+          "creditline": "Leonard C. Hanna Jr. Fund",
           "wall": "south",
           "position": {
-            "x": 9.267,
+            "x": 2.733,
             "y": 2.2,
             "z": 34.83
           },
@@ -2880,83 +2820,83 @@
           "hero": false
         },
         {
+          "id": "barbizon-art-02",
+          "title": "Marshlands",
+          "artist": "Théodore Rousseau",
+          "year": "not dated",
+          "image": "barbizon-08.webp",
+          "source": "https://www.clevelandart.org/art/1964.290",
+          "sortYear": 1830,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "oil on wood panel",
+          "dimensions": "未装框 24.6 × 15.9 cm（9 × 6 in）",
+          "creditline": "Severance and Greta Millikin Collection",
+          "wall": "south",
+          "position": {
+            "x": 6.0,
+            "y": 2.2,
+            "z": 34.83
+          },
+          "size": {
+            "width": 2.613,
+            "height": 1.69
+          },
+          "rotation": {
+            "y": 3.1416,
+            "z": 0
+          },
+          "hue": 0.22,
+          "hero": true
+        },
+        {
+          "id": "barbizon-art-03",
+          "title": "The Oak Tree",
+          "artist": "Théodore Rousseau",
+          "year": "19th century",
+          "image": "barbizon-07.webp",
+          "source": "https://www.clevelandart.org/art/1916.1052",
+          "sortYear": 1800,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "oil on paper mounted on wood panel",
+          "dimensions": "未装框 28.6 × 26.4 cm（11 × 10 in）",
+          "creditline": "Gift of Mr. and Mrs. J. H. Wade",
+          "wall": "south",
+          "position": {
+            "x": 9.267,
+            "y": 2.2,
+            "z": 34.83
+          },
+          "size": {
+            "width": 2.32,
+            "height": 1.81
+          },
+          "rotation": {
+            "y": 3.1416,
+            "z": 0
+          },
+          "hue": 0.22,
+          "hero": false
+        },
+        {
           "id": "barbizon-art-04",
-          "title": "Sunset on the River Oise",
-          "artist": "Charles François Daubigny",
-          "year": "1866",
-          "image": "barbizon-04.webp",
-          "source": "https://www.clevelandart.org/art/1964.289",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
-          "wall": "east",
-          "position": {
-            "x": 11.83,
-            "y": 2.2,
-            "z": 26.15
-          },
-          "size": {
-            "width": 2.457,
-            "height": 1.384
-          },
-          "rotation": {
-            "y": -1.5708,
-            "z": 0
-          },
-          "hue": 0.22,
-          "hero": false
-        },
-        {
-          "id": "barbizon-art-05",
-          "title": "The Hillsides of Méry-sur-Oise, Opposite Auvers",
-          "artist": "Charles François Daubigny",
-          "year": "1873",
-          "image": "barbizon-05.webp",
-          "source": "https://www.clevelandart.org/art/1916.1048",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
-          "wall": "east",
-          "position": {
-            "x": 11.83,
-            "y": 2.2,
-            "z": 29.25
-          },
-          "size": {
-            "width": 2.382,
-            "height": 1.427
-          },
-          "rotation": {
-            "y": -1.5708,
-            "z": 0
-          },
-          "hue": 0.22,
-          "hero": false
-        },
-        {
-          "id": "barbizon-art-06",
           "title": "Leaving the Forest, Fontainebleau: Setting Sun",
           "artist": "Théodore Rousseau",
           "year": "1851",
           "image": "barbizon-06.webp",
           "source": "https://www.clevelandart.org/art/1983.70",
-          "sortYear": null,
+          "sortYear": 1851,
           "description": "",
           "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "technique": "oil on fabric",
+          "dimensions": "未装框 130.2 × 109.1 cm（51 × 42 in）",
+          "creditline": "John L. Severance Fund",
           "wall": "east",
           "position": {
             "x": 11.83,
             "y": 2.2,
-            "z": 32.35
+            "z": 26.15
           },
           "size": {
             "width": 2.011,
@@ -2970,18 +2910,78 @@
           "hero": false
         },
         {
-          "id": "barbizon-art-07",
-          "title": "Marshlands",
-          "artist": "Théodore Rousseau",
-          "year": "not dated",
-          "image": "barbizon-08.webp",
-          "source": "https://www.clevelandart.org/art/1964.290",
-          "sortYear": null,
+          "id": "barbizon-art-05",
+          "title": "The Pond at the Entrance of the Woods",
+          "artist": "Jean Baptiste Camille Corot",
+          "year": "c. 1860–75",
+          "image": "barbizon-03.webp",
+          "source": "https://www.clevelandart.org/art/1951.330",
+          "sortYear": 1860,
+          "description": "This scene of a pond bordered by large, leafy trees echoes Corot's well-known views of Ville-d'Avray, while the vaporous light and atmospheric effects within a restricted palette resemble those of the artist's late style of the 1860s and 1870s. The small forms of the peasant and white goat are also typical of Corot's late imagery. This is one of many views of a large pond at Ville-d'Avray, a small commune on the western suburbs of Paris, where Corot inherited a rural property from his parents.",
+          "didYouKnow": "This painting's first recorded owner was the Dowager Duchess of Newcastle, née Henrietta-Adela Hope, who became a widow of the sixth duke Henry Pelham Alexander in 1879.",
+          "technique": "oil on fabric",
+          "dimensions": "未装框 61.0 × 46.0 cm（24 × 18 in）",
+          "creditline": "Bequest of William G. Mather",
+          "wall": "east",
+          "position": {
+            "x": 11.83,
+            "y": 2.2,
+            "z": 29.25
+          },
+          "size": {
+            "width": 2.124,
+            "height": 1.6
+          },
+          "rotation": {
+            "y": -1.5708,
+            "z": 0
+          },
+          "hue": 0.22,
+          "hero": false
+        },
+        {
+          "id": "barbizon-art-06",
+          "title": "Sunset on the River Oise",
+          "artist": "Charles François Daubigny",
+          "year": "1866",
+          "image": "barbizon-04.webp",
+          "source": "https://www.clevelandart.org/art/1964.289",
+          "sortYear": 1866,
           "description": "",
           "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "technique": "oil on wood panel",
+          "dimensions": "未装框 69.1 × 40.1 cm（27 × 15 in）",
+          "creditline": "Severance and Greta Millikin Collection",
+          "wall": "east",
+          "position": {
+            "x": 11.83,
+            "y": 2.2,
+            "z": 32.35
+          },
+          "size": {
+            "width": 2.457,
+            "height": 1.384
+          },
+          "rotation": {
+            "y": -1.5708,
+            "z": 0
+          },
+          "hue": 0.22,
+          "hero": false
+        },
+        {
+          "id": "barbizon-art-07",
+          "title": "The Hillsides of Méry-sur-Oise, Opposite Auvers",
+          "artist": "Charles François Daubigny",
+          "year": "1873",
+          "image": "barbizon-05.webp",
+          "source": "https://www.clevelandart.org/art/1916.1048",
+          "sortYear": 1873,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "oil on wood panel",
+          "dimensions": "未装框 57.1 × 34.5 cm（22 × 13 in）",
+          "creditline": "Gift of Mr. and Mrs. J. H. Wade",
           "wall": "west",
           "position": {
             "x": 0.17,
@@ -2989,8 +2989,8 @@
             "z": 26.925
           },
           "size": {
-            "width": 2.293,
-            "height": 1.483
+            "width": 2.382,
+            "height": 1.427
           },
           "rotation": {
             "y": 1.5708,
@@ -3001,17 +3001,17 @@
         },
         {
           "id": "barbizon-art-08",
-          "title": "The Oak Tree",
-          "artist": "Théodore Rousseau",
-          "year": "19th century",
-          "image": "barbizon-07.webp",
-          "source": "https://www.clevelandart.org/art/1916.1052",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "title": "Woman Meditating",
+          "artist": "Jean Baptiste Camille Corot",
+          "year": "after 1868",
+          "image": "barbizon-02.webp",
+          "source": "https://www.clevelandart.org/art/1949.189",
+          "sortYear": 1868,
+          "description": "This painting, acquired by the Cleveland Museum of Art in 1949, as a work by Corot, proved to be a copy when the signed original reappeared at a public auction in New York in 1981. Although the original, Jeune Femme Pensive or La Méditation, is not in the Corot catalogue raisonné compiled by his friend Alfred Robaut, that painting does have an unquestionable origin. According to one source, Corot painted the original version in Paris in 1866–68 and allowed his pupil, Eugène Lavieille, to make a copy with permission.",
+          "didYouKnow": "Scholars speculate that Camille Corot's model for this painting was Emma Dobigny, the frail young girl who posed for the two versions of Pierre Puvis de Chavannes's painting Hope of 1872 (Musée du Louvre, Paris; Walters Art Gallery, Baltimore).This painting, acquired by the Cleveland Museum of Art in 1949, as a work by Corot, proved to be a copy when the signed original reappeared at a public auction in New York in 1981.",
+          "technique": "oil on fabric",
+          "dimensions": "未装框 42.9 × 59.4 cm（16 × 23 in）",
+          "creditline": "Gift of the Hanna Fund",
           "wall": "west",
           "position": {
             "x": 0.17,
@@ -3019,8 +3019,8 @@
             "z": 31.575
           },
           "size": {
-            "width": 2.088,
-            "height": 1.628
+            "width": 1.568,
+            "height": 2.168
           },
           "rotation": {
             "y": 1.5708,
@@ -3150,7 +3150,7 @@
         "hero": 11.5
       },
       "blurb": "印象派之后，颜色不再只是描述光，而是自己说话。塞尚把山切成几何，高更把海压成色块，纳比派把一间卧室画成一整面图案。",
-      "yearRange": "",
+      "yearRange": "1889–1908",
       "benches": [
         {
           "x": 46.5,
@@ -3166,17 +3166,17 @@
       "arts": [
         {
           "id": "postimp-art-01",
-          "title": "Under the Trees (from \"The Public Gardens\")",
-          "artist": "Édouard Vuillard",
-          "year": "1894",
-          "image": "postimp-01.webp",
-          "source": "https://www.clevelandart.org/art/1953.212",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "title": "The Orange Christ",
+          "artist": "Maurice Denis",
+          "year": "1889",
+          "image": "postimp-07.webp",
+          "source": "https://www.clevelandart.org/art/2020.107",
+          "sortYear": 1889,
+          "description": "A devout Catholic, Maurice Denis sought to create what he described as “imperishable icons.” In this small painting, he used flat planes of intense colors to conjure emotion in the viewer. Here, a somber group of women, depicted as amorphous black forms, gather around an orange figure of Christ on the cross. The sky is a reddish-purple streaked with green clouds. Pink angels flank the crucified Christ whose head is haloed in brilliant yellow. In this painting, the daring young artist combined religious fervor with unprecedented visual experimentation.",
+          "didYouKnow": "As reflected in the two-dimensionality and color blocking in this painting, Denis believed a painting was \"a flat surface covered with colors assembled in a certain order.\"",
+          "technique": "oil on board",
+          "dimensions": "未装框 18.9 × 23.8 cm（7 × 9 in）",
+          "creditline": "Nancy F. and Joseph P. Keithley Collection Gift",
           "wall": "north",
           "position": {
             "x": 44.567,
@@ -3184,8 +3184,8 @@
             "z": 0.17
           },
           "size": {
-            "width": 1.222,
-            "height": 2.7
+            "width": 1.547,
+            "height": 1.919
           },
           "rotation": {
             "y": 0.0,
@@ -3196,17 +3196,17 @@
         },
         {
           "id": "postimp-art-02",
-          "title": "At the Café",
-          "artist": "Édouard Vuillard",
-          "year": "c. 1897–99",
-          "image": "postimp-02.webp",
-          "source": "https://www.clevelandart.org/art/1958.57",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "title": "Eva Meurier in a Green Dress",
+          "artist": "Maurice Denis",
+          "year": "1891",
+          "image": "postimp-06.webp",
+          "source": "https://www.clevelandart.org/art/2002.92",
+          "sortYear": 1891,
+          "description": "Delicate, elegantly folded hands in this painting allude to the sitter’s musical abilities. Eva Meurier, the sister-in-law of the artist, was a talented pianist. Maurice Denis painted the portrait on a fragment of an abandoned picture, hints of which appear around the edges of the composition, as if Eva’s portrait is mysteriously emerging from another painting.",
+          "didYouKnow": "Maurice Denis painted this early in his career, when he was only 21.",
+          "technique": "oil on canvas",
+          "dimensions": "装框 56.5 × 72.7 cm（22 × 28 in）",
+          "creditline": "Mr. and Mrs. William H. Marlatt Fund",
           "wall": "north",
           "position": {
             "x": 46.5,
@@ -3215,7 +3215,7 @@
           },
           "size": {
             "width": 1.547,
-            "height": 1.625
+            "height": 2.228
           },
           "rotation": {
             "y": 0.0,
@@ -3226,17 +3226,17 @@
         },
         {
           "id": "postimp-art-03",
-          "title": "Luncheon (Annette and Her Grandmother)",
-          "artist": "Édouard Vuillard",
-          "year": "1899",
-          "image": "postimp-03.webp",
-          "source": "https://www.clevelandart.org/art/2020.118",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "title": "Procession or Pardon at Perros-Guirec",
+          "artist": "Maurice Denis",
+          "year": "1891",
+          "image": "postimp-08.webp",
+          "source": "https://www.clevelandart.org/art/2020.108",
+          "sortYear": 1891,
+          "description": "One of the leading artists of a group called the Nabis (\"Prophets\"), Denis rejected naturalism and materialism out of desire to return spirituality to art. His imaginative compositions emphasize flat, decorative shapes and abstract colors. This painting depicts an annual procession in a small village in Brittany held on the feast day of Saint-Jacques. Young women dressed in white lead the procession; they are followed by married women wearing black and carrying a religious icon.",
+          "didYouKnow": "A pardon is a ceremony that occurs on the feast of the patron saint of a church often followed by a procession.",
+          "technique": "oil on canvas",
+          "dimensions": "未装框 46.4 × 55.9 cm（18 × 22 in）",
+          "creditline": "Nancy F. and Joseph P. Keithley Collection Gift",
           "wall": "north",
           "position": {
             "x": 48.433,
@@ -3245,7 +3245,7 @@
           },
           "size": {
             "width": 1.547,
-            "height": 1.435
+            "height": 1.88
           },
           "rotation": {
             "y": 0.0,
@@ -3256,17 +3256,17 @@
         },
         {
           "id": "postimp-art-04",
-          "title": "Café Wepler",
+          "title": "Under the Trees (from \"The Public Gardens\")",
           "artist": "Édouard Vuillard",
-          "year": "c. 1908–10, reworked in 1912",
-          "image": "postimp-04.webp",
-          "source": "https://www.clevelandart.org/art/1950.90",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "year": "1894",
+          "image": "postimp-01.webp",
+          "source": "https://www.clevelandart.org/art/1953.212",
+          "sortYear": 1894,
+          "description": "This painting is from a nine-panel decorative series showing children playing in two of Paris’s most spacious parks: the Tuileries Gardens and the Bois de Boulogne. It depicts a game of hide-and-seek in which a girl conceals herself behind a tree. The stillness of the women resting on green chairs at the right is countered by children running at the left. Rather than a realistic rendering of the subject, Édouard Vuillard arranged the composition in bands of colorful, decorative patterns so that the painting seems like a tapestry.",
+          "didYouKnow": "Vuillard's social circle included actors and directors. He often contributed to their theatrical pursuits by designing costumes, programs, and set pieces. In this panel from a nine-part series, a patterned landscape recalls scenery for the stage.",
+          "technique": "distemper on fabric",
+          "dimensions": "未装框 96.3 × 214.2 cm（37 × 84 in）",
+          "creditline": "Gift of the Hanna Fund",
           "wall": "east",
           "position": {
             "x": 50.33,
@@ -3274,8 +3274,8 @@
             "z": 3.63
           },
           "size": {
-            "width": 2.374,
-            "height": 1.432
+            "width": 1.086,
+            "height": 2.4
           },
           "rotation": {
             "y": -1.5708,
@@ -3286,17 +3286,17 @@
         },
         {
           "id": "postimp-art-05",
-          "title": "Blessing of a Yacht on the Belon River",
-          "artist": "Maurice Denis",
-          "year": "1899",
-          "image": "postimp-05.webp",
-          "source": "https://www.clevelandart.org/art/2020.110",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "title": "At the Café",
+          "artist": "Édouard Vuillard",
+          "year": "c. 1897–99",
+          "image": "postimp-02.webp",
+          "source": "https://www.clevelandart.org/art/1958.57",
+          "sortYear": 1897,
+          "description": "This scene of two women in a Parisian café has a hushed atmosphere that is heightened by the warm palette and glow of gaslight. Édouard Vuillard and Félix Vallotton were close friends and painted together in the 1890s, but Vuillard’s quiet café and Vallotton’s riotous Bistro (2020.114) could not be more different in mood.",
+          "didYouKnow": "Vuillard once said, “I don’t do portraits. I paint people in their surroundings.”",
+          "technique": "oil on board, laid on cradled panel",
+          "dimensions": "未装框 27.5 × 28.8 cm（10 × 11 in）",
+          "creditline": "Bequest of Leonard C. Hanna Jr.",
           "wall": "east",
           "position": {
             "x": 50.33,
@@ -3304,8 +3304,8 @@
             "z": 8.25
           },
           "size": {
-            "width": 1.906,
-            "height": 1.784
+            "width": 1.799,
+            "height": 1.89
           },
           "rotation": {
             "y": -1.5708,
@@ -3316,17 +3316,17 @@
         },
         {
           "id": "postimp-art-06",
-          "title": "Eva Meurier in a Green Dress",
-          "artist": "Maurice Denis",
-          "year": "1891",
-          "image": "postimp-06.webp",
-          "source": "https://www.clevelandart.org/art/2002.92",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "title": "Luncheon (Annette and Her Grandmother)",
+          "artist": "Édouard Vuillard",
+          "year": "1899",
+          "image": "postimp-03.webp",
+          "source": "https://www.clevelandart.org/art/2020.118",
+          "sortYear": 1899,
+          "description": "Vuillard depicted close family members in this intimate domestic scene. The woman at the lower right corner of the composition is his mother, Marie Vuillard. She is tending to a her grandchild, Annette Roussel, the daughter of Vuillard’s sister and her husband, Ker-Xavier Roussel, who was also an artist. The two figures are in the apartment that Vuillard shared with his mother in Paris. Vuillard adopted a particularly steep angle of view in this painting, looking down upon the interaction of the figures. The viewer assumes the position of the artist himself, looking over his mother’s shoulder as she lovingly feeds the baby.",
+          "didYouKnow": "Vuillard began visiting his sister's home in the country more frequently and for extended periods of time after the birth of Annette, who was one year old at the time of this painting.",
+          "technique": "oil on board",
+          "dimensions": "未装框 32.4 × 29.8 cm（12 × 11 in）",
+          "creditline": "Nancy F. and Joseph P. Keithley Collection Gift",
           "wall": "east",
           "position": {
             "x": 50.33,
@@ -3334,8 +3334,8 @@
             "z": 12.87
           },
           "size": {
-            "width": 1.536,
-            "height": 2.213
+            "width": 1.915,
+            "height": 1.776
           },
           "rotation": {
             "y": -1.5708,
@@ -3346,17 +3346,17 @@
         },
         {
           "id": "postimp-art-07",
-          "title": "Procession or Pardon at Perros-Guirec",
-          "artist": "Maurice Denis",
-          "year": "1891",
-          "image": "postimp-08.webp",
-          "source": "https://www.clevelandart.org/art/2020.108",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "title": "Café Wepler",
+          "artist": "Édouard Vuillard",
+          "year": "c. 1908–10, reworked in 1912",
+          "image": "postimp-04.webp",
+          "source": "https://www.clevelandart.org/art/1950.90",
+          "sortYear": 1908,
+          "description": "The Wepler, a large brasserie restaurant on Place Clichy in the Montmartre district of Paris, is composed of several rooms on different levels. Once frequented by bohemian artists like Pablo Picasso and Amedeo Modigliani, the Wepler is still in business today.",
+          "didYouKnow": "Established in 1881, the Cafe Wepler is still in business. In the late 19th and early 20th centuries, it was frequented by artists and writers.",
+          "technique": "oil on fabric",
+          "dimensions": "未装框 103.2 × 62.2 cm（40 × 24 in）",
+          "creditline": "Gift of the Hanna Fund",
           "wall": "west",
           "position": {
             "x": 42.67,
@@ -3364,8 +3364,8 @@
             "z": 4.785
           },
           "size": {
-            "width": 1.672,
-            "height": 2.033
+            "width": 2.374,
+            "height": 1.432
           },
           "rotation": {
             "y": 1.5708,
@@ -3376,17 +3376,17 @@
         },
         {
           "id": "postimp-art-08",
-          "title": "The Orange Christ",
+          "title": "Blessing of a Yacht on the Belon River",
           "artist": "Maurice Denis",
-          "year": "1889",
-          "image": "postimp-07.webp",
-          "source": "https://www.clevelandart.org/art/2020.107",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "year": "1899",
+          "image": "postimp-05.webp",
+          "source": "https://www.clevelandart.org/art/2020.110",
+          "sortYear": 1899,
+          "description": "Maurice Denis made this painting during the summer of 1899 while vacationing with his family in the coastal village of Le Pouldu in Brittany in northwestern France. Two-thirds of this canvas is filled by the lavender-pink surface of the water, dotted with touches of color that suggest reflections of flags and sails on the Belon River. Local women wearing traditional headdresses observe the scene from the riverbank in the foreground, shaded by trees whose foliage frames the top of the composition.",
+          "didYouKnow": "Denis was an extremely prolific artist who experimented with other art forms. His decorative murals can be viewed in many French churches as well as on the ceiling of the Champs Élysées Theatre in Paris.",
+          "technique": "oil on canvas",
+          "dimensions": "未装框 80.0 × 75.0 cm（31 × 29 in）",
+          "creditline": "Nancy F. and Joseph P. Keithley Collection Gift",
           "wall": "west",
           "position": {
             "x": 42.67,
@@ -3394,8 +3394,8 @@
             "z": 11.715
           },
           "size": {
-            "width": 1.655,
-            "height": 2.054
+            "width": 1.906,
+            "height": 1.784
           },
           "rotation": {
             "y": 1.5708,
@@ -3525,7 +3525,7 @@
         "hero": 11.5
       },
       "blurb": "新大陆的风景与面孔。英尼斯的雾、荷马的浪、蔡斯的肖像——他们用欧洲的技法，画一片欧洲人没见过的光。",
-      "yearRange": "",
+      "yearRange": "1849–1890",
       "benches": [
         {
           "x": 47.25,
@@ -3546,12 +3546,12 @@
           "year": "1866",
           "image": "american-03.webp",
           "source": "https://www.clevelandart.org/art/1938.40",
-          "sortYear": null,
+          "sortYear": 1866,
           "description": "",
           "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "technique": "oil on board",
+          "dimensions": "未装框 22.2 × 30.2 cm（8 × 11 in）",
+          "creditline": "Bequest of Mrs. Henry A. Everett for the Dorothy Burnham Everett Memorial Collection",
           "wall": "south",
           "position": {
             "x": 45.817,
@@ -3571,50 +3571,20 @@
         },
         {
           "id": "american-art-02",
-          "title": "Landscape",
-          "artist": "George Inness",
-          "year": "1888",
-          "image": "american-02.webp",
-          "source": "https://www.clevelandart.org/art/1929.464",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
-          "wall": "south",
-          "position": {
-            "x": 47.25,
-            "y": 2.2,
-            "z": 34.83
-          },
-          "size": {
-            "width": 1.147,
-            "height": 0.944
-          },
-          "rotation": {
-            "y": 3.1416,
-            "z": 0
-          },
-          "hue": 0.1,
-          "hero": true
-        },
-        {
-          "id": "american-art-03",
           "title": "Harvest Time",
           "artist": "George Inness",
           "year": "1864",
           "image": "american-01.webp",
           "source": "https://www.clevelandart.org/art/1939.234",
-          "sortYear": null,
+          "sortYear": 1864,
           "description": "",
           "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "technique": "oil on canvas",
+          "dimensions": "未装框 76.8 × 56.5 cm（30 × 22 in）",
+          "creditline": "Gift of Mrs. Henry White Cannon",
           "wall": "south",
           "position": {
-            "x": 48.683,
+            "x": 47.25,
             "y": 2.2,
             "z": 34.83
           },
@@ -3627,21 +3597,51 @@
             "z": 0
           },
           "hue": 0.1,
-          "hero": false
+          "hero": true
         },
         {
-          "id": "american-art-04",
+          "id": "american-art-03",
           "title": "The Wood Chopper",
           "artist": "George Inness",
           "year": "1849",
           "image": "american-04.webp",
           "source": "https://www.clevelandart.org/art/1963.501",
-          "sortYear": null,
+          "sortYear": 1849,
           "description": "",
           "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "technique": "oil on canvas",
+          "dimensions": "未装框 60.6 × 50.5 cm（23 × 19 in）",
+          "creditline": "Mr. and Mrs. William H. Marlatt Fund",
+          "wall": "south",
+          "position": {
+            "x": 48.683,
+            "y": 2.2,
+            "z": 34.83
+          },
+          "size": {
+            "width": 1.147,
+            "height": 0.948
+          },
+          "rotation": {
+            "y": 3.1416,
+            "z": 0
+          },
+          "hue": 0.1,
+          "hero": false
+        },
+        {
+          "id": "american-art-04",
+          "title": "Gray Day on the Bay",
+          "artist": "William Merritt Chase",
+          "year": "c. 1886",
+          "image": "american-08.webp",
+          "source": "https://www.clevelandart.org/art/1957.423",
+          "sortYear": 1881,
+          "description": "",
+          "didYouKnow": "",
+          "technique": "oil on wood",
+          "dimensions": "未装框 34.2 × 23.7 cm（13 × 9 in）",
+          "creditline": "Gift of Mrs. John B. Dempsey",
           "wall": "east",
           "position": {
             "x": 50.33,
@@ -3649,8 +3649,8 @@
             "z": 24.08
           },
           "size": {
-            "width": 2.028,
-            "height": 1.677
+            "width": 2.235,
+            "height": 1.521
           },
           "rotation": {
             "y": -1.5708,
@@ -3666,12 +3666,12 @@
           "year": "1882–83",
           "image": "american-05.webp",
           "source": "https://www.clevelandart.org/art/1921.1239",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "sortYear": 1882,
+          "description": "Dora Wheeler became Chase's first student when he returned from overseas study in Munich and set up a teaching studio in New York. At the time, few American artists accepted women as private pupils. After her course of study, Wheeler joined her mother in launching a successful decorating firm, one of the first businesses in the country to be operated entirely by women. For the firm, she designed luxurious textiles, and the embroidered silk tapestry that fills the background in her portrait references her occupational interest. Chase's portrait was awarded a gold medal at an international exhibition of contemporary art in Munich in 1883, and later that year was also shown in Paris. At some later point, the painting was acquired by the sitter, who subsequently donated it to the museum.",
+          "didYouKnow": "Chase and Wheeler worked together to raise money for constructing the Statue of Liberty's pedestal.",
+          "technique": "oil on canvas",
+          "dimensions": "未装框 166.4 × 159.8 cm（65 × 62 in）",
+          "creditline": "Gift of Mrs. Boudinot Keith in memory of Mr. and Mrs. J. H. Wade",
           "wall": "east",
           "position": {
             "x": 50.33,
@@ -3691,17 +3691,17 @@
         },
         {
           "id": "american-art-06",
-          "title": "The Old Road to the Sea",
-          "artist": "William Merritt Chase",
-          "year": "c. 1893",
-          "image": "american-06.webp",
-          "source": "https://www.clevelandart.org/art/1938.333",
-          "sortYear": null,
+          "title": "Landscape",
+          "artist": "George Inness",
+          "year": "1888",
+          "image": "american-02.webp",
+          "source": "https://www.clevelandart.org/art/1929.464",
+          "sortYear": 1888,
           "description": "",
           "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "technique": "oil on canvas",
+          "dimensions": "未装框 70.0 × 56.2 cm（27 × 22 in）",
+          "creditline": "Gift of the Estate of Charles F. Brush",
           "wall": "east",
           "position": {
             "x": 50.33,
@@ -3709,8 +3709,8 @@
             "z": 31.92
           },
           "size": {
-            "width": 2.063,
-            "height": 1.648
+            "width": 2.032,
+            "height": 1.673
           },
           "rotation": {
             "y": -1.5708,
@@ -3721,17 +3721,17 @@
         },
         {
           "id": "american-art-07",
-          "title": "Gray Day on the Bay",
+          "title": "Portrait of My Daughter Alice",
           "artist": "William Merritt Chase",
-          "year": "c. 1886",
-          "image": "american-08.webp",
-          "source": "https://www.clevelandart.org/art/1957.423",
-          "sortYear": null,
+          "year": "c. 1895",
+          "image": "american-07.webp",
+          "source": "https://www.clevelandart.org/art/1920.254",
+          "sortYear": 1890,
           "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "didYouKnow": "Born in 1887, Alice Dieudonnée Chase was nicknamed \"Cosy.\"",
+          "technique": "oil on canvas",
+          "dimensions": "未装框 121.2 × 183.0 cm（47 × 72 in）",
+          "creditline": "Gift of Mr. and Mrs. Hermon A. Kelley, in memory of their daughter Virginia Kelley Newberry",
           "wall": "west",
           "position": {
             "x": 44.17,
@@ -3739,8 +3739,8 @@
             "z": 25.06
           },
           "size": {
-            "width": 2.235,
-            "height": 1.521
+            "width": 1.501,
+            "height": 2.265
           },
           "rotation": {
             "y": 1.5708,
@@ -3751,17 +3751,17 @@
         },
         {
           "id": "american-art-08",
-          "title": "Portrait of My Daughter Alice",
+          "title": "The Old Road to the Sea",
           "artist": "William Merritt Chase",
-          "year": "c. 1895",
-          "image": "american-07.webp",
-          "source": "https://www.clevelandart.org/art/1920.254",
-          "sortYear": null,
-          "description": "",
-          "didYouKnow": "",
-          "technique": "",
-          "dimensions": "",
-          "creditline": "",
+          "year": "c. 1893",
+          "image": "american-06.webp",
+          "source": "https://www.clevelandart.org/art/1938.333",
+          "sortYear": 1888,
+          "description": "One of the most influential of the American Impressionists, William Merritt Chase established his own summer school at Shinnecock, on the eastern tip of Long Island, New York. Attracted to the low-lying dunes and beaches, Chase and his students were among the first American artists to pursue open-air painting. With its varied brushwork and warm colors, this painting is among the finest works Chase produced at Shinnecock. The panoramic scene glows with the light of a summer day. The Chase school at Shinnecock, active from 1891-1902, was instrumental in expanding the influence of Impressionism in the United States.",
+          "didYouKnow": "Chase loved big dogs, variously owning a greyhound, a borzoi, and an Irish wolfhound.",
+          "technique": "oil on canvas",
+          "dimensions": "未装框 127.0 × 101.5 cm（50 × 39 in）",
+          "creditline": "Gift of Mrs. Henry White Cannon",
           "wall": "west",
           "position": {
             "x": 44.17,
@@ -3769,8 +3769,8 @@
             "z": 30.94
           },
           "size": {
-            "width": 1.501,
-            "height": 2.265
+            "width": 2.063,
+            "height": 1.648
           },
           "rotation": {
             "y": 1.5708,
