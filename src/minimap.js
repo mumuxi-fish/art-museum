@@ -11,6 +11,8 @@ let galleryIndex = new Map(); // roomId -> 展厅序号（1 起）
 let view = null;              // 世界坐标 → 画布坐标的映射
 let lastLabel = null;
 let frame = 0;
+// 上次画下来的位姿：没动就不用重画
+const lastDraw = { x: NaN, z: NaN, yaw: NaN, room: null };
 
 // 小地图上各类型空间的底色
 const FILL = {
@@ -55,6 +57,14 @@ export function updateMinimap(camera, currentRoomId, plan) {
   // 20fps 足够顺，没必要每帧重画
   frame = (frame + 1) % 3;
   if (frame !== 0) return;
+
+  // 站着不动时位置、朝向、所在厅都没变，画出来和上一次一模一样 —— 跳过
+  if (camera.position.x === lastDraw.x && camera.position.z === lastDraw.z
+    && camera.rotation.y === lastDraw.yaw && currentRoomId === lastDraw.room) return;
+  lastDraw.x = camera.position.x;
+  lastDraw.z = camera.position.z;
+  lastDraw.yaw = camera.rotation.y;
+  lastDraw.room = currentRoomId;
 
   const { scale, ox, oz, minX, minZ } = view;
   const W = cv.width, H = cv.height;

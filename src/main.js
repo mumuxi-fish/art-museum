@@ -3,11 +3,14 @@
 // 整座馆是一张连续平面图，一次建好，玩家从门厅一路走进去，没有传送。
 
 import * as THREE from 'three';
-import { scene, camera, renderer, ambient } from './scene.js';
+import { scene, camera, renderer, ambient, markDirty, takeDirty } from './scene.js';
 import { IS_MOBILE } from './config.js';
 import { loadMuseum, streamArtTextures } from './loader.js';
 import { buildPlan } from './plan.js';
-import { buildMuseum, disposeMuseum, applyRoomVisibility, visibleRoomCount } from './room.js';
+import {
+  buildMuseum, disposeMuseum, applyRoomVisibility, visibleRoomCount,
+  freezeMuseumMatrices, getVisRevision,
+} from './room.js';
 import { initControls, controls, updateMovement, enterMobileMode } from './controls.js';
 import { initPlayer, updatePlayer } from './player.js';
 import { initFlashlight, updateFlashlight, toggle } from './flashlight.js';
@@ -311,6 +314,7 @@ function updateRoom() {
   if (!room || room.id === currentRoomId) return;
   currentRoomId = room.id;
   applyLightBudget(room.id);
+  markDirty(); // 可见灯数变了，shader 要重编译，画面也跟着变
   if (roomLabel) {
     roomLabel.textContent = room.name;
     // 用一个短促的文字动画代替整屏闪黑：有"到了一个新厅"的提示，又不糊一下画面
@@ -335,7 +339,7 @@ let roomCulling = true;
 function updateRoomVisibility(now) {
   if (!plan || !roomSamples) return;
   if (!roomCulling) {
-    applyRoomVisibility(null);
+    if (applyRoomVisibility(null)) markDirty();
     visPose.x = Infinity;
     visPose.at = -1;
     return;
@@ -347,7 +351,9 @@ function updateRoomVisibility(now) {
   visPose.z = camera.position.z;
   visPose.yaw = camera.rotation.y;
   visPose.at = now;
-  applyRoomVisibility(plan.visibleRoomsFrom(camera.position.x, camera.position.z, roomSamples));
+  if (applyRoomVisibility(plan.visibleRoomsFrom(camera.position.x, camera.position.z, roomSamples))) {
+    markDirty();
+  }
 }
 
 // 作品详情浮层。打开时锁住走动，并且不要让指针解锁去弹展厅列表
@@ -588,6 +594,31 @@ const prevPos = new THREE.Vector3();
 let stepAccum = 0;
 const STRIDE = 0.78;   // 一步大约 0.78m
 
+// 上一次真正画出来的位姿。静止不动 + 没有 markDirty 就跳过 renderer.render，
+// 站在展厅里发呆时 GPU 完全闲着（笔记本上最省电的一段）。
+const renderedPose = { x: NaN, y: NaN, z: NaN, rx: NaN, ry: NaN, rz: NaN };
+
+function poseChanged() {
+  return camera.position.x !== renderedPose.x
+    || camera.position.y !== renderedPose.y
+    || camera.position.z !== renderedPose.z
+    || camera.rotation.x !== renderedPose.rx
+    || camera.rotation.y !== renderedPose.ry
+    || camera.rotation.z !== renderedPose.rz;
+}
+
+function renderIfDirty() {
+  const dirty = takeDirty();
+  if (!dirty && !poseChanged() && !glide) return;
+  renderedPose.x = camera.position.x;
+  renderedPose.y = camera.position.y;
+  renderedPose.z = camera.position.z;
+  renderedPose.rx = camera.rotation.x;
+  renderedPose.ry = camera.rotation.y;
+  renderedPose.rz = camera.rotation.z;
+  renderer.render(scene, camera);
+}
+
 // 按实际走过的距离触发脚步，和移动速度天然同步
 function updateFootsteps() {
   const dx = camera.position.x - prevPos.x;
@@ -609,15 +640,19 @@ function animate() {
   const dt = Math.min(clock.getDelta(), 0.05);
   if (glide) updateGlide(dt);
   else if (!menuOpen() && !detailOpen && !isSeated()) updateMovement(dt);
+  // 视线拾取和手电瞄准读的是 camera.matrixWorld，而 three 只在 renderer.render()
+  // 里更新相机的世界矩阵 —— 现在静止时可能连续很多帧不渲染，射线就会停在上一帧
+  // 的位姿上（提示条会指着看不见的东西）。相机就一个节点，这里自己算一次。
+  camera.updateMatrixWorld();
   updateRoom();
   updateRoomVisibility(clock.elapsedTime);
   updateMinimap(camera, currentRoomId, plan);
-  if (!detailOpen && !glide) updateInteract();
+  if (!detailOpen && !glide) updateInteract(getVisRevision());
   updatePlayer();
-  updateFlashlight(dt);
+  if (updateFlashlight(dt)) markDirty();
   updateFootsteps();
   stepWarmup();
-  renderer.render(scene, camera);
+  renderIfDirty();
 }
 
 function showFatal(err) {
@@ -641,6 +676,9 @@ async function bootstrap() {
 
     // 抛光地板的环境反射（拍一次，不是每帧）
     applyFloorReflection(built.floorMats);
+
+    // 场景建完了，冻结全部静态节点的矩阵（详见 room.js）
+    freezeMuseumMatrices();
 
     // 建作品索引：详情浮层里点"相关作品"要能算出该站到哪儿。
     // 直接写回原对象（而不是做副本）—— 3D 场景里 canvas.userData.art
@@ -672,6 +710,7 @@ async function bootstrap() {
         const t = Number(daylightRange.value) / 1000;
         applyDaylight(t);
         if (daylightName) daylightName.textContent = daylightLabel(t);
+        markDirty();
       };
       daylightRange.addEventListener('input', onTime);
       onTime();
@@ -709,6 +748,7 @@ async function bootstrap() {
         // 40 张图就是 40 次重编译，页面会一路卡到底
         material.map = texture;
         material.emissiveMap = texture;
+        markDirty(); // 静止时靠它把新到的画刷上墙
       },
       (done, total) => {
         if (!progressEl) return;
@@ -748,6 +788,7 @@ window.__artMuseum = {
       几何体: i.memory.geometries,
       贴图: i.memory.textures,
       着色器程序: i.programs?.length ?? 0,
+      剔除版本: getVisRevision(),
     };
   },
   setView(x, z, yaw = 0, pitch = 0) {

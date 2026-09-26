@@ -24,6 +24,14 @@ const standPos = new THREE.Vector3();
 const raycaster = new THREE.Raycaster();
 const screenCenter = new THREE.Vector2(0, 0);
 
+// 上一次真正算过的位姿 + 整厅剔除版本号。
+//
+// 拾取是每帧 84 条射线，站着发呆时结果一模一样，没必要重算：
+// 位姿没动、藏起来的厅也没换，就直接沿用上一次的 target。
+// 位姿要带 pitch —— 低头抬头会改变画面正中那条射线。
+const lastPose = { x: NaN, y: NaN, z: NaN, rx: NaN, ry: NaN };
+let lastVisRev = -1;
+
 export function initInteract(opts) {
   artTargets = opts.artTargets || [];
   benchTargets = opts.benchTargets || [];
@@ -57,13 +65,27 @@ function worldVisible(obj) {
   return true;
 }
 
-// 每帧更新当前可交互目标
-export function updateInteract() {
+// 每帧更新当前可交互目标。visRev 传整厅剔除的版本号（room.getVisRevision），
+// 藏起来的厅一变，就算没动也要重算，不然提示条会指着看不见的画。
+export function updateInteract(visRev = 0) {
   if (seated) {
     target = null;
     showPrompt('E  起身');
     return;
   }
+
+  const still = camera.position.x === lastPose.x
+    && camera.position.y === lastPose.y
+    && camera.position.z === lastPose.z
+    && camera.rotation.x === lastPose.rx
+    && camera.rotation.y === lastPose.ry;
+  if (still && visRev === lastVisRev) return;
+  lastPose.x = camera.position.x;
+  lastPose.y = camera.position.y;
+  lastPose.z = camera.position.z;
+  lastPose.rx = camera.rotation.x;
+  lastPose.ry = camera.rotation.y;
+  lastVisRev = visRev;
 
   // 视线正中打一条射线，画作和长凳一起拾取，谁近认谁。
   // 上一版先判画再按距离判凳子，结果站在凳子前只要视线扫到画就只剩"查看作品"。

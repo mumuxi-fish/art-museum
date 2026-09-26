@@ -27,10 +27,30 @@ document.body.appendChild(renderer.domElement);
 
 export const textureLoader = new THREE.TextureLoader();
 
+// "画面变了、需要重画"的标记。
+//
+// 静止不动的时候 animate 会跳过 renderer.render（详见 main.js），
+// 所以任何会让画面和上一帧不一样的事都得喊一声：贴图到位、日光滑杆、
+// 整厅剔除翻转、开手电、窗口缩放……漏喊就停在旧画面上。
+let needsRender = true;
+
+export function markDirty() {
+  needsRender = true;
+}
+
+// 取走标记并复位。一帧只会取一次。
+export function takeDirty() {
+  const d = needsRender;
+  needsRender = false;
+  return d;
+}
+
 export function handleResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
+  // resize 会把 canvas 清掉，不重画就是一片黑
+  markDirty();
 }
 
 window.addEventListener('resize', handleResize);

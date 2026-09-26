@@ -68,8 +68,18 @@ export function isFlashlightOn() {
   return on;
 }
 
+// 返回"这一帧画面有没有变"（亮度渐变中 / 灯位还在追相机），
+// main.js 拿它决定要不要重画 —— 手电关着站着不动时它一直是 false。
 export function updateFlashlight(dt = 0.016) {
-  if (!core) return;
+  if (!core) return false;
+
+  const level0 = level;
+  const x0 = core.position.x;
+  const y0 = core.position.y;
+  const z0 = core.position.z;
+  const tx0 = target.position.x;
+  const ty0 = target.position.y;
+  const tz0 = target.position.z;
 
   // 亮度渐变
   const goal = on ? 1 : 0;
@@ -78,20 +88,26 @@ export function updateFlashlight(dt = 0.016) {
   core.intensity = CORE_MAX * level;
   spill.intensity = SPILL_MAX * level;
 
-  if (level <= 0.001) return;
+  if (level > 0.001) {
+    camera.getWorldDirection(dir);
 
-  camera.getWorldDirection(dir);
+    // 灯挂在身前 0.35m、下方 0.22m，像举在胸前的手电
+    want.copy(camera.position).addScaledVector(dir, 0.35);
+    want.y -= 0.22;
 
-  // 灯挂在身前 0.35m、下方 0.22m，像举在胸前的手电
-  want.copy(camera.position).addScaledVector(dir, 0.35);
-  want.y -= 0.22;
+    // 阻尼跟随：走快了会有一点点滞后，像手持光源而不是焊在头上
+    const k = 1 - Math.pow(0.0005, dt);
+    core.position.lerp(want, k);
+    spill.position.lerp(want, k);
 
-  // 阻尼跟随：走快了会有一点点滞后，像手持光源而不是焊在头上
-  const k = 1 - Math.pow(0.0005, dt);
-  core.position.lerp(want, k);
-  spill.position.lerp(want, k);
+    // 瞄准相机前方 14m 处
+    aim.copy(camera.position).addScaledVector(dir, 14);
+    target.position.copy(aim);
+  }
 
-  // 瞄准相机前方 14m 处
-  aim.copy(camera.position).addScaledVector(dir, 14);
-  target.position.copy(aim);
+  // 用一个小阈值吸收浮点尾差，否则灯位永远差 1e-12，重画就停不下来
+  const moved = Math.abs(core.position.x - x0) + Math.abs(core.position.y - y0)
+    + Math.abs(core.position.z - z0) + Math.abs(target.position.x - tx0)
+    + Math.abs(target.position.y - ty0) + Math.abs(target.position.z - tz0);
+  return level !== level0 || moved > 1e-7;
 }

@@ -6,7 +6,8 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
-import { scene } from './scene.js';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { scene, markDirty } from './scene.js';
 import {
   makeFloorTexture,
   getFallbackTexture,
@@ -565,6 +566,8 @@ function buildSculpture(sc) {
     STD({ color: 0xCBA76B, roughness: 0.28, metalness: 0.34 }),
   );
   placeholder.position.set(sc.x, sc.plinthH, sc.z);
+  // 模型加载完要按引用把它摘掉，所以不能参与静态合并
+  placeholder.userData.noMerge = true;
   addObj(placeholder);
 
   if (sc.model) loadSculptureModel(sc, placeholder);
@@ -645,6 +648,8 @@ function loadSculptureModel(sc, placeholder) {
       placeholder.geometry.dispose();
       placeholder.material.dispose();
       parent.add(root);
+      // 模型是异步落地的，落地时画面可能早就静止不重画了
+      markDirty();
     },
     undefined,
     (err) => {
@@ -948,6 +953,114 @@ function buildEntranceSigns(room) {
   }
 }
 
+// —— 合并静态几何（建完之后跑一次） ——
+//
+// 整座馆有 ~800 个 mesh、~480 个材质实例，其中绝大多数是同色同质感的墙、
+// 天花、地板、画框、凳子：参数一模一样却各建各的材质，画一个物件就切换一次
+// 渲染状态。建完之后按「房间 × 材质签名」把它们烘焙成一个 mesh：
+//
+//   - 签名里含贴图/法线/粗糙度等，串味的绝不会合到一起
+//   - 逐个房间做，可见性剔除还是按 group 开关，粒度一点没变粗
+//   - 画作与长凳（射线拾取、贴图流式替换都要单独持有对象）、雕塑占位体
+//     （模型加载完要按名字把它摘掉）、daylight 管着的地板/灯槽材质
+//     都不参与；透明物件也不参与（透明按 mesh 排序，合了前后会乱）
+//   - 顶点变换烘进几何体，合并后的 mesh 挂在房间 group 原点、矩阵留 identity
+function materialSignature(m, managed) {
+  // 被 daylight 直接改的材质按实例分开，别和同参数的陌生材质合到一起
+  if (managed.has(m)) return `id:${m.uuid}`;
+  const t = (x) => (x ? x.uuid : '-');
+  return [
+    m.type, m.name || '',
+    m.color ? m.color.getHexString() : '',
+    m.emissive ? m.emissive.getHexString() : '',
+    m.emissiveIntensity ?? 1, m.roughness ?? 0, m.metalness ?? 0,
+    m.opacity ?? 1, m.transparent ? 1 : 0, m.side ?? 0,
+    m.flatShading ? 1 : 0, m.depthWrite ? 1 : 0, m.vertexColors ? 1 : 0,
+    t(m.map), t(m.bumpMap), t(m.normalMap), t(m.roughnessMap),
+    t(m.metalnessMap), t(m.emissiveMap), t(m.envMap), t(m.alphaMap),
+  ].join('|');
+}
+
+function mergeStaticMeshes(managed, exclude) {
+  if (!museumGroup || !roomGroups) return 0;
+
+  // 几何体可能被多个 mesh 共用，先数清楚，只销毁再也没人用的那些
+  const refCount = new Map();
+  museumGroup.traverse((o) => {
+    if (o.isMesh && o.geometry) {
+      refCount.set(o.geometry, (refCount.get(o.geometry) || 0) + 1);
+    }
+  });
+
+  const mergeable = (o) => {
+    if (!o.isMesh || exclude.has(o)) return false;
+    const u = o.userData;
+    if (u.art || u.bench || u.noMerge) return false;
+    const m = o.material;
+    if (!m || Array.isArray(m) || m.transparent || m.userData?.keepMap) return false;
+    const a = o.geometry?.attributes;
+    return Boolean(o.geometry?.index && a?.position && a?.normal && a?.uv);
+  };
+
+  // deep=false 时只收馆级直属物件，跳过各房间 group（它们自己单独合）
+  const collect = (root, deep) => {
+    const out = [];
+    const walk = (node) => {
+      for (const child of node.children) {
+        if (!deep && roomGroups.has(child)) continue;
+        if (mergeable(child)) out.push(child);
+        walk(child);
+      }
+    };
+    walk(root);
+    return out;
+  };
+
+  let baked = 0;
+  museumGroup.updateMatrixWorld(true);
+
+  const roots = [...roomGroups.values()].map((g) => [g, true]);
+  roots.push([museumGroup, false]);
+
+  for (const [root, deep] of roots) {
+    const buckets = new Map();
+    for (const o of collect(root, deep)) {
+      const key = materialSignature(o.material, managed);
+      const arr = buckets.get(key);
+      if (arr) arr.push(o);
+      else buckets.set(key, [o]);
+    }
+
+    // 房间 group 本身挂在馆级节点下，本地矩阵 = 世界矩阵的相对量
+    const inv = new THREE.Matrix4().copy(root.matrixWorld).invert();
+
+    for (const members of buckets.values()) {
+      if (members.length < 2) continue;
+      const geos = members.map((o) => {
+        const g = o.geometry.clone();
+        g.applyMatrix4(new THREE.Matrix4().multiplyMatrices(inv, o.matrixWorld));
+        return g;
+      });
+      const merged = mergeGeometries(geos, false);
+      geos.forEach((g) => g.dispose());
+      if (!merged) continue; // 属性对不上就整组放弃，保持原样
+
+      const mesh = new THREE.Mesh(merged, members[0].material);
+      mesh.name = `merged:${root.name || '馆级'}×${members.length}`;
+      root.add(mesh);
+
+      for (const o of members) {
+        o.parent?.remove(o);
+        const n = (refCount.get(o.geometry) || 1) - 1;
+        refCount.set(o.geometry, n);
+        if (n <= 0) o.geometry.dispose();
+        baked += 1;
+      }
+    }
+  }
+  return baked;
+}
+
 export function buildMuseum(plan) {
   disposeMuseum();
   museumGroup = new THREE.Group();
@@ -1014,19 +1127,56 @@ export function buildMuseum(plan) {
   }
   buildingRoomId = null;
 
+  // 收尾：同参数的静态物件按房间合成一个 mesh（详见 mergeStaticMeshes）
+  mergeStaticMeshes(
+    new Set([...floorMats, ...coveMats]),
+    new Set([...artTargets, ...benchTargets]),
+  );
+
   return {
     group: museumGroup, roomGroups, roomSamples,
     lights, artSlots, artTargets, benches, benchTargets, floorMats, coveMats,
   };
 }
 
+// 建完就冻结矩阵。
+//
+// 整座馆在运行期没有任何物件改位姿（只有 group.visible 和灯的开关会变），
+// 而 three.js 每帧会对场景里每个节点跑一遍 updateMatrix —— 795 个 mesh 加上
+// 各种 group，全是白算。这里先把世界矩阵算准，再把 matrixAutoUpdate 关掉，
+// 每帧就只剩一次布尔判断。
+//
+// 只冻 museumGroup 子树：相机、玩家身体、手电筒还在动，冻了就不跟手了。
+export function freezeMuseumMatrices() {
+  if (!museumGroup) return;
+  museumGroup.updateMatrixWorld(true);
+  museumGroup.traverse((o) => {
+    o.matrixAutoUpdate = false;
+  });
+}
+
 // 按视线结果开关各厅的 group。传 null 表示"全开"（预热阶段用）。
+// 返回"这次调用有没有真的翻转某个 group" —— 有翻转才算画面变了。
+// 另外维护一个版本号：整厅剔除一变，站桩不动的视线拾取也得重算一遍
+// （不然藏起来的画还能被点到）。
+let visRevision = 0;
+
+export function getVisRevision() {
+  return visRevision;
+}
+
 export function applyRoomVisibility(visible) {
-  if (!roomGroups) return;
+  if (!roomGroups) return false;
+  let changed = false;
   for (const [id, g] of roomGroups) {
     const on = !visible || visible.has(id);
-    if (g.visible !== on) g.visible = on;
+    if (g.visible !== on) {
+      g.visible = on;
+      changed = true;
+    }
   }
+  if (changed) visRevision += 1;
+  return changed;
 }
 
 export function visibleRoomCount() {
