@@ -28,7 +28,7 @@
 - 🌇 **光线随时间** - 右下角滑块，从「正午」拖到「闭馆」：环境光转暖、雾变浓、灯槽渐亮
 - ❓ **操作说明** - 右上角 ? 或按 <kbd>H</kbd>，随时查快捷键（开场提示几秒后就没了）
 - 🔊 **空间声音** - Web Audio 纯合成：环境底噪、按地面材质变化的脚步声、混响
-- 🎵 **舒缓背景音乐** - 生成式合成（慢和弦 pad + 稀疏钟声，走大厅混响），不放音频文件，按 <kbd>B</kbd> 单独开关
+- 🎵 **舒缓背景音乐** - 一条本地实时生成的氛围音，外加 5 首 Kevin MacLeod 的轻音乐（`public/music/`，CC BY 4.0）；<kbd>B</kbd> 开关，<kbd>N</kbd> 或右上角 ⏭ 切下一首
 - 💡 **逐幅射灯** - 每幅画配一盏柔和射灯，锥角按画面宽度反算
 - 🌐 **纯静态** - 无需后端服务器
 
@@ -58,6 +58,7 @@ npm run preview # 预览构建结果
 - **F 键**: 手电筒
 - **M 键**: 声音开关
 - **B 键**: 背景音乐开关
+- **N 键**: 切换下一首音乐
 - **ESC**: 关闭浮层 / 起身 / 退出沉浸模式
 
 ---
@@ -233,6 +234,7 @@ art-museum/
 ├── index.html                  # 入口
 ├── public/
 │   ├── art/                    # 72 幅公版画作（离线打包）
+│   ├── music/                  # 5 首背景音乐（Kevin MacLeod，CC BY 4.0）
 │   ├── models/                 # 雕塑 GLB
 │   ├── draco/                  # Draco 解码器（模型是压缩的）
 │   └── data/museum.json        # 运行时数据（由脚本生成，勿手改）
@@ -269,6 +271,22 @@ art-museum/
 画作来自 **The Cleveland Museum of Art Open Access**，雕塑来自 **The Metropolitan
 Museum of Art Open Access**，均为 CC0 公有领域作品。
 逐幅清单与馆藏链接见 [CREDITS.md](./CREDITS.md)。
+
+## 🎵 音乐授权
+
+`public/music/` 下的 5 首背景音乐来自 **Kevin MacLeod**（[incompetech.com](https://incompetech.com)），
+按 **[Creative Commons: By Attribution 4.0](https://creativecommons.org/licenses/by/4.0/)** 授权使用：
+
+| 曲目 | 用在哪 |
+|---|---|
+| Friday Morning | 背景音乐 · 钢琴即兴 |
+| Bathed in the Light | 背景音乐 · 明亮轻盈 |
+| Daybreak | 背景音乐 · 复古电钢琴 |
+| Gymnopedie No 1 | 背景音乐 · 萨蒂 |
+| Dreamer | 背景音乐 · 钢琴与轻打击 |
+
+署名同样写在游戏内的操作说明面板（按 <kbd>H</kbd>）底部。
+除此之外的第一首「合成氛围」是 Web Audio 实时合成的，无外部素材。
 
 ---
 

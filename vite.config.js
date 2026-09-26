@@ -35,7 +35,9 @@ function walk(dir, out) {
 const ASSET_VERSIONS = {};
 for (const file of walk(join(ROOT, 'public'), [])) {
   const key = relative(join(ROOT, 'public'), file).split('\\').join('/');
-  if (!/\.(webp|jpe?g|png|json|glb)$/.test(key)) continue;
+  // mp3（public/music/ 的背景音乐）也算进去：换一首曲子时 URL 必须跟着换，
+  // 否则浏览器会一直用缓存里那首旧的
+  if (!/\.(webp|jpe?g|png|json|glb|mp3)$/.test(key)) continue;
   ASSET_VERSIONS[key] = shortHash(readFileSync(file));
 }
 

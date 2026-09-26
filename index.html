@@ -28,6 +28,7 @@
     </div>
     <button id="bodyToggle" title="显示/隐藏人物">👤</button>
     <button id="galleryMenuBtn" title="展厅列表">🏛</button>
+    <button id="nextTrackBtn" class="next-track-btn" title="下一首音乐（N）">⏭</button>
     <button id="helpBtn" title="操作说明（H）">?</button>
 
     <!-- 操作说明。开场提示几秒后就没地方查了，这里给一个常驻入口 -->
@@ -41,10 +42,16 @@
         <div><dt><kbd>F</kbd></dt><dd>手电筒</dd></div>
         <div><dt><kbd>M</kbd></dt><dd>声音开关</dd></div>
         <div><dt><kbd>B</kbd></dt><dd>背景音乐开关</dd></div>
+        <div><dt><kbd>N</kbd></dt><dd>切换下一首音乐</dd></div>
         <div><dt><kbd>H</kbd></dt><dd>打开 / 关闭这份说明</dd></div>
         <div><dt><kbd>ESC</kbd></dt><dd>关闭浮层 / 起身 / 退出沉浸模式</dd></div>
       </dl>
       <p class="help-note">馆内九个展厅：前五厅按题材，后四厅按画派。<br>左下角的小地图会跟着你走。</p>
+      <p class="help-credits">
+        音乐：Friday Morning · Bathed in the Light · Daybreak · Gymnopedie No 1 · Dreamer<br />
+        Kevin MacLeod (<a href="https://incompetech.com" target="_blank" rel="noopener">incompetech.com</a>)
+        · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>
+      </p>
     </div>
 
     <!-- 开场提示，几秒后自动淡出 -->
@@ -120,6 +127,7 @@
       <div id="actionButtons">
         <button id="flashBtn" class="action-btn toggle-btn" title="手电筒">🔦</button>
         <button id="musicBtn" class="action-btn toggle-btn active" title="背景音乐">🎵</button>
+        <button class="action-btn next-track-btn" title="下一首音乐">⏭</button>
         <button id="lookBtn" class="action-btn toggle-btn" title="环顾四周">
           <svg viewBox="0 0 24 24" width="28" height="28"><circle fill="currentColor" cx="12" cy="12" r="10" opacity="0.2"/><circle fill="currentColor" cx="12" cy="12" r="3"/></svg>
         </button>

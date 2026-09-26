@@ -21,6 +21,7 @@ import { paintingTextureCache, artWallUrl, artDetailUrl } from './textures.js';
 import {
   initAudio, setAudioEnabled, toggleMute, isMuted, footstep, sitSound, clickSound,
   toggleMusic, isMusicOn, audioRms,
+  nextTrack, currentTrack, isTrackLoading, trackList, audioDebug,
 } from './audio.js';
 
 // DOM
@@ -36,6 +37,7 @@ const galleryMenuBtn = document.getElementById('galleryMenuBtn');
 const galleryCards = document.getElementById('gallery-cards');
 const flashBtn = document.getElementById('flashBtn');
 const musicBtn = document.getElementById('musicBtn');
+const nextTrackBtns = document.querySelectorAll('.next-track-btn');
 const minimapEl = document.getElementById('minimap');
 const minimapCanvas = document.getElementById('minimap-canvas');
 const minimapRoom = document.getElementById('minimap-room');
@@ -541,6 +543,7 @@ window.addEventListener('keydown', (e) => {
   if (e.code === 'KeyF') toggle();
   if (e.code === 'KeyM') toggleSound();
   if (e.code === 'KeyB') toggleMusicKey();
+  if (e.code === 'KeyN') nextTrackKey();
   if (e.code === 'KeyH') toggleHelp();
     if (e.code === 'KeyE' && !glide) activate();
   if (e.code === 'Escape') {
@@ -578,6 +581,18 @@ function toggleMusicKey() {
   musicBtn?.classList.toggle('active', on);
 }
 
+// N 键 / ⏭ 按钮：下一首。第一首是本地生成的 pad，后面是 public/music/ 下的文件
+async function nextTrackKey() {
+  startAudio();
+  if (isTrackLoading()) {
+    toast('上一首还在载入…');
+    return;
+  }
+  const r = await nextTrack();
+  if (r.stale) return;   // 连按了 N，以最后一次为准
+  toast(r.ok ? `正在播放：${r.track.title}` : `《${r.track.title}》没载进来，已回到合成氛围`);
+}
+
 // 操作说明面板。开场提示几秒后就没了，这里给个常驻入口（按钮或 H 键）。
 function toggleHelp(force) {
   if (!helpPanel) return;
@@ -597,6 +612,11 @@ initFlashlight(flashBtn, {
 // 移动端没有键盘，音乐开关做成一个和手电并排的按钮（B 键的等价物）
 musicBtn?.classList.toggle('active', isMusicOn());
 musicBtn?.addEventListener('click', () => toggleMusicKey());
+
+// 切歌：桌面右上角的 ⏭ 和手机端动作区的 ⏭ 是同一个 class
+nextTrackBtns.forEach((btn) => {
+  btn.addEventListener('click', (e) => { e.stopPropagation(); nextTrackKey(); });
+});
 
 if (controls) {
   controls.addEventListener('unlock', () => {
@@ -811,6 +831,12 @@ window.__artMuseum = {
     rms: () => audioRms(),
     get musicOn() { return isMusicOn(); },
     get muted() { return isMuted(); },
+    get track() { return currentTrack().id; },
+    get trackTitle() { return currentTrack().title; },
+    get trackLoading() { return isTrackLoading(); },
+    tracks: () => trackList().map((t) => t.id),
+    next: () => nextTrack(),
+    debug: () => audioDebug(),
   },
   setView(x, z, yaw = 0, pitch = 0) {
     glide = null;

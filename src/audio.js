@@ -31,6 +31,15 @@ let nextChordAt = 0;
 let nextBellAt = 0;
 let chordIdx = 0;
 let chordActiveUntil = 0;   // 当前还有声音的和弦到哪一秒为止
+let genLevel = null;        // 生成式（pad+钟）的总闸，切到文件曲时压到 0
+let fileNode = null;        // 正在放的文件曲 { src, gain }
+let trackIdx = 0;           // 当前曲目，0 = 生成式 pad
+let trackLoading = false;
+let trackSeq = 0;           // 每次切换 +1，用来丢弃过期的加载结果
+const bufferCache = new Map();     // url -> AudioBuffer，LRU（解码后很占内存）
+const inflight = new Map();        // url -> 正在下载解码的 Promise
+const liveChords = new Set();      // 还在响的和弦，切走时要掐掉
+const MAX_TRACK_BUFFERS = 3;       // 缓存几首：3 × ~35MB，再多手机上要出事
 
 // 调试用：挂在 master 上的分析节点，测音量/验证在不在响
 let analyser = null;
@@ -151,12 +160,14 @@ export function setAudioEnabled(on) {
       startAmbient();
       enabled = true;
       // 只在"从关到开"这一下起音乐，重复调用不会打断已经排好的和弦
-      if (musicOn) startMusic(4);
+      if (trackIdx > 0) void switchToTrack(trackIdx, 4);   // 文件曲：重新载入起播
+      else if (musicOn) startMusic(4);
     }
     master.gain.cancelScheduledValues(ctx.currentTime);
     master.gain.setTargetAtTime(muted ? 0 : 0.3, ctx.currentTime, 0.5);
   } else if (ctx && enabled) {
     stopMusic(0.6);
+    stopFileTrack(0.6);
     killMusicTimer();
     master.gain.setTargetAtTime(0, ctx.currentTime, 0.15);
   }
@@ -263,6 +274,8 @@ export function isAudioOn() {
 //
 // 听感不对就改这三个（想调音量、换和弦、钟声密度）：
 const MUSIC_LEVEL = 0.55;        // musicGain 目标值（后面还要乘 bus 与 master）
+const TRACK_LEVEL = 0.42;        // 文件曲的目标值 —— 母带已压过，天生比 pad 响
+const TRACK_RMS = 0.25;          // 文件曲归一到的响度（见 measureRms）
 const NOTE_LEVEL = 0.05;         // 单个正弦的音量
 const BELL_LEVEL = 0.14;         // 单声钟的音量
 const CHORD_DUR = 20;            // 一个和弦响多久（秒）
@@ -304,11 +317,17 @@ function ensureMusicGraph() {
   musicGain.connect(hall);
   hall.connect(wet);
 
+  // 生成式这一路（pad + 钟）先过 genLevel：切到文件曲时整条压成静音，
+  // 已经排好的和弦不用一个个去关
+  genLevel = ctx.createGain();
+  genLevel.gain.value = 1;
+  genLevel.connect(musicGain);
+
   padFilter = ctx.createBiquadFilter();
   padFilter.type = 'lowpass';
   padFilter.frequency.value = 900;
   padFilter.Q.value = 0.6;
-  padFilter.connect(musicGain);
+  padFilter.connect(genLevel);
 
   // 极慢的明暗呼吸，避免 pad 像一条焊死的合成器
   const lfo = ctx.createOscillator();
@@ -321,7 +340,7 @@ function ensureMusicGraph() {
 
   bellBus = ctx.createGain();
   bellBus.gain.value = 1;
-  bellBus.connect(musicGain);
+  bellBus.connect(genLevel);
 }
 
 // 一个和弦：cg 是它的总音量包络，所有正弦都挂它下面
@@ -332,6 +351,7 @@ function scheduleChord(t, notes, dur, attack = CHORD_FADE) {
   cg.gain.setValueAtTime(1, t + dur - CHORD_RELEASE);
   cg.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   cg.connect(padFilter);
+  liveChords.add(cg);
   chordActiveUntil = Math.max(chordActiveUntil, t + dur);
 
   for (const m of notes) {
@@ -349,7 +369,7 @@ function scheduleChord(t, notes, dur, attack = CHORD_FADE) {
     }
   }
   // 声音播完再松手，不然每个和弦都留一个 gain 节点在图里
-  setTimeout(() => cg.disconnect(), (dur + 1) * 1000);
+  setTimeout(() => { cg.disconnect(); liveChords.delete(cg); }, (dur + 1) * 1000);
 }
 
 // 一声钟：主音 + 2.76 倍泛音（玻璃感），泛音衰减快得多
@@ -417,24 +437,34 @@ function musicTick() {
   }
 }
 
+function setMusicVol(level, fade) {
+  if (!musicGain) return;
+  const g = musicGain.gain;
+  g.cancelScheduledValues(ctx.currentTime);
+  g.setTargetAtTime(level, ctx.currentTime, Math.max(0.08, fade / 3));
+}
+
+// 当前曲目决定 musicGain 抬到多高：生成式是 pad 的音量，文件曲另有一档
+const targetLevel = () => (trackIdx === 0 ? MUSIC_LEVEL : TRACK_LEVEL);
+
+// "把音乐准备好"：抬音量；当前是生成式时顺带把排程跑起来。
+// B 键打开、首次手势、切回生成式 都走这里。
 function startMusic(fade = 4) {
   if (!ctx) return;
   ensureMusicGraph();
-  if (!musicTimer) musicTimer = setInterval(musicTick, 500);
-  if (nextChordAt <= ctx.currentTime) nextChordAt = ctx.currentTime + 0.1;
-  if (nextBellAt <= ctx.currentTime) nextBellAt = ctx.currentTime + 7;
-  musicTick();
-  const g = musicGain.gain;
-  g.cancelScheduledValues(ctx.currentTime);
-  g.setTargetAtTime(MUSIC_LEVEL, ctx.currentTime, Math.max(0.08, fade / 3));
+  if (trackIdx === 0) {
+    reviveGenerative(fade);
+    if (!musicTimer) musicTimer = setInterval(musicTick, 500);
+    if (nextChordAt <= ctx.currentTime) nextChordAt = ctx.currentTime + 0.1;
+    if (nextBellAt <= ctx.currentTime) nextBellAt = ctx.currentTime + 7;
+    musicTick();
+  }
+  setMusicVol(musicOn ? targetLevel() : 0, fade);
 }
 
 // 只把音量淡下去，排程留给 musicTick 处理（见 musicOn 分支）
 function stopMusic(fade = 1.5) {
-  if (!musicGain) return;
-  const g = musicGain.gain;
-  g.cancelScheduledValues(ctx.currentTime);
-  g.setTargetAtTime(0, ctx.currentTime, Math.max(0.08, fade / 3));
+  setMusicVol(0, fade);
 }
 
 // 关掉整段音频时才连定时器一起收
@@ -467,4 +497,228 @@ export function audioRms() {
   let sum = 0;
   for (let i = 0; i < rmsBuf.length; i++) sum += rmsBuf[i] * rmsBuf[i];
   return Math.sqrt(sum / rmsBuf.length);
+}
+
+// —— 曲目：生成式之外，再放几首真正的轻音乐 ——
+//
+// 曲子来自 Kevin MacLeod 的 incompetech.com，CC BY 4.0（署名见帮助面板），
+// 文件放在 public/music/，第一次切到才下载解码（约 6–10MB/首），解码完就缓存。
+//
+// 播放链路挂在 musicGain 下面，所以 B 的开关、M 的总静音、干声与大厅混响
+// 全部照旧生效 —— 文件曲和生成式 pad 是同一个"音乐总音量"。
+//
+// 两条路互斥：切到文件曲就 killGenerative()，切回生成式就 startMusic()。
+const MUSIC_FADE = 1.5;   // 切歌交叉淡化（秒）
+
+// 署名信息。CC BY 4.0 要求"点一下就能找到"，所以放在帮助面板里
+const MACLEOD = Object.freeze({
+  author: 'Kevin MacLeod',
+  source: 'incompetech.com',
+  license: 'CC BY 4.0',
+  licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+});
+
+// index 0 是本地实时生成的 pad；1 之后是 public/music/ 下的文件
+// URL 带内容 hash（vite.config.js 算的），换文件不会吃到旧缓存
+const musicUrl = (file) => {
+  const v = (typeof __ASSET_VERSIONS__ === 'object' && __ASSET_VERSIONS__) || {};
+  const hash = v[`music/${file}`];
+  return `music/${file}${hash ? `?v=${hash}` : ''}`;
+};
+
+const TRACKS = Object.freeze([
+  { id: 'generative', title: '合成氛围', note: '本地实时生成 · A 小调慢和弦', url: null },
+  { id: 'friday-morning', title: 'Friday Morning', note: '钢琴即兴', url: musicUrl('friday-morning.mp3'), credit: MACLEOD },
+  { id: 'bathed-in-the-light', title: 'Bathed in the Light', note: '明亮轻盈', url: musicUrl('bathed-in-the-light.mp3'), credit: MACLEOD },
+  { id: 'daybreak', title: 'Daybreak', note: '复古电钢琴', url: musicUrl('daybreak.mp3'), credit: MACLEOD },
+  { id: 'gymnopedie-no-1', title: 'Gymnopedie No 1', note: '萨蒂 · 钢琴', url: musicUrl('gymnopedie-no-1.mp3'), credit: MACLEOD },
+  { id: 'dreamer', title: 'Dreamer', note: '钢琴与轻打击', url: musicUrl('dreamer.mp3'), credit: MACLEOD },
+]);
+
+const announce = () => onStateChange?.({ enabled, muted, musicOn, trackIdx, trackLoading });
+
+// 下载 + 解码。一首 4 分钟的 mp3 解码完约 35MB，所以只留最近用过的 3 首；
+// 被淘汰的下次切回来再从 HTTP 缓存取、重解码（几百毫秒），不常驻内存。
+// 失败既不缓存结果也不留 inflight，下次切还会重试。
+function loadTrackBuffer(url) {
+  if (bufferCache.has(url)) {
+    const hit = bufferCache.get(url);
+    bufferCache.delete(url);
+    bufferCache.set(url, hit);            // LRU：摸过的排到队尾
+    return Promise.resolve(hit);
+  }
+  if (inflight.has(url)) return inflight.get(url);
+
+  const job = (async () => {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const buf = await ctx.decodeAudioData(await res.arrayBuffer());
+    bufferCache.set(url, buf);
+    while (bufferCache.size > MAX_TRACK_BUFFERS) {
+      const oldest = bufferCache.keys().next().value;
+      if (oldest === url) break;
+      bufferCache.delete(oldest);
+    }
+    return buf;
+  })().finally(() => inflight.delete(url));
+
+  inflight.set(url, job);
+  return job;
+}
+
+function fadeOutNode(node, fade) {
+  const now = ctx.currentTime;
+  const g = node.gain.gain;
+  const cur = Math.max(0.0001, g.value);
+  g.cancelScheduledValues(now);
+  g.setValueAtTime(cur, now);
+  g.exponentialRampToValueAtTime(0.0001, now + fade);
+  try { node.src.stop(now + fade + 0.1); } catch { /* 已经停了 */ }
+  setTimeout(() => { node.src.disconnect(); node.gain.disconnect(); }, (fade + 1) * 1000);
+}
+
+// 起播（或交叉淡化到）一个解码好的 buffer，无限循环
+//
+// 这里有个坑：incompetech 的 mp3 峰值只有 -11dBFS（Friday Morning 整首
+// RMS 只有 0.023），直接接上链路算出来只有 0.0009，被 0.003 的环境底噪
+// 整个盖住 —— 状态全都"对"，就是听不见。所以每首解码完先量一次响度，
+// 按 TRACK_RMS 归一再放，换曲子、换响度都不用再手调。
+function measureRms(buf) {
+  const step = 10;                    // 每 10 个采样取一个，够准也够快
+  let sum = 0, n = 0;
+  for (let c = 0; c < buf.numberOfChannels; c++) {
+    const ch = buf.getChannelData(c);
+    for (let i = 0; i < ch.length; i += step) { sum += ch[i] * ch[i]; n++; }
+  }
+  const rms = Math.sqrt(sum / n);
+  return rms > 1e-6 ? rms : 1;
+}
+
+function startFileTrack(buf, fade = MUSIC_FADE) {
+  const now = ctx.currentTime;
+  const k = TRACK_RMS / measureRms(buf);   // 归一系数
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  src.loop = true;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, now);
+  g.gain.exponentialRampToValueAtTime(k, now + fade);
+  src.connect(g);
+  g.connect(musicGain);
+  src.start(now);
+
+  const old = fileNode;
+  fileNode = { src, gain: g };
+  if (old) fadeOutNode(old, fade);
+}
+
+function stopFileTrack(fade = MUSIC_FADE) {
+  if (!fileNode) return;
+  const n = fileNode;
+  fileNode = null;
+  fadeOutNode(n, fade);
+}
+
+// 切到文件曲时把生成式整条压掉：已排好的和弦一起静音，排程账本归零，
+// 这样随时切回来都是"从现在重新开始"，不会突然窜出一个旧和弦
+function killGenerative(fade = 0.6) {
+  if (!ctx) return;
+  killMusicTimer();
+  const now = ctx.currentTime;
+  const tc = Math.max(0.05, fade / 3);
+  for (const cg of liveChords) {
+    cg.gain.cancelScheduledValues(now);
+    cg.gain.setTargetAtTime(0, now, tc);
+  }
+  if (genLevel) genLevel.gain.setTargetAtTime(0, now, tc);
+  chordActiveUntil = 0;
+  nextChordAt = 0;
+  nextBellAt = 0;
+}
+
+function reviveGenerative(fade = 1) {
+  if (genLevel) genLevel.gain.setTargetAtTime(1, ctx.currentTime, Math.max(0.05, fade / 3));
+}
+
+export function trackList() {
+  return TRACKS;
+}
+
+export function currentTrack() {
+  return TRACKS[trackIdx] ?? TRACKS[0];
+}
+
+export function isTrackLoading() {
+  return trackLoading;
+}
+
+// 调试：把音频图的内部状态摊开，方便查"为什么没声"
+export function audioDebug() {
+  return {
+    musicVol: musicGain ? musicGain.gain.value : null,
+    genVol: genLevel ? genLevel.gain.value : null,
+    filePlaying: !!fileNode,
+    padTimer: !!musicTimer,
+    liveChords: liveChords.size,
+    trackIdx,
+    enabled,
+    musicOn,
+    muted,
+    loading: trackLoading,
+    buffers: bufferCache.size,
+    duration: fileNode ? fileNode.src.buffer.duration : null,
+    fileGain: fileNode ? fileNode.gain.gain.value : null,
+  };
+}
+
+// 下一首（尾尾相接）。返回 { ok, track, index, failed?, error? }
+export async function nextTrack() {
+  return switchToTrack(trackIdx + 1);
+}
+
+// 切曲目。并发安全：连按 N 时只有最后一次的结果会被采纳
+export async function switchToTrack(index, fade = MUSIC_FADE) {
+  const idx = ((Math.trunc(index) % TRACKS.length) + TRACKS.length) % TRACKS.length;
+  const seq = ++trackSeq;
+  trackIdx = idx;
+  trackLoading = idx !== 0;
+  announce();
+
+  // 还没到首次手势：只记账，startAudio() 到时候会按 trackIdx 起播
+  if (!ctx || !enabled) {
+    trackLoading = false;
+    announce();
+    return { ok: true, track: TRACKS[idx], index: idx };
+  }
+
+  ensureMusicGraph();
+
+  if (idx === 0) {
+    stopFileTrack(fade);
+    killGenerative(0.4);
+    startMusic(fade);          // 内部会按 musicOn 决定抬不抬音量
+    trackLoading = false;
+    announce();
+    return { ok: true, track: TRACKS[0], index: 0 };
+  }
+
+  killGenerative(0.4);         // 先掐生成式，再等下载
+  const track = TRACKS[idx];
+  try {
+    const buf = await loadTrackBuffer(track.url);
+    if (seq !== trackSeq) return { ok: false, stale: true, track: currentTrack(), index: trackIdx };
+    startFileTrack(buf, fade);
+    setMusicVol(musicOn ? targetLevel() : 0, fade);
+    trackLoading = false;
+    announce();
+    return { ok: true, track, index: idx };
+  } catch (err) {
+    if (seq !== trackSeq) return { ok: false, stale: true, track: currentTrack(), index: trackIdx };
+    // 载入失败就退回生成式，音乐不能断在半路
+    trackIdx = 0;
+    trackLoading = false;
+    startMusic(fade);
+    announce();
+    return { ok: false, failed: true, track, index: idx, error: String(err?.message || err) };
+  }
 }
