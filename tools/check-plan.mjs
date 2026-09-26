@@ -63,4 +63,32 @@ for (const room of plan.rooms) {
 }
 console.log(bad === 0 ? '✓ 没有画挂在门洞里' : `✗ 共 ${bad} 处画/门洞冲突`);
 
-process.exit(bad === 0 && between === 0 ? 0 : 1);
+// ---- 画 / 独立展墙 ----
+// 展厅里的 partitions 是从墙边伸出来的半截墙，高度 3.6 正好盖住挂画带。
+// 它的 z（或 x）只要落进某幅画的展幅，那幅画就被人站在正面看不全 ——
+// 展厅四的 Nocturne: Palaces 就是这么被隔断从画心穿过去的。
+// 按画的朝向算它在地面上的投影，再和隔断矩形相交。
+function artFootprint(a) {
+  const w = a.size.width;
+  const p = a.position;
+  const vertical = Math.abs(Math.abs(a.rotation?.y || 0) - Math.PI / 2) < 0.01; // 东西墙
+  return vertical
+    ? { x0: p.x - 0.3, x1: p.x + 0.1, z0: p.z - w / 2, z1: p.z + w / 2 }
+    : { x0: p.x - w / 2, x1: p.x + w / 2, z0: p.z - 0.3, z1: p.z + 0.1 };
+}
+
+let blocked = 0;
+for (const room of plan.rooms) {
+  for (const p of room.partitions || []) {
+    for (const a of room.arts || []) {
+      const f = artFootprint(a);
+      if (f.x0 < p.x1 && f.x1 > p.x0 && f.z0 < p.z1 && f.z1 > p.z0) {
+        blocked++;
+        console.log(`✗ ${room.name} 「${a.title}」被独立展墙压住（隔断 x${p.x0}~${p.x1} z${p.z0}~${p.z1}）`);
+      }
+    }
+  }
+}
+console.log(blocked === 0 ? '✓ 没有画被独立展墙挡住' : `✗ 共 ${blocked} 处画/隔断冲突`);
+
+process.exit(bad === 0 && between === 0 && blocked === 0 ? 0 : 1);
