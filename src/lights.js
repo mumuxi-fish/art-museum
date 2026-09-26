@@ -1,7 +1,8 @@
 // 灯具 3D 模型与光源创建
 //
-// 和上一版的区别：不再按"一个房间一个 group"来建，而是直接在世界坐标里摆。
-// 整座馆是一张连续的平面图，所有房间挂在同一个 group 下。
+// fixtureGroup：灯具模型，挂到所属房间的 group，跟着整厅剔除一起隐藏。
+// lightGroup：光源和 target，挂馆级节点 —— 灯的可见数直接决定 shader 里
+//             的灯数，绝不能跟着房间显隐来回变，否则每换厅就重编译一次。
 
 import * as THREE from 'three';
 
@@ -90,7 +91,7 @@ function createWallLightFixture(color = '#ffe8d0') {
 }
 
 // 按房间的 lights 配置在世界坐标里建灯，并把灯对象收进 out 供按房间剔除用
-export function buildRoomLights(room, group, out) {
+export function buildRoomLights(room, fixtureGroup, lightGroup, out) {
   (room.lights || []).forEach((ld) => {
     const useSpot = ld.type === 'ceiling';
     // cove：灯槽灯。光带本身是几何体（room.js 的 buildLightCove），
@@ -106,7 +107,7 @@ export function buildRoomLights(room, group, out) {
       if (ld.rotation) {
         fixture.rotation.set(ld.rotation.x || 0, ld.rotation.y || 0, ld.rotation.z || 0);
       }
-      group.add(fixture);
+      fixtureGroup.add(fixture);
       dir.applyQuaternion(fixture.quaternion);
     }
 
@@ -123,11 +124,11 @@ export function buildRoomLights(room, group, out) {
 
     const target = new THREE.Object3D();
     target.position.set(pos.x, pos.y, pos.z).add(dir);
-    group.add(target);
+    lightGroup.add(target);
     light.target = target;
 
     light.userData.roomId = room.id;
-    group.add(light);
+    lightGroup.add(light);
     out.push(light);
   });
 }

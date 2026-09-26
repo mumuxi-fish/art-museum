@@ -1,7 +1,7 @@
 // 整座馆的构建：地板 / 天花 / 墙段 / 门套 / 画作 / 名牌 / 射灯 / 标识牌
 //
 // 和上一版的区别：以前是"一次建一个房间，切展厅就整间重建"，现在是一张连续平面图，
-// 七个空间（门厅 + 主廊 + 五个展厅）一次性建好，玩家一路走过去，不再有传送。
+// 十一个空间（门厅 + 主廊 + 九个展厅）一次性建好，玩家一路走过去，不再有传送。
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -20,6 +20,27 @@ import {
 import { buildRoomLights } from './lights.js';
 
 let museumGroup = null;
+// 按房间分组：一个房间一个 group，靠 group.visible 做整厅剔除。
+// 注意灯（光源 + target）不进这些 group —— 可见灯数一变 shader 就要重编译，
+// 所以灯的开关只由 main.js 的灯光预算决定，两套开关互不干扰。
+let roomGroups = null;
+// 建馆期"正在建哪个房间"，addObj 用它决定东西挂到哪个 group
+let buildingRoomId = null;
+// 每个房间的物件世界坐标，交给 plan.visibleRoomsFrom 做视线判定
+let roomSamples = null;
+
+function addObj(obj) {
+  const g = buildingRoomId && roomGroups?.get(buildingRoomId);
+  if (!g) {
+    museumGroup.add(obj);
+    return;
+  }
+  g.add(obj);
+  // 采样点只收顶层物件：group 都挂在原点下，本地坐标就是世界坐标
+  if (obj.isObject3D && Number.isFinite(obj.position.x) && Number.isFinite(obj.position.z)) {
+    roomSamples.get(buildingRoomId).push([obj.position.x, obj.position.z]);
+  }
+}
 
 const BOX = (w, h, d) => new THREE.BoxGeometry(w, h, d);
 const STD = (o) => new THREE.MeshStandardMaterial(o);
@@ -49,6 +70,9 @@ export function disposeMuseum() {
     });
   });
   museumGroup = null;
+  roomGroups = null;
+  roomSamples = null;
+  buildingRoomId = null;
 }
 
 // 墙板：每个房间在自己边界内侧各建半厚的墙，两个房间之间自然形成整墙厚。
@@ -87,7 +111,7 @@ function buildLightCove(room, coveMats) {
   const strip = new THREE.Mesh(geo, stripMat);
   strip.rotation.x = Math.PI / 2; // 法线朝下
   strip.position.set(room.cx, y, room.cz);
-  museumGroup.add(strip);
+  addObj(strip);
 
   // 灯槽两侧的挡板：让光带看起来是"嵌"在天花里的，而不是贴了张白纸
   const lipMat = mat(room.materials.ceilingColor || room.materials.wallColor, { roughness: 0.95 });
@@ -102,7 +126,7 @@ function buildLightCove(room, coveMats) {
       y - 0.035,
       room.cz + (along === 'x' ? s * off : 0),
     );
-    museumGroup.add(lip);
+    addObj(lip);
   }
 }
 
@@ -144,7 +168,7 @@ function buildPlanter(f) {
   });
 
   g.position.set(f.x, 0, f.z);
-  museumGroup.add(g);
+  addObj(g);
 }
 
 // 服务台：一个长条台面 + 前挡板 + 台面上的几样小东西
@@ -181,7 +205,7 @@ function buildCounter(f, room) {
 
   g.position.set(f.x, 0, f.z);
   g.rotation.y = f.rotY || 0;
-  museumGroup.add(g);
+  addObj(g);
 }
 
 // 寄存柜：一排带门的柜子。门用略深色的薄片贴在正面，做出分格。
@@ -218,7 +242,7 @@ function buildLockers(f, room) {
 
   g.position.set(f.x, 0, f.z);
   g.rotation.y = f.rotY || 0;
-  museumGroup.add(g);
+  addObj(g);
 }
 
 // 沙发：坐垫 + 靠背 + 两侧扶手
@@ -248,7 +272,7 @@ function buildSofa(f, room) {
 
   g.position.set(f.x, 0, f.z);
   g.rotation.y = f.rotY || 0;
-  museumGroup.add(g);
+  addObj(g);
 }
 
 // 茶几：一块薄台面 + 四条细腿
@@ -271,7 +295,7 @@ function buildTable(f, room) {
 
   g.position.set(f.x, 0, f.z);
   g.rotation.y = f.rotY || 0;
-  museumGroup.add(g);
+  addObj(g);
 }
 
 // 伞架：细高圆筒 + 几把伞
@@ -308,7 +332,7 @@ function buildUmbrellaStand(f) {
   });
 
   g.position.set(f.x, 0, f.z);
-  museumGroup.add(g);
+  addObj(g);
 }
 
 // 门厅/走廊家具：按 kind 分发
@@ -339,7 +363,7 @@ function buildPartitions(room) {
     const wall = new THREE.Mesh(BOX(w, h, d), mat(room.materials.wallColor));
     wall.position.set(cx, h / 2, cz);
     wall.receiveShadow = true;
-    museumGroup.add(wall);
+    addObj(wall);
 
     // 顶部压条：让它读起来是"一道墙"，而不是悬空的盒子
     const cap = new THREE.Mesh(
@@ -347,7 +371,7 @@ function buildPartitions(room) {
       mat(new THREE.Color(room.materials.wallColor).multiplyScalar(0.8).getHex(), { roughness: 0.9 }),
     );
     cap.position.set(cx, h + 0.027, cz);
-    museumGroup.add(cap);
+    addObj(cap);
 
     // 底部踢脚，和房间的踢脚线呼应
     const base = new THREE.Mesh(
@@ -355,7 +379,7 @@ function buildPartitions(room) {
       mat(new THREE.Color(room.materials.wallColor).multiplyScalar(0.7).getHex(), { roughness: 0.85 }),
     );
     base.position.set(cx, 0.055, cz);
-    museumGroup.add(base);
+    addObj(base);
 
     // 正面挂一块大的展厅导言板。独立展墙不挂画（会打乱编年），
     // 改成导言板 —— 真实美术馆的独立展墙也常这么用。
@@ -377,7 +401,7 @@ function buildPartitions(room) {
         board.position.set(p.x1 + 0.012, y, cz);
         board.rotation.y = Math.PI / 2;
       }
-      museumGroup.add(board);
+      addObj(board);
     }
   }
 }
@@ -397,7 +421,7 @@ function buildRoomShell(room, plan, lights, floorMats) {
   floor.rotation.x = -Math.PI / 2;
   floor.position.set(room.cx, 0, room.cz);
   floor.receiveShadow = true;
-  museumGroup.add(floor);
+  addObj(floor);
 
   // 天花板：给一点自发光。所有灯都朝下照，天花板本身收不到光，
   // 纯色材质会变成一块黑顶，很压抑。真实馆里的天花是被漫射光洗亮的。
@@ -415,7 +439,7 @@ function buildRoomShell(room, plan, lights, floorMats) {
   ceil.rotation.x = Math.PI / 2;
   ceil.position.set(room.cx, room.height, room.cz);
   ceil.receiveShadow = true;
-  museumGroup.add(ceil);
+  addObj(ceil);
 
   // 墙面加抹灰凹凸。repeat 按房间尺寸算，否则大房间的纹理会被拉糊
   const wallTex = getPlasterTexture().clone();
@@ -431,7 +455,7 @@ function buildRoomShell(room, plan, lights, floorMats) {
     mesh.position.set(g.x, g.y, g.z);
     mesh.castShadow = wall.kind === 'solid';
     mesh.receiveShadow = true;
-    museumGroup.add(mesh);
+    addObj(mesh);
 
     // 踢脚线：便宜但很能提升"装修完成度"
     if (wall.kind === 'solid') {
@@ -447,11 +471,12 @@ function buildRoomShell(room, plan, lights, floorMats) {
       const base = new THREE.Mesh(BOX(bw, bh, bdp), baseMat);
       base.position.set(bx, bh / 2, bz);
       base.receiveShadow = true;
-      museumGroup.add(base);
+      addObj(base);
     }
   }
 
-  buildRoomLights(room, museumGroup, lights);
+  // 灯具模型挂到本厅的 group（跟着整厅剔除），光源和 target 挂馆级节点
+  buildRoomLights(room, roomGroups.get(buildingRoomId), museumGroup, lights);
 }
 
 // 门套：门洞两侧竖框 + 上方横框，让"通过"有实体感
@@ -489,7 +514,7 @@ function buildDoorCasing(op, plan) {
     g.add(head);
   }
   g.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
-  museumGroup.add(g);
+  addObj(g);
 }
 
 // 展厅长凳：一块木坐板 + 两片支撑板。美术馆里一定有它，
@@ -509,7 +534,7 @@ function buildBench(bench, room, benchTargets) {
   });
   g.position.set(bench.x, 0, bench.z);
   g.rotation.y = bench.rotY || 0;
-  museumGroup.add(g);
+  addObj(g);
 
   if (benchTargets) {
     g.traverse((o) => {
@@ -527,7 +552,7 @@ function buildSculpture(sc) {
   const plinthMat = mat(0xCFC9BD, { roughness: 0.85, metalness: 0.02 });
   const plinth = new THREE.Mesh(BOX(sc.plinth, sc.plinthH, sc.plinth), plinthMat);
   plinth.position.set(sc.x, sc.plinthH / 2, sc.z);
-  museumGroup.add(plinth);
+  addObj(plinth);
 
   // 程序化占位：细长的竖向形体
   const profile = [
@@ -540,7 +565,7 @@ function buildSculpture(sc) {
     STD({ color: 0xCBA76B, roughness: 0.28, metalness: 0.34 }),
   );
   placeholder.position.set(sc.x, sc.plinthH, sc.z);
-  museumGroup.add(placeholder);
+  addObj(placeholder);
 
   if (sc.model) loadSculptureModel(sc, placeholder);
 
@@ -553,7 +578,7 @@ function buildSculpture(sc) {
     const plaque = new THREE.Mesh(new THREE.PlaneGeometry(pw, ph), plaqueMat);
     plaque.position.set(sc.x - sc.plinth / 2 - 0.012, sc.plinthH * 0.62, sc.z);
     plaque.rotation.y = -Math.PI / 2;
-    museumGroup.add(plaque);
+    addObj(plaque);
   }
 
   const target = new THREE.Object3D();
@@ -614,10 +639,12 @@ function loadSculptureModel(sc, placeholder) {
         }
       });
 
-      museumGroup.remove(placeholder);
+      // 换回原来的父节点（房间 group），别把模型挂到馆级节点上
+      const parent = placeholder.parent || museumGroup;
+      parent.remove(placeholder);
       placeholder.geometry.dispose();
       placeholder.material.dispose();
-      museumGroup.add(root);
+      parent.add(root);
     },
     undefined,
     (err) => {
@@ -693,7 +720,7 @@ function buildThemeLabel(room, plan, corridor) {
   const panel = new THREE.Mesh(new THREE.PlaneGeometry(PW, PH), labelMat);
   panel.position.set(pos.x, Y, pos.z);
   panel.rotation.y = pos.rotY;
-  museumGroup.add(panel);
+  addObj(panel);
 
   const frame = new THREE.Mesh(
     BOX(PW + 0.07, PH + 0.07, 0.03),
@@ -702,7 +729,7 @@ function buildThemeLabel(room, plan, corridor) {
   frame.position.set(pos.x, Y, pos.z);
   frame.rotation.y = pos.rotY;
   frame.translateZ(-0.025);
-  museumGroup.add(frame);
+  addObj(frame);
 }
 
 // 体积光：给射灯加一个可见的光锥，让"光"有实体感。
@@ -823,7 +850,7 @@ function buildArtworks(room, plan, lights, artSlots, artTargets) {
 
     frame.castShadow = true;
     canvas.castShadow = true;
-    museumGroup.add(grp);
+    addObj(grp);
     lights.push(addArtSpotlight(
       grp.position, grp.rotation.y, a.size.width, a.hero, room.artLight, room.id,
     ));
@@ -870,7 +897,7 @@ function buildGallerySign(room, plan, corridor) {
   const sign = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 0.5), signMat);
   sign.position.set(x, plan.openingHeight + 0.55, z);
   sign.rotation.y = rotY;
-  museumGroup.add(sign);
+  addObj(sign);
 }
 
 // 门厅：导览牌 + 入口大门
@@ -892,7 +919,7 @@ function buildEntranceSigns(room) {
       );
       board.position.set(sign.position.x, sign.position.y, sign.position.z);
       board.rotation.y = sign.rotation?.y ?? 0;
-      museumGroup.add(board);
+      addObj(board);
 
       const fr = new THREE.Mesh(
         BOX(sign.size.width + 0.12, sign.size.height + 0.12, 0.04),
@@ -900,7 +927,7 @@ function buildEntranceSigns(room) {
       );
       fr.position.set(sign.position.x, sign.position.y, sign.position.z - 0.035);
       fr.rotation.y = sign.rotation?.y ?? 0;
-      museumGroup.add(fr);
+      addObj(fr);
     } else if (sign.kind === 'frontdoors') {
       const doorMat = mat(room.materials.doorColor, { roughness: 0.55, metalness: 0.08 });
       const handleMat = mat(0xc9a227, { roughness: 0.3, metalness: 0.9 });
@@ -911,11 +938,11 @@ function buildEntranceSigns(room) {
         leaf.position.set(sign.position.x, leafH / 2, sign.position.z + s * (leafW / 2 + 0.03));
         leaf.castShadow = true;
         leaf.receiveShadow = true;
-        museumGroup.add(leaf);
+        addObj(leaf);
 
         const handle = new THREE.Mesh(new THREE.SphereGeometry(0.055, 14, 12), handleMat);
         handle.position.set(sign.position.x + 0.06, 1.05, sign.position.z + s * 0.16);
-        museumGroup.add(handle);
+        addObj(handle);
       });
     }
   }
@@ -925,6 +952,16 @@ export function buildMuseum(plan) {
   disposeMuseum();
   museumGroup = new THREE.Group();
   scene.add(museumGroup);
+  roomGroups = new Map();
+  roomSamples = new Map();
+  for (const room of plan.rooms) {
+    const g = new THREE.Group();
+    g.name = room.id;
+    g.userData.roomId = room.id;
+    museumGroup.add(g);
+    roomGroups.set(room.id, g);
+    roomSamples.set(room.id, []);
+  }
 
   const lights = [];
   const artSlots = new Map();
@@ -934,12 +971,21 @@ export function buildMuseum(plan) {
   const floorMats = [];
   const coveMats = [];
 
-  for (const room of plan.rooms) buildRoomShell(room, plan, lights, floorMats);
-  for (const room of plan.rooms) buildPartitions(room);
+  for (const room of plan.rooms) {
+    buildingRoomId = room.id;
+    buildRoomShell(room, plan, lights, floorMats);
+  }
+  for (const room of plan.rooms) {
+    buildingRoomId = room.id;
+    buildPartitions(room);
+  }
+  // 门套是两个房间共用的，不属于任何一个厅，永远跟着馆级节点走
+  buildingRoomId = null;
   for (const op of plan.openings) buildDoorCasing(op, plan);
 
   const corridor = plan.rooms.find((r) => r.kind === 'corridor');
   for (const room of plan.rooms) {
+    buildingRoomId = room.id;
     buildArtworks(room, plan, lights, artSlots, artTargets);
 
     for (const b of room.benches || []) {
@@ -947,7 +993,11 @@ export function buildMuseum(plan) {
       buildBench(entry, room, benchTargets);
       benches.push(entry);
     }
-    if (room.sculpture) lights.push(buildSculpture(room.sculpture));
+    if (room.sculpture) {
+      const spot = buildSculpture(room.sculpture);
+      spot.userData.roomId = room.id;
+      lights.push(spot);
+    }
 
     // 每个空间都嵌天花灯槽
     buildLightCove(room, coveMats);
@@ -962,6 +1012,26 @@ export function buildMuseum(plan) {
       buildEntranceSigns(room);
     }
   }
+  buildingRoomId = null;
 
-  return { group: museumGroup, lights, artSlots, artTargets, benches, benchTargets, floorMats, coveMats };
+  return {
+    group: museumGroup, roomGroups, roomSamples,
+    lights, artSlots, artTargets, benches, benchTargets, floorMats, coveMats,
+  };
+}
+
+// 按视线结果开关各厅的 group。传 null 表示"全开"（预热阶段用）。
+export function applyRoomVisibility(visible) {
+  if (!roomGroups) return;
+  for (const [id, g] of roomGroups) {
+    const on = !visible || visible.has(id);
+    if (g.visible !== on) g.visible = on;
+  }
+}
+
+export function visibleRoomCount() {
+  if (!roomGroups) return 0;
+  let n = 0;
+  for (const g of roomGroups.values()) if (g.visible) n += 1;
+  return n;
 }

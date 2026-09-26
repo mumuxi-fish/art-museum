@@ -45,9 +45,16 @@ function showPrompt(text) {
   promptEl.classList.remove('hidden');
 }
 
-function hidePrompt() {
+export function hidePrompt() {
   if (!promptEl) return;
   promptEl.classList.add('hidden');
+}
+
+// 整厅剔除之后，藏起来的房间里的画/凳子不能再被点到 ——
+// three 的 Raycaster 不看 visible，穿墙打到的远室画作会凭空冒出提示条。
+function worldVisible(obj) {
+  for (let o = obj; o; o = o.parent) if (o.visible === false) return false;
+  return true;
 }
 
 // 每帧更新当前可交互目标
@@ -63,8 +70,8 @@ export function updateInteract() {
   raycaster.setFromCamera(screenCenter, camera);
   raycaster.far = ART_REACH;
   const hits = raycaster.intersectObjects([...artTargets, ...benchTargets], false);
-  if (hits.length) {
-    const hit = hits[0];
+  for (const hit of hits) {
+    if (!worldVisible(hit.object)) continue;
     if (hit.object.userData.art) {
       target = { kind: 'art', art: hit.object.userData.art };
       showPrompt('E  查看作品');

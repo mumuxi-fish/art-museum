@@ -13,14 +13,9 @@ export async function loadMuseum() {
 
 // 背景流式加载：每张图到位就立刻换到对应材质上，不阻塞首屏。
 //
-// 分两批：主墙 15 张（进门正对着看的那面墙）先来，其余 25 张随后补。
-//
-// 并发数限制在 6，并且失败会重试。
-// 起因是实测：从国内访问 GitHub Pages 只有 1–11 KB/s，总带宽就那么大，
-// 一次放 40 个请求过去只会互相挤、集体超时（实测并发 4 张全部 timeout）。
-// 限流 + 重试反而能一张一张稳定拿到图。
+// 分两批：主墙的图（进门正对着看的那面墙）先来，其余随后补。
+// 并发限制在 6 —— 一次放开 72 个请求只会互相挤，浏览器排队反而更慢。
 const CONCURRENCY = 6;
-const RETRIES = 2;
 
 async function runPool(items, worker, limit) {
   let cursor = 0;
@@ -41,19 +36,12 @@ export async function streamArtTextures(artSlots, onReady, onProgress) {
   let done = 0;
 
   const loadOne = async ([image, slot]) => {
-    for (let attempt = 0; attempt <= RETRIES; attempt++) {
-      try {
-        const tex = await loadPaintingTexture(image, slot.hue, slot.fallbackSeed, attempt > 0);
-        onReady(slot.material, tex);
-        break;
-      } catch (err) {
-        if (attempt === RETRIES) {
-          console.warn('[art-museum] 画作加载失败（已重试）:', image, err);
-        } else {
-          // 慢网络下超时很常见，等一下再试，别急着退化成色块
-          await new Promise((r) => setTimeout(r, 600 * (attempt + 1)));
-        }
-      }
+    try {
+      const tex = await loadPaintingTexture(image, slot.hue, slot.fallbackSeed);
+      onReady(slot.material, tex);
+    } catch (err) {
+      // 单张失败就先用程序化兜底纹理，别让一张图卡住整面墙
+      console.warn('[art-museum] 画作加载失败:', image, err);
     }
     done += 1;
     onProgress?.(done, total);

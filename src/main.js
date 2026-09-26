@@ -7,13 +7,14 @@ import { scene, camera, renderer, ambient } from './scene.js';
 import { IS_MOBILE } from './config.js';
 import { loadMuseum, streamArtTextures } from './loader.js';
 import { buildPlan } from './plan.js';
-import { buildMuseum, disposeMuseum } from './room.js';
+import { buildMuseum, disposeMuseum, applyRoomVisibility, visibleRoomCount } from './room.js';
 import { initControls, controls, updateMovement, enterMobileMode } from './controls.js';
 import { initPlayer, updatePlayer } from './player.js';
 import { initFlashlight, updateFlashlight, toggle } from './flashlight.js';
-import { initInteract, updateInteract, activate, isSeated, stand } from './interact.js';
+import { initInteract, updateInteract, activate, isSeated, stand, hidePrompt } from './interact.js';
 import { initMinimap, updateMinimap } from './minimap.js';
 import { initDaylight, applyDaylight, daylightLabel } from './daylight.js';
+import { paintingTextureCache, artWallUrl, artDetailUrl } from './textures.js';
 import {
   initAudio, setAudioEnabled, toggleMute, footstep, sitSound, clickSound,
 } from './audio.js';
@@ -97,9 +98,133 @@ function placePlayer(x, z, yaw) {
   if (yaw !== undefined) camera.rotation.set(0, yaw, 0);
 }
 
+// ---- 相机滑移 ----
+//
+// 展厅列表和详情浮层的"相关作品"原本是直接改坐标（瞬移），和馆内"没有传送、
+// 连续动线"的设定自相矛盾 —— 卡片上还写着「走过去 →」，点下去却是落地。
+//
+// 改成一段带缓动的滑移：本馆的房间图是一棵树（门厅 ↔ 主廊 ↔ 各展厅，
+// 展厅之间不直接连通），所以先在房间图上 BFS 出一条路，用每个门洞的中心
+// 当途经点，相机沿折线滑过去。全程不落地、不切镜头，小地图上也能看见自己在走。
+let glide = null;
+
+function shortestAngle(from, to) {
+  let d = (to - from) % (Math.PI * 2);
+  if (d > Math.PI) d -= Math.PI * 2;
+  if (d < -Math.PI) d += Math.PI * 2;
+  return d;
+}
+
+// 从当前位置走到 (x, z) 的途经点。房间图连通就走门洞，不连通（理论上不会）
+// 直接退化成一条直线。
+function waypointsTo(x, z) {
+  const pts = [];
+  const from = plan.roomAt(camera.position.x, camera.position.z);
+  const to = plan.roomAt(x, z);
+
+  if (from && to && from.id !== to.id) {
+    const prev = new Map();
+    const seen = new Set([from.id]);
+    const queue = [from.id];
+    let reached = false;
+    while (queue.length && !reached) {
+      const id = queue.shift();
+      if (id === to.id) { reached = true; break; }
+      for (const op of plan.byId.get(id).openings) {
+        const next = op.rooms.find((r) => r !== id);
+        if (next && !seen.has(next)) {
+          seen.add(next);
+          prev.set(next, { from: id, op });
+          queue.push(next);
+        }
+      }
+    }
+    if (reached) {
+      // 房间链：from → … → to，同时记下每一步走的门洞
+      const chain = [];
+      for (let cur = to.id; cur !== from.id;) {
+        const step = prev.get(cur);
+        chain.unshift({ next: cur, op: step.op });
+        cur = step.from;
+      }
+      const doorPt = (op) => (op.axis === 'x'
+        ? { x: op.at, z: (op.from + op.to) / 2 }
+        : { x: (op.from + op.to) / 2, z: op.at });
+      chain.forEach((step, i) => {
+        pts.push(doorPt(step.op));
+        // 途经的房间（门厅/主廊）在两个门洞之间绕一下房间中心。
+        // 两个门洞可能开在同一面墙上，直接连线会贴着墙皮走，近裁剪面会穿帮。
+        if (i < chain.length - 1) {
+          const mid = plan.byId.get(step.next);
+          pts.push({ x: mid.cx, z: mid.cz });
+        }
+      });
+    }
+  }
+  pts.push({ x, z });
+  return pts;
+}
+
+function startGlide(x, z, yaw) {
+  const points = [{ x: camera.position.x, z: camera.position.z }, ...waypointsTo(x, z)];
+  const lengths = [];
+  let total = 0;
+  for (let i = 1; i < points.length; i++) {
+    const d = Math.hypot(points[i].x - points[i - 1].x, points[i].z - points[i - 1].z);
+    lengths.push(d);
+    total += d;
+  }
+  // 已经站在目标点上（比如同室内的"相关作品"距离很近却重合）——直接落位
+  if (total < 0.02) {
+    placePlayer(x, z, yaw ?? camera.rotation.y);
+    return;
+  }
+  hidePrompt();
+  glide = {
+    points,
+    lengths,
+    total,
+    // 距离越远给的时间越长，但整体压在 0.6–1s：是"滑过去"，不是模拟步行
+    duration: Math.min(1.0, Math.max(0.6, total / 26)),
+    t: 0,
+    yaw0: camera.rotation.y,
+    yaw1: yaw ?? camera.rotation.y,
+    y: camera.position.y,
+  };
+}
+
+function updateGlide(dt) {
+  glide.t += dt / glide.duration;
+  const done = glide.t >= 1;
+  const t = Math.min(glide.t, 1);
+  // easeInOutCubic：起步和落地都缓一下，中间最快
+  const e = t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
+
+  let want = e * glide.total;
+  let i = 0;
+  while (i < glide.lengths.length - 1 && want > glide.lengths[i]) {
+    want -= glide.lengths[i];
+    i += 1;
+  }
+  const seg = glide.lengths[i] || 1;
+  const a = glide.points[i];
+  const b = glide.points[i + 1];
+  const k = Math.min(1, want / seg);
+
+  camera.position.set(a.x + (b.x - a.x) * k, glide.y, a.z + (b.z - a.z) * k);
+  camera.rotation.y = glide.yaw0 + shortestAngle(glide.yaw0, glide.yaw1) * e;
+
+  if (done) {
+    camera.position.set(glide.points.at(-1).x, glide.y, glide.points.at(-1).z);
+    camera.rotation.y = glide.yaw1;
+    glide = null;
+    stepAccum = 0;
+  }
+}
+
 // ---- 灯光预算 ----
 //
-// 全馆 65 盏灯，全开会把 forward rendering 的 shader 撑爆。
+// 全馆 117 盏灯，全开会把 forward rendering 的 shader 撑爆。
 // 但也不能简单地"当前房间 + 相邻房间"：走廊和所有展厅都相邻，
 // 站走廊里等于全馆灯全开（实测 65/65），那才是最卡的场景。
 //
@@ -196,12 +321,41 @@ function updateRoom() {
   started = true;
 }
 
+// ---- 整厅剔除 ----
+//
+// plan 已经把每面实心墙抽成了 2D 线段，这里按视线判断哪些房间看得见，
+// 看不见的整个 group 直接不渲染（门洞、隔壁厅、拐角后面的东西全挡住）。
+//
+// 代价是每帧最多 ~0.3ms，所以只在姿势变了的时候重算：走动 >0.15m、
+// 转头 >1.7°、或者站着不动超过 0.5s 兜底算一次。
+let roomSamples = null;
+const visPose = { x: Infinity, z: Infinity, yaw: 0, at: -1 };
+let roomCulling = true;
+
+function updateRoomVisibility(now) {
+  if (!plan || !roomSamples) return;
+  if (!roomCulling) {
+    applyRoomVisibility(null);
+    visPose.x = Infinity;
+    visPose.at = -1;
+    return;
+  }
+  const moved = Math.hypot(camera.position.x - visPose.x, camera.position.z - visPose.z);
+  const turned = Math.abs(shortestAngle(visPose.yaw, camera.rotation.y));
+  if (moved < 0.15 && turned < 0.03 && now - visPose.at < 0.5) return;
+  visPose.x = camera.position.x;
+  visPose.z = camera.position.z;
+  visPose.yaw = camera.rotation.y;
+  visPose.at = now;
+  applyRoomVisibility(plan.visibleRoomsFrom(camera.position.x, camera.position.z, roomSamples));
+}
+
 // 作品详情浮层。打开时锁住走动，并且不要让指针解锁去弹展厅列表
 function openArtDetail(art) {
   if (!detailEl) return;
   detailOpen = true;
   clickSound();
-  if (detailImg) detailImg.src = `art/${art.image}`;
+  if (detailImg) detailImg.src = art.image ? artDetailUrl(art.image) : '';
   if (detailImg) detailImg.alt = art.title || '';
   if (detailTitle) detailTitle.textContent = art.title || '无题';
   if (detailArtist) detailArtist.textContent = art.artist || '佚名';
@@ -263,7 +417,10 @@ function renderRelated(art) {
     btn.className = 'related-card';
     btn.title = `${p.title || '无题'} · ${p.artist || '佚名'}`;
     const img = document.createElement('img');
-    img.src = `art/${p.image}`;
+    // 相关作品的卡片只有 78×56，直接复用墙上已经加载好的 640 小图 —— 零请求。
+    // 墙上还没到位就用同一个 URL，等流式加载完成后浏览器缓存会命中。
+    const wall = paintingTextureCache.get(p.image);
+    img.src = wall?.image?.src || artWallUrl(p.image);
     img.alt = '';
     img.loading = 'lazy';
     const cap = document.createElement('span');
@@ -276,6 +433,7 @@ function renderRelated(art) {
 }
 
 // 站到画心外侧，面朝画。距离从 2.4m 起试，走不通就往前挪。
+// 走过去靠 startGlide 滑移，不瞬移。
 function goToArtwork(a) {
   closeArtDetail();
 
@@ -291,11 +449,7 @@ function goToArtwork(a) {
     if (!plan || plan.canStand(tx, tz)) { x = tx; z = tz; break; }
   }
 
-  placePlayer(x, z, Math.atan2(nx, nz));
-  currentRoomId = null;
-  updateRoom();
-  prevPos.copy(camera.position);
-  stepAccum = 0;
+  startGlide(x, z, Math.atan2(nx, nz));
 }
 
 function closeArtDetail() {
@@ -340,10 +494,8 @@ function jumpToGallery(gallery) {
     }
   }
   const yaw = Math.atan2(-(gallery.cx - x), -(gallery.cz - z));
-  placePlayer(x, z, yaw);
-  currentRoomId = null;
-  updateRoom();
   galleryMenu.classList.add('hidden');
+  startGlide(x, z, yaw);
   try {
     if (controls) controls.lock();
     else enterMobileMode();
@@ -381,7 +533,7 @@ window.addEventListener('keydown', (e) => {
   if (e.code === 'KeyF') toggle();
   if (e.code === 'KeyM') toggleSound();
   if (e.code === 'KeyH') toggleHelp();
-  if (e.code === 'KeyE') activate();
+    if (e.code === 'KeyE' && !glide) activate();
   if (e.code === 'Escape') {
     if (!helpPanel?.classList.contains('hidden')) toggleHelp(false);
     else if (detailOpen) closeArtDetail();
@@ -442,8 +594,8 @@ function updateFootsteps() {
   const dz = camera.position.z - prevPos.z;
   const moved = Math.hypot(dx, dz);
   prevPos.copy(camera.position);
-  // 传送/菜单跳转会是一次很大的位移，排除掉
-  if (moved <= 0.0005 || moved > 1.5) return;
+  // 滑移/菜单跳转会是一次较大的位移，排除掉，免得滑过去时一路响脚步
+  if (glide || moved <= 0.0005 || moved > 1.5) return;
   stepAccum += moved;
   if (stepAccum >= STRIDE) {
     stepAccum = 0;
@@ -455,10 +607,12 @@ function updateFootsteps() {
 function animate() {
   requestAnimationFrame(animate);
   const dt = Math.min(clock.getDelta(), 0.05);
-  if (!menuOpen() && !detailOpen && !isSeated()) updateMovement(dt);
+  if (glide) updateGlide(dt);
+  else if (!menuOpen() && !detailOpen && !isSeated()) updateMovement(dt);
   updateRoom();
+  updateRoomVisibility(clock.elapsedTime);
   updateMinimap(camera, currentRoomId, plan);
-  if (!detailOpen) updateInteract();
+  if (!detailOpen && !glide) updateInteract();
   updatePlayer();
   updateFlashlight(dt);
   updateFootsteps();
@@ -483,6 +637,7 @@ async function bootstrap() {
 
     const built = buildMuseum(plan);
     lights = built.lights;
+    roomSamples = built.roomSamples;
 
     // 抛光地板的环境反射（拍一次，不是每帧）
     applyFloorReflection(built.floorMats);
@@ -588,12 +743,15 @@ window.__artMuseum = {
       总灯数: lights.length,
       绘制调用: i.render.calls,
       三角面: i.render.triangles,
+      可见厅: visibleRoomCount(),
+      总厅数: plan?.rooms.length ?? 0,
       几何体: i.memory.geometries,
       贴图: i.memory.textures,
       着色器程序: i.programs?.length ?? 0,
     };
   },
   setView(x, z, yaw = 0, pitch = 0) {
+    glide = null;
     camera.rotation.order = 'YXZ';
     camera.position.set(x, camera.position.y, z);
     camera.rotation.set(pitch, yaw, 0);
@@ -607,6 +765,20 @@ window.__artMuseum = {
     return r;
   },
   jumpTo: jumpToGallery,
+  // 自动化验证用：直接触发滑移/开详情，不走 UI
+  glideToArt: goToArtwork,
+  openArt: openArtDetail,
+  get gliding() { return glide; },
+  get elapsed() { return clock.elapsedTime; },
+  get roomSamples() { return roomSamples; },
+  get visPose() { return { ...visPose }; },
+  setRoomCulling(on) { roomCulling = !!on; visPose.x = Infinity; visPose.at = -1; },
+  get roomCulling() { return roomCulling; },
+  previewPath(x, z) {
+    const from = plan.roomAt(camera.position.x, camera.position.z);
+    const to = plan.roomAt(x, z);
+    return { from: from?.id, to: to?.id, pts: waypointsTo(x, z) };
+  },
 };
 
 bootstrap();

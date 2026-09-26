@@ -1,9 +1,20 @@
 // 纹理生成与画作纹理加载
 import * as THREE from 'three';
 import { renderer, textureLoader } from './scene.js';
-import { ART_CDN_BASE } from './config.js';
 
 export const paintingTextureCache = new Map();
+
+// 画作两档：墙面用小图（640px，显存和纹理上传都便宜），
+// 详情浮层用原图（1200px，76vh 的大图才不糊）。
+// 两档都在 public/art 下，文件名相同、目录不同。
+export const ART_WALL_DIR = 'art/640/';
+export const ART_DETAIL_DIR = 'art/';
+
+// vite 的 define 按裸标识符替换（和 loader 里的 __BUILD_ID__ 一个写法）
+const ASSET_VERSIONS = __ASSET_VERSIONS__;
+const withVersion = (url) => (ASSET_VERSIONS[url] ? `${url}?v=${ASSET_VERSIONS[url]}` : url);
+export const artWallUrl = (image) => withVersion(`${ART_WALL_DIR}${image}`);
+export const artDetailUrl = (image) => withVersion(`${ART_DETAIL_DIR}${image}`);
 
 // 确定性伪随机(mulberry32) —— 同一 seed 永远得到同一串数
 // 用它取代 Math.random(),否则同一幅画每次刷新都会长得不一样
@@ -227,39 +238,21 @@ export function getFallbackTexture(hue, seed) {
   return tex;
 }
 
-// 加载画作图片。按顺序试多个源：生产环境先走 CDN，再回退本地相对路径；
-// 开发环境只用本地。全都失败才 reject，交给调用方重试。
-//
-// forceRetry：跳过缓存再试一次。之前失败的结果会被缓存成 fallback 纹理，
-// 不绕过缓存的话重试永远拿到那个色块。
+// 加载画作图片。单一来源（本地相对路径），失败直接抛给调用方。
 function loadOneTexture(url) {
   return new Promise((resolve, reject) => textureLoader.load(url, resolve, undefined, reject));
 }
 
-export async function loadPaintingTexture(imagePath, hue = 0.5, seed = 'untitled', forceRetry = false) {
+export async function loadPaintingTexture(imagePath, hue = 0.5, seed = 'untitled') {
   if (!imagePath) return getFallbackTexture(hue, seed);
-  if (!forceRetry && paintingTextureCache.has(imagePath)) {
-    return paintingTextureCache.get(imagePath);
-  }
+  const cached = paintingTextureCache.get(imagePath);
+  if (cached) return cached;
 
-  // 相对路径(兼容子路径部署),而非硬编码 /art/
-  const sources = import.meta.env.PROD && ART_CDN_BASE
-    ? [`${ART_CDN_BASE}${imagePath}`, `art/${imagePath}`]
-    : [`art/${imagePath}`];
-
-  let lastErr;
-  for (const url of sources) {
-    try {
-      const tex = await loadOneTexture(url);
-      tex.colorSpace = THREE.SRGBColorSpace;
-      tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-      paintingTextureCache.set(imagePath, tex);
-      return tex;
-    } catch (err) {
-      lastErr = err;
-    }
-  }
-  throw lastErr;
+  const tex = await loadOneTexture(artWallUrl(imagePath));
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  paintingTextureCache.set(imagePath, tex);
+  return tex;
 }
 
 // 圆形粒子贴图 —— PointsMaterial 不给 map 时 WebGL 会把点渲染成硬边方块
@@ -417,7 +410,10 @@ export function makeDirectoryBoardTexture(rooms, youAreHereId) {
   ctx.fillText('ART MUSEUM', 56, 66);
   ctx.fillStyle = '#8a857b';
   ctx.font = `400 26px ${sans}`;
-  ctx.fillText('导览图 · 五个展厅', 56, 110);
+  const galleryCount = rooms.filter((r) => r.kind === 'gallery').length;
+  const CN_NUM = '零一二三四五六七八九十';
+  const cnNum = (n) => (n <= 10 ? CN_NUM[n] : String(n));
+  ctx.fillText(`导览图 · ${cnNum(galleryCount)}个展厅`, 56, 110);
 
   ctx.strokeStyle = 'rgba(0,0,0,0.15)';
   ctx.lineWidth = 2;
@@ -455,7 +451,7 @@ export function makeDirectoryBoardTexture(rooms, youAreHereId) {
       ctx.fillStyle = '#2b4f70';
       ctx.font = `500 22px ${sans}`;
       ctx.textAlign = 'center';
-      const label = r.name.replace(/^展厅[一二三四五]\s*·\s*/, '');
+      const label = r.name.replace(/^展厅[一二三四五六七八九十]+\s*·\s*/, '');
       ctx.fillText(label, x + w / 2, y + h / 2);
     }
   }
