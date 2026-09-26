@@ -40,6 +40,7 @@
         <div><dt><kbd>E</kbd></dt><dd>看向画作时打开作品详情；走到长凳前坐下</dd></div>
         <div><dt><kbd>F</kbd></dt><dd>手电筒</dd></div>
         <div><dt><kbd>M</kbd></dt><dd>声音开关</dd></div>
+        <div><dt><kbd>B</kbd></dt><dd>背景音乐开关</dd></div>
         <div><dt><kbd>H</kbd></dt><dd>打开 / 关闭这份说明</dd></div>
         <div><dt><kbd>ESC</kbd></dt><dd>关闭浮层 / 起身 / 退出沉浸模式</dd></div>
       </dl>
@@ -48,7 +49,7 @@
 
     <!-- 开场提示，几秒后自动淡出 -->
     <div id="intro-hint" class="intro-hint">
-      <p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 走动 · 鼠标转视角 · <kbd>E</kbd> 看作品 / 坐下 · <kbd>F</kbd> 手电筒 · <kbd>M</kbd> 声音 · <kbd>H</kbd> 全部操作</p>
+      <p><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 走动 · 鼠标转视角 · <kbd>E</kbd> 看作品 / 坐下 · <kbd>F</kbd> 手电筒 · <kbd>M</kbd> 声音 · <kbd>B</kbd> 音乐 · <kbd>H</kbd> 全部操作</p>
     </div>
 
     <!-- 可交互提示（桌面上按 E，移动端直接点） -->
@@ -118,6 +119,7 @@
       </div>
       <div id="actionButtons">
         <button id="flashBtn" class="action-btn toggle-btn" title="手电筒">🔦</button>
+        <button id="musicBtn" class="action-btn toggle-btn active" title="背景音乐">🎵</button>
         <button id="lookBtn" class="action-btn toggle-btn" title="环顾四周">
           <svg viewBox="0 0 24 24" width="28" height="28"><circle fill="currentColor" cx="12" cy="12" r="10" opacity="0.2"/><circle fill="currentColor" cx="12" cy="12" r="3"/></svg>
         </button>

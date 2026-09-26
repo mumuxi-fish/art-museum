@@ -31,7 +31,7 @@
 | 渲染 | Three.js（WebGL） |
 | 构建 | Vite 5 |
 | 语言 | 原生 ES 模块 + CSS，无框架 |
-| 音频 | Web Audio API（纯合成，无音频文件） |
+| 音频 | Web Audio API（纯合成，无音频文件：底噪 / 脚步 / 混响 / 生成式背景音乐） |
 | 3D 模型 | glTF + Draco 压缩 |
 | 部署 | GitHub Pages（GitHub Actions 自动构建） |
 | 图片 | WebP（画作）、JPEG（分享预览图） |
@@ -107,7 +107,7 @@ src/
 ├── textures.js    546 行  程序化纹理 + 画作双档加载（挂墙 640 / 详情 1200）
 ├── style.css      984 行  全部样式
 ├── controls.js    270 行  键鼠控制、指针锁定、拖动转视角
-├── audio.js       225 行  Web Audio 合成（底噪/脚步/混响）
+├── audio.js       470 行  Web Audio 合成（底噪/脚步/混响 + 生成式背景音乐）
 ├── plan.js        332 行  平面图编译：相邻检测、门洞、碰撞体、按厅视线剔除
 ├── interact.js    142 行  射线拾取（看画、坐长凳；只命中可见的厅）
 ├── lights.js      134 行  灯光预算与按距离剔除
@@ -199,6 +199,7 @@ python3 tools/enrich-artworks.py tools/artworks.json
 | `E` | 看向画作时打开详情；走到长凳前坐下 |
 | `F` | 手电筒 |
 | `M` | 声音开关 |
+| `B` | 背景音乐开关 |
 | `H` | 操作说明面板 |
 | `ESC` | 关闭浮层 / 起身 / 退出沉浸模式 |
 

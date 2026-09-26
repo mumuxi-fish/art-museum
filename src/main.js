@@ -19,7 +19,8 @@ import { initMinimap, updateMinimap } from './minimap.js';
 import { initDaylight, applyDaylight, daylightLabel } from './daylight.js';
 import { paintingTextureCache, artWallUrl, artDetailUrl } from './textures.js';
 import {
-  initAudio, setAudioEnabled, toggleMute, footstep, sitSound, clickSound,
+  initAudio, setAudioEnabled, toggleMute, isMuted, footstep, sitSound, clickSound,
+  toggleMusic, isMusicOn, audioRms,
 } from './audio.js';
 
 // DOM
@@ -34,6 +35,7 @@ const galleryMenu = document.getElementById('gallery-menu');
 const galleryMenuBtn = document.getElementById('galleryMenuBtn');
 const galleryCards = document.getElementById('gallery-cards');
 const flashBtn = document.getElementById('flashBtn');
+const musicBtn = document.getElementById('musicBtn');
 const minimapEl = document.getElementById('minimap');
 const minimapCanvas = document.getElementById('minimap-canvas');
 const minimapRoom = document.getElementById('minimap-room');
@@ -538,6 +540,7 @@ detailEl?.addEventListener('click', (e) => {
 window.addEventListener('keydown', (e) => {
   if (e.code === 'KeyF') toggle();
   if (e.code === 'KeyM') toggleSound();
+  if (e.code === 'KeyB') toggleMusicKey();
   if (e.code === 'KeyH') toggleHelp();
     if (e.code === 'KeyE' && !glide) activate();
   if (e.code === 'Escape') {
@@ -567,6 +570,14 @@ function toggleSound() {
   toast(isMuted ? '声音已关' : '声音已开');
 }
 
+// B 键：只切背景音乐，M 管的仍然是全部声音
+function toggleMusicKey() {
+  startAudio();
+  const on = toggleMusic();
+  toast(on ? '音乐已开' : '音乐已关');
+  musicBtn?.classList.toggle('active', on);
+}
+
 // 操作说明面板。开场提示几秒后就没了，这里给个常驻入口（按钮或 H 键）。
 function toggleHelp(force) {
   if (!helpPanel) return;
@@ -582,6 +593,10 @@ helpClose?.addEventListener('click', () => toggleHelp(false));
 initFlashlight(flashBtn, {
   onToggle: (isOn) => toast(isOn ? '手电筒已开' : '手电筒已关'),
 });
+
+// 移动端没有键盘，音乐开关做成一个和手电并排的按钮（B 键的等价物）
+musicBtn?.classList.toggle('active', isMusicOn());
+musicBtn?.addEventListener('click', () => toggleMusicKey());
 
 if (controls) {
   controls.addEventListener('unlock', () => {
@@ -790,6 +805,12 @@ window.__artMuseum = {
       着色器程序: i.programs?.length ?? 0,
       剔除版本: getVisRevision(),
     };
+  },
+  // 音频调试：rms 是 master 上的实时有效值（总静音≈0）
+  audio: {
+    rms: () => audioRms(),
+    get musicOn() { return isMusicOn(); },
+    get muted() { return isMuted(); },
   },
   setView(x, z, yaw = 0, pitch = 0) {
     glide = null;

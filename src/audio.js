@@ -1,9 +1,10 @@
 // 声音：全部用 Web Audio 合成，不引入任何音频文件
 //
-// 三部分：
+// 四部分：
 //   环境音  低通后的布朗噪声，极低音量，带缓慢起伏 —— 让人感觉空间是"活的"
 //   脚步声  噪声爆发 + 低频落地感，按地面材质换滤波频率，每次略有随机
 //   交互音  坐下/起身的木头声、打开展签的一声轻响
+//   背景音乐 舒缓的生成式 pad + 稀疏钟声，详见文件末尾的"音乐"段（B 键开关）
 //
 // 浏览器要求用户手势之后才能出声，所以 AudioContext 是懒创建的，
 // 第一次点击或按键时才 resume。用 convolver + 合成脉冲响应做一个大厅混响，
@@ -19,6 +20,21 @@ let irBuffer = null;
 let enabled = false;
 let muted = false;
 let onStateChange = null;
+
+// 音乐（详见文件末尾）
+let musicOn = true;        // B 键，默认开
+let musicGain = null;
+let padFilter = null;
+let bellBus = null;
+let musicTimer = null;
+let nextChordAt = 0;
+let nextBellAt = 0;
+let chordIdx = 0;
+let chordActiveUntil = 0;   // 当前还有声音的和弦到哪一秒为止
+
+// 调试用：挂在 master 上的分析节点，测音量/验证在不在响
+let analyser = null;
+let rmsBuf = null;
 
 function makeNoiseBuffer(seconds = 2) {
   const len = Math.floor(ctx.sampleRate * seconds);
@@ -77,6 +93,13 @@ function ensureContext() {
   convolver.connect(master);
 
   noiseBuffer = makeNoiseBuffer();
+
+  // 分析节点：只读不发声，用来实测音量（调试钩子 __artMuseum.audio）
+  analyser = ctx.createAnalyser();
+  analyser.fftSize = 2048;
+  rmsBuf = new Float32Array(analyser.fftSize);
+  master.connect(analyser);
+
   return ctx;
 }
 
@@ -127,13 +150,17 @@ export function setAudioEnabled(on) {
     if (!enabled) {
       startAmbient();
       enabled = true;
+      // 只在"从关到开"这一下起音乐，重复调用不会打断已经排好的和弦
+      if (musicOn) startMusic(4);
     }
     master.gain.cancelScheduledValues(ctx.currentTime);
     master.gain.setTargetAtTime(muted ? 0 : 0.3, ctx.currentTime, 0.5);
   } else if (ctx && enabled) {
+    stopMusic(0.6);
+    killMusicTimer();
     master.gain.setTargetAtTime(0, ctx.currentTime, 0.15);
   }
-  onStateChange?.({ enabled: on, muted });
+  onStateChange?.({ enabled: on, muted, musicOn });
   return true;
 }
 
@@ -222,4 +249,222 @@ export function clickSound() {
 
 export function isAudioOn() {
   return enabled && !muted;
+}
+
+// —— 音乐：舒缓的生成式背景音 ——
+//
+// 同样是纯合成，不放音频文件。两层：
+//   pad   慢和弦垫底 —— 每个音两个 ±6 音分的正弦（轻微拍频，听着是"暖"的），
+//         起音慢、释放慢，新和弦提前交叠，接缝处听不出来
+//   钟声  每 5–15s 一声，取当前和弦最上两个音，快起慢落，
+//         额外多送一份进大厅混响 —— 空展厅里远远的一声
+//
+// 没有节拍也没有旋律线：站着看画时它只该是空间的一部分，不该被"听出来"。
+//
+// 听感不对就改这三个（想调音量、换和弦、钟声密度）：
+const MUSIC_LEVEL = 0.55;        // musicGain 目标值（后面还要乘 bus 与 master）
+const NOTE_LEVEL = 0.05;         // 单个正弦的音量
+const BELL_LEVEL = 0.14;         // 单声钟的音量
+const CHORD_DUR = 20;            // 一个和弦响多久（秒）
+const CHORD_XFADE = 6;           // 提前多久交叠下一个 → 实际每 (DUR-XFADE)s 换一次
+const CHORD_FADE = 5;            // 起音（秒）
+const CHORD_RELEASE = 7;         // 释放（秒）
+const BELL_GAP = [5000, 15000];  // 钟声间隔区间（毫秒）
+
+// A 小调系的五个和弦，宽排列：低音 A2–G2，顶上到 B4，中段留空
+const CHORDS = [
+  [45, 57, 64, 71],  // Am9   A2 A3 E4 B4
+  [41, 53, 60, 67],  // Fmaj9 F2 F3 C4 G4
+  [48, 55, 64, 71],  // Cmaj9 C3 G3 E4 B4
+  [43, 55, 62, 71],  // G6/9  G2 G3 D4 B4
+  [50, 57, 65, 69],  // Dm9   D3 A3 F4 A4
+];
+
+const midiToFreq = (m) => 440 * Math.pow(2, (m - 69) / 12);
+
+// 随机游走：不原地重复，听起来像是在同一个调里慢慢漂
+function pickChord() {
+  let i = Math.floor(Math.random() * CHORDS.length);
+  if (i === chordIdx) {
+    i = (i + 1 + Math.floor(Math.random() * (CHORDS.length - 1))) % CHORDS.length;
+  }
+  chordIdx = i;
+  return CHORDS[i];
+}
+
+function ensureMusicGraph() {
+  if (musicGain) return;
+
+  // 所有音乐最终都汇到 musicGain，B 键只需要淡入淡出这一个点
+  musicGain = ctx.createGain();
+  musicGain.gain.value = 0;
+  musicGain.connect(bus(0.3));            // 干声
+  const hall = ctx.createGain();          // 额外的混响份
+  hall.gain.value = 0.5;
+  musicGain.connect(hall);
+  hall.connect(wet);
+
+  padFilter = ctx.createBiquadFilter();
+  padFilter.type = 'lowpass';
+  padFilter.frequency.value = 900;
+  padFilter.Q.value = 0.6;
+  padFilter.connect(musicGain);
+
+  // 极慢的明暗呼吸，避免 pad 像一条焊死的合成器
+  const lfo = ctx.createOscillator();
+  lfo.frequency.value = 0.04;
+  const lfoGain = ctx.createGain();
+  lfoGain.gain.value = 300;
+  lfo.connect(lfoGain);
+  lfoGain.connect(padFilter.frequency);
+  lfo.start();
+
+  bellBus = ctx.createGain();
+  bellBus.gain.value = 1;
+  bellBus.connect(musicGain);
+}
+
+// 一个和弦：cg 是它的总音量包络，所有正弦都挂它下面
+function scheduleChord(t, notes, dur, attack = CHORD_FADE) {
+  const cg = ctx.createGain();
+  cg.gain.setValueAtTime(0.0001, t);
+  cg.gain.exponentialRampToValueAtTime(1, t + attack);
+  cg.gain.setValueAtTime(1, t + dur - CHORD_RELEASE);
+  cg.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  cg.connect(padFilter);
+  chordActiveUntil = Math.max(chordActiveUntil, t + dur);
+
+  for (const m of notes) {
+    const f = midiToFreq(m);
+    for (const cents of [-6, 6]) {
+      const o = ctx.createOscillator();
+      o.type = 'sine';
+      o.frequency.value = f * Math.pow(2, cents / 1200);
+      const vg = ctx.createGain();
+      vg.gain.value = NOTE_LEVEL;
+      o.connect(vg);
+      vg.connect(cg);
+      o.start(t);
+      o.stop(t + dur + 0.5);
+    }
+  }
+  // 声音播完再松手，不然每个和弦都留一个 gain 节点在图里
+  setTimeout(() => cg.disconnect(), (dur + 1) * 1000);
+}
+
+// 一声钟：主音 + 2.76 倍泛音（玻璃感），泛音衰减快得多
+function scheduleBell(t, notes) {
+  const top = notes.slice(-2);                       // 和弦最上两个音
+  const m = top[Math.floor(Math.random() * top.length)] + 12;
+  const f = midiToFreq(m);
+
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.linearRampToValueAtTime(BELL_LEVEL, t + 0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + 3.6);
+  g.connect(bellBus);
+
+  const o = ctx.createOscillator();
+  o.type = 'sine';
+  o.frequency.value = f;
+  o.connect(g);
+  o.start(t);
+  o.stop(t + 3.8);
+
+  const pg = ctx.createGain();
+  pg.gain.setValueAtTime(BELL_LEVEL * 0.5, t);
+  pg.gain.exponentialRampToValueAtTime(0.0001, t + 0.9);
+  pg.connect(bellBus);
+
+  const p = ctx.createOscillator();
+  p.type = 'sine';
+  p.frequency.value = f * 2.76;
+  p.connect(pg);
+  p.start(t);
+  p.stop(t + 1.1);
+
+  setTimeout(() => { g.disconnect(); pg.disconnect(); }, 4200);
+}
+
+// 前瞻调度：每 500ms 把未来 1.5s 内该响的排进去
+function musicTick() {
+  if (!ctx || !enabled) return;
+  const now = ctx.currentTime;
+
+  if (!musicOn) {
+    // 关着的时候把账本归零：重开时要么接着响（上一个和弦还在窗口里），
+    // 要么从"现在"起排 —— 绝不把关着这段时间一次补排出来
+    nextChordAt = now + 0.1;
+    nextBellAt = now + 7;
+    return;
+  }
+
+  // 后台标签页会把定时器掐到一分钟一次，回来先对齐账本
+  if (nextChordAt < now - 1) nextChordAt = now + 0.1;
+  if (nextBellAt < now - 1) nextBellAt = now + 7;
+
+  const horizon = now + 1.5;
+  while (nextChordAt < horizon) {
+    // 已经有和弦在响就用慢起音（交叠处听不出接缝）；没有就快点起，
+    // 否则刚打开音乐要等 5 秒才有声，像是没生效
+    const attack = chordActiveUntil > now + CHORD_FADE ? CHORD_FADE : 1.8;
+    scheduleChord(nextChordAt, pickChord(), CHORD_DUR, attack);
+    nextChordAt += CHORD_DUR - CHORD_XFADE;
+  }
+  while (nextBellAt < horizon) {
+    scheduleBell(nextBellAt, CHORDS[chordIdx]);
+    nextBellAt += BELL_GAP[0] + Math.random() * (BELL_GAP[1] - BELL_GAP[0]);
+  }
+}
+
+function startMusic(fade = 4) {
+  if (!ctx) return;
+  ensureMusicGraph();
+  if (!musicTimer) musicTimer = setInterval(musicTick, 500);
+  if (nextChordAt <= ctx.currentTime) nextChordAt = ctx.currentTime + 0.1;
+  if (nextBellAt <= ctx.currentTime) nextBellAt = ctx.currentTime + 7;
+  musicTick();
+  const g = musicGain.gain;
+  g.cancelScheduledValues(ctx.currentTime);
+  g.setTargetAtTime(MUSIC_LEVEL, ctx.currentTime, Math.max(0.08, fade / 3));
+}
+
+// 只把音量淡下去，排程留给 musicTick 处理（见 musicOn 分支）
+function stopMusic(fade = 1.5) {
+  if (!musicGain) return;
+  const g = musicGain.gain;
+  g.cancelScheduledValues(ctx.currentTime);
+  g.setTargetAtTime(0, ctx.currentTime, Math.max(0.08, fade / 3));
+}
+
+// 关掉整段音频时才连定时器一起收
+function killMusicTimer() {
+  if (musicTimer) {
+    clearInterval(musicTimer);
+    musicTimer = null;
+  }
+}
+
+// B 键：只切音乐，M 仍然是总静音
+export function toggleMusic() {
+  musicOn = !musicOn;
+  if (ctx && enabled) {
+    if (musicOn) startMusic(1.5);
+    else stopMusic(1.5);
+  }
+  onStateChange?.({ enabled, muted, musicOn });
+  return musicOn;
+}
+
+export function isMusicOn() {
+  return musicOn;
+}
+
+// 调试：master 上的实时 RMS（静音时约 0），用来验证"到底响没响"
+export function audioRms() {
+  if (!analyser) return 0;
+  analyser.getFloatTimeDomainData(rmsBuf);
+  let sum = 0;
+  for (let i = 0; i < rmsBuf.length; i++) sum += rmsBuf[i] * rmsBuf[i];
+  return Math.sqrt(sum / rmsBuf.length);
 }
