@@ -557,14 +557,14 @@ function toggleMusicKey() {
   musicBtn?.classList.toggle('active', on);
 }
 
-// N 键 / ⏭ 按钮：下一首。第一首是本地生成的 pad，后面是 public/music/ 下的文件
+// N 键 / ⏭ 按钮：下一首。第一首是本地生成的 pad，后面是 public/music/ 下的文件。
+// 载入中也直接切：trackIdx 同步就变，正在下的那首作废，以最后一次为准。
 async function nextTrackKey() {
   startAudio();
-  if (isTrackLoading()) {
-    toast('上一首还在载入…');
-    return;
-  }
-  const r = await nextTrack();
+  const list = trackList();
+  const cur = Math.max(0, list.findIndex((t) => t.id === currentTrack().id));
+  if (isTrackLoading()) toast(`切换中：${list[(cur + 1) % list.length].title}`);
+  const r = await switchToTrack(cur + 1);
   if (r.stale) return;   // 连按了 N，以最后一次为准
   toast(r.ok ? `正在播放：${r.track.title}` : `《${r.track.title}》没载进来，已回到合成氛围`);
 }
@@ -635,16 +635,14 @@ function renderPlaylist() {
 
 async function pickTrack(index) {
   startAudio();
-  const curIdx = trackList().findIndex((t) => t.id === currentTrack().id);
-  if (index === curIdx && !isTrackLoading()) {
-    toast('已经在播这首了');
+  const list = trackList();
+  const curIdx = list.findIndex((t) => t.id === currentTrack().id);
+  if (index === curIdx) {
+    toast(isTrackLoading() ? '这首正在载入…' : '已经在播这首了');
     return;
   }
-  if (isTrackLoading()) {
-    toast('上一首还在载入…');
-    return;
-  }
-  renderPlaylist();
+  // 载入中也能直接点别的：正在下的那首作废，以这一下为准
+  if (isTrackLoading()) toast(`切换中：${list[index]?.title ?? ''}`);
   const r = await switchToTrack(index);
   if (r.stale) return;
   toast(r.ok ? `正在播放：${r.track.title}` : `《${r.track.title}》没载进来，已回到合成氛围`);

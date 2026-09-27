@@ -676,7 +676,7 @@ export async function nextTrack() {
   return switchToTrack(trackIdx + 1);
 }
 
-// 切曲目。并发安全：连按 N 时只有最后一次的结果会被采纳
+// 切曲目。并发安全：载入中再切只有最后一次会被采纳，前一次的下载直接作废
 export async function switchToTrack(index, fade = MUSIC_FADE) {
   const idx = ((Math.trunc(index) % TRACKS.length) + TRACKS.length) % TRACKS.length;
   const seq = ++trackSeq;
@@ -702,11 +702,12 @@ export async function switchToTrack(index, fade = MUSIC_FADE) {
     return { ok: true, track: TRACKS[0], index: 0 };
   }
 
-  killGenerative(0.4);         // 先掐生成式，再等下载
   const track = TRACKS[idx];
   try {
     const buf = await loadTrackBuffer(track.url);
     if (seq !== trackSeq) return { ok: false, stale: true, track: currentTrack(), index: trackIdx };
+    // 下载完才掐生成式：载入期间 pad 照常出声，接上新曲时再交叉淡入
+    killGenerative(0.4);
     startFileTrack(buf, fade);
     setMusicVol(musicOn ? targetLevel() : 0, fade);
     trackLoading = false;
@@ -714,9 +715,10 @@ export async function switchToTrack(index, fade = MUSIC_FADE) {
     return { ok: true, track, index: idx };
   } catch (err) {
     if (seq !== trackSeq) return { ok: false, stale: true, track: currentTrack(), index: trackIdx };
-    // 载入失败就退回生成式，音乐不能断在半路
+    // 载入失败就退回生成式，音乐不能断在半路（旧文件曲也得停，别两轨同时响）
     trackIdx = 0;
     trackLoading = false;
+    stopFileTrack(fade);
     startMusic(fade);
     announce();
     return { ok: false, failed: true, track, index: idx, error: String(err?.message || err) };
