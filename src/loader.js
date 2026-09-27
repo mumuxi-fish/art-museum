@@ -1,7 +1,15 @@
 // 展馆数据加载与画作贴图流式加载
 import { loadPaintingTexture } from './textures.js';
+import { loadMyGallery } from './mygallery.js';
+
+export { isMyGallery } from './mygallery.js';
 
 export async function loadMuseum() {
+  // 优先用「我自己导入的本地照片」那份方案（🖼 按钮选的文件夹，存在 IndexedDB 里），
+  // 没有才回落到仓库里的默认展馆。两边返回的是同一种结构，后面 buildPlan 不用知道区别。
+  const mine = await loadMyGallery();
+  if (mine) return mine.json;
+
   // 带构建 ID：museum.json 在 public/ 下，vite 不会给它加 hash，
   // 不加版本号的话换了图或改了数据，浏览器会一直吃旧缓存。
   const response = await fetch(`data/museum.json?v=${__BUILD_ID__}`);

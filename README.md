@@ -29,6 +29,8 @@
 - ❓ **操作说明** - 右上角 ? 或按 <kbd>H</kbd>，随时查快捷键（开场提示几秒后就没了）
 - 🔊 **空间声音** - Web Audio 纯合成：环境底噪、按地面材质变化的脚步声、混响
 - 🎵 **舒缓背景音乐** - 一条本地实时生成的氛围音，外加 5 首 Kevin MacLeod 的轻音乐（`public/music/`，CC BY 4.0）；<kbd>B</kbd> 开关，<kbd>空格</kbd> 或 ⏸ ▶ 暂停 / 继续，<kbd>N</kbd> 或 ⏭ 切下一首，右上角 ♫ 打开**播放列表**直接点着换
+- 📷 **导入你自己的照片** - 右上角 🖼 选一个本地文件夹，就地生成一座专属展厅
+  （东墙主位 + 南北两墙的长厅）；照片只在浏览器里处理，不上传、不进仓库，点 ↩ 还原默认展馆
 - 💡 **逐幅射灯** - 每幅画配一盏柔和射灯，锥角按画面宽度反算
 - 🌐 **纯静态** - 无需后端服务器
 
@@ -61,6 +63,8 @@ npm run preview # 预览构建结果
 - **N 键**: 切换下一首音乐（载入中也能直接切，正在下的那首作废）
 - **空格**: 暂停 / 继续背景音乐（右上角 ⏸ ▶ 按钮；手机端在动作区），文件曲会记住进度
 - **♫ 按钮**: 打开播放列表，点曲目直接切换（右上角；手机端在动作区）
+- **🖼 按钮**: 选一个本地文件夹，用你的照片生成专属展厅（只在本机处理，不上传）；
+  已导入时变成 ↩，点击还原默认展馆
 - **ESC**: 关闭浮层 / 起身 / 释放鼠标（退出沉浸模式，随后可点界面上的按钮）
 
 ---
@@ -69,7 +73,7 @@ npm run preview # 预览构建结果
 
 所有内容都是**数据驱动**的：改数据文件 → 跑脚本 → 重新构建。不需要动 3D 代码。
 
-先说明整个管线，再分四种情况讲。
+先说明整个管线，再分几种情况讲。
 
 ## 数据管线
 
@@ -227,6 +231,28 @@ python3 tools/build-galleries.py tools/artworks.json public/data/museum.json
 > ⚠️ 曾经的 `checker`（棋盘）和 `stripes`（条纹）已经废弃——走廊是 41.5×4.5，
 > 长宽比 9:1，任何有方向的图案都会被拉成条状。纹理重复次数现在按房间长宽分别计算。
 
+## 六、用你自己的照片生成展厅
+
+右上角 🖼 不走 `tools/` 那条数据管线——照片不是仓库内容，整件事在浏览器里就地完成：
+
+1. 点 🖼 选一个文件夹（`webkitdirectory`，连子目录一起读）
+2. 每张图 `createImageBitmap` 解码 → canvas 缩成两档（挂墙 640px / 详情 1600px）
+   → 转 WebP 存进 IndexedDB（HEIC 之类解不开的单张跳过，不让整个文件夹失败）
+3. `src/mygallery-plan.js` 按照片长宽比排一版平面：**门厅 + 一条长厅**，
+   第一张挂进门正对的东墙主位（`hero`，配更亮的射灯），其余对半挂南北两面长墙；
+   单幅面积按张数反比缩放，长厅长度跟着画数走（不短于 14m）
+4. 刷新一次，走和默认展馆完全相同的启动路径，只是 `loader.js` 优先读 IndexedDB
+   里那份方案；`textures.js` 的 `artWallUrl/artDetailUrl` 被换成 blob URL，
+   挂画、详情浮层、「相关作品」都不用知道自己看的是谁的图
+5. 点 ↩ 删掉 IndexedDB 记录再刷新，就回到默认展馆
+
+平面自检不碰浏览器：`node tools/check-mygallery.mjs`（1~80 张、含极端横竖幅，
+检查门洞 / 贴墙 / 越界 / 壁灯不压画 / 射灯数不超上限）。
+
+限制：照片不进仓库、不上传，换浏览器或清站点数据就没了；一次只保留一套方案
+（导入新的覆盖旧的）；墙上的射灯按 `room.artLight.max` 等间隔挑着加，
+几十张照片也不会把房间的光照 shader 撑爆。
+
 ---
 
 ## 🗂️ 项目结构
@@ -254,6 +280,9 @@ art-museum/
 │   ├── daylight.js             # 光线随时间（正午 → 闭馆，环境光/雾/灯槽/反射插值）
 │   ├── audio.js                # Web Audio 合成：环境音 / 脚步 / 交互音 / 混响 / 背景音乐
 │   ├── flashlight.js           # 手电筒（双层锥 + 手持阻尼）
+│   ├── loader.js               # museum.json 加载（优先读自己导入的照片方案）+ 画作流式加载
+│   ├── mygallery.js            # 🖼 本地照片导入：canvas 缩图 + IndexedDB
+│   ├── mygallery-plan.js       # 照片 → 单厅平面（纯数据，可 Node 自检）
 │   └── style.css               # HUD / 浮层 / 提示样式
 ├── tools/
 │   ├── fetch-artworks.py       # 从 Cleveland Open Access 抓画作（直接输出 WebP）
@@ -262,6 +291,8 @@ art-museum/
 │   ├── fetch-sculpture.py      # 从 Met 抓 3D 雕塑
 │   ├── shrink-sculpture.py     # 压缩 GLB 里的嵌入纹理
 │   ├── build-galleries.py      # 排版引擎：生成 museum.json + CREDITS.md
+│   ├── check-plan.mjs          # 默认展馆平面自检（画有没有挂进门洞）
+│   ├── check-mygallery.mjs     # 自建展厅平面自检（node 直接跑）
 │   ├── artworks.json           # 画作清单（数据源）
 │   └── sculpture.json          # 雕塑元数据（数据源）
 ├── .github/workflows/deploy.yml

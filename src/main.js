@@ -5,7 +5,8 @@
 import * as THREE from 'three';
 import { scene, camera, renderer, ambient, markDirty, takeDirty } from './scene.js';
 import { IS_MOBILE } from './config.js';
-import { loadMuseum, streamArtTextures } from './loader.js';
+import { loadMuseum, streamArtTextures, isMyGallery } from './loader.js';
+import { importPhotoFiles, clearMyGallery } from './mygallery.js';
 import { buildPlan } from './plan.js';
 import {
   buildMuseum, disposeMuseum, applyRoomVisibility, visibleRoomCount,
@@ -67,6 +68,9 @@ const detailTechnique = document.getElementById('detail-technique');
 const detailDimensions = document.getElementById('detail-dimensions');
 const detailCredit = document.getElementById('detail-credit');
 const introHint = document.getElementById('intro-hint');
+const photoBtn = document.getElementById('photoBtn');
+const photoInput = document.getElementById('photoInput');
+const helpNote = document.querySelector('.help-note');
 
 let plan = null;
 let lights = [];
@@ -689,6 +693,58 @@ nextTrackBtns.forEach((btn) => {
   btn.addEventListener('click', (e) => { e.stopPropagation(); nextTrackKey(); });
 });
 
+// 🖼 选一个本地文件夹，把里面的照片生成一座专属展厅（细节见 mygallery.js）。
+// 没导入时是「选文件夹」，导入后变成「↩ 还原默认展馆」。
+function syncPhotoBtn() {
+  if (!photoBtn) return;
+  const mine = isMyGallery();
+  photoBtn.textContent = mine ? '↩' : '🖼';
+  photoBtn.title = mine ? '还原默认展馆' : '导入我的照片（只在本机处理，不上传）';
+}
+
+photoBtn?.addEventListener('click', async () => {
+  if (photoBtn.disabled) return;
+  if (isMyGallery()) {
+    photoBtn.disabled = true;
+    try {
+      await clearMyGallery();
+      location.reload();
+    } catch (err) {
+      photoBtn.disabled = false;
+      toast(`还原失败：${err?.message || err}`);
+    }
+    return;
+  }
+  photoInput?.click();
+});
+
+photoInput?.addEventListener('change', async () => {
+  const files = photoInput.files;
+  if (!files?.length) return;
+  photoBtn.disabled = true;
+  if (progressEl) {
+    progressEl.classList.remove('hidden');
+    progressEl.textContent = '正在读取照片…';
+  }
+  try {
+    const r = await importPhotoFiles(files, ({ done, total, name }) => {
+      if (progressEl) progressEl.textContent = `正在处理照片 ${done + 1} / ${total} · ${name}`;
+    });
+    if (progressEl) progressEl.textContent = `已生成「${r.folder}」· ${r.count} 张`;
+    toast(
+      `已生成专属展厅：${r.count} 张照片${r.skipped ? `（跳过 ${r.skipped} 张）` : ''}，正在重启…`,
+      3200,
+    );
+    await new Promise((res) => setTimeout(res, 400));
+    location.reload();
+  } catch (err) {
+    toast(`导入失败：${err?.message || err}`, 3200);
+    if (progressEl) progressEl.classList.add('hidden');
+    photoBtn.disabled = false;
+    photoInput.value = ''; // 释放掉，好让用户重选同一个文件夹
+  }
+});
+
 const clock = new THREE.Clock();
 const prevPos = new THREE.Vector3();
 let stepAccum = 0;
@@ -769,6 +825,12 @@ async function bootstrap() {
   try {
     const data = await loadMuseum();
     plan = buildPlan(data);
+
+    // 是自己导入的照片墙就换掉右上角按钮和说明文案
+    syncPhotoBtn();
+    if (isMyGallery() && helpNote) {
+      helpNote.innerHTML = '当前是你导入的本地照片展厅：<br>照片只在本机处理，不上传、不进仓库。';
+    }
 
     const built = buildMuseum(plan);
     lights = built.lights;
@@ -874,6 +936,9 @@ window.__artMuseum = {
   get renderer() { return renderer; },
   get activeLightCount() { return lights.filter((l) => l.visible).length; },
   get artIndex() { return artIndex; },
+  // 是不是「我自己导入的照片墙」（🖼 按钮，见 mygallery.js）
+  usingMyGallery: () => isMyGallery(),
+  clearMyGallery: () => clearMyGallery(),
   get stats() {
     const i = renderer.info;
     return {

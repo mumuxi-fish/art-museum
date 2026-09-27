@@ -13,8 +13,18 @@ export const ART_DETAIL_DIR = 'art/';
 // vite 的 define 按裸标识符替换（和 loader 里的 __BUILD_ID__ 一个写法）
 const ASSET_VERSIONS = __ASSET_VERSIONS__;
 const withVersion = (url) => (ASSET_VERSIONS[url] ? `${url}?v=${ASSET_VERSIONS[url]}` : url);
-export const artWallUrl = (image) => withVersion(`${ART_WALL_DIR}${image}`);
-export const artDetailUrl = (image) => withVersion(`${ART_DETAIL_DIR}${image}`);
+
+// 自己导入的照片（🖼 选本地文件夹）走这里：image → { wall, detail } 的 object URL。
+// 没登记过的照旧去 public/art 下找 —— 默认展馆和自建展厅共用同一套调用点，
+// 挂画、详情浮层、「相关作品」缩略图都不用知道自己现在看的是谁的图。
+const customArtUrls = new Map();
+export function setCustomArtUrl(image, urls) {
+  customArtUrls.set(image, urls);
+}
+export const artWallUrl = (image) =>
+  customArtUrls.get(image)?.wall || withVersion(`${ART_WALL_DIR}${image}`);
+export const artDetailUrl = (image) =>
+  customArtUrls.get(image)?.detail || withVersion(`${ART_DETAIL_DIR}${image}`);
 
 // 确定性伪随机(mulberry32) —— 同一 seed 永远得到同一串数
 // 用它取代 Math.random(),否则同一幅画每次刷新都会长得不一样

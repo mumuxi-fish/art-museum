@@ -811,6 +811,15 @@ function buildArtworks(room, plan, lights, artSlots, artTargets) {
   });
   const placeholder = getPlaceholderTexture();
 
+  // 射灯按等间隔挑着加：一个厅几十幅画（自己导入的照片墙就是这个量级）
+  // 全都挂聚光灯的话，房间的光照 shader 会变成几十盏灯的循环，帧率直接崩。
+  // room.artLight.max 不写就和以前一样每幅都有（默认展馆的数据里没有这个字段）；
+  // 写 0 表示一盏都不要（全靠灯槽照明）。
+  const spotMax = room.artLight?.max ?? Infinity;
+  const spotStep = Number.isFinite(spotMax)
+    ? (spotMax <= 0 ? 0 : Math.max(1, Math.ceil(room.arts.length / spotMax)))
+    : 1;
+
   room.arts.forEach((a, i) => {
     const seed = `${a.id || i}|${a.title || ''}`;
 
@@ -856,9 +865,11 @@ function buildArtworks(room, plan, lights, artSlots, artTargets) {
     frame.castShadow = true;
     canvas.castShadow = true;
     addObj(grp);
-    lights.push(addArtSpotlight(
-      grp.position, grp.rotation.y, a.size.width, a.hero, room.artLight, room.id,
-    ));
+    if (i % spotStep === 0) {
+      lights.push(addArtSpotlight(
+        grp.position, grp.rotation.y, a.size.width, a.hero, room.artLight, room.id,
+      ));
+    }
 
     if (a.image && !artSlots.has(a.image)) {
       artSlots.set(a.image, {

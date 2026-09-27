@@ -31,6 +31,9 @@
     <button id="nextTrackBtn" class="next-track-btn" title="下一首音乐（N）">⏭</button>
     <button id="playlistBtn" class="playlist-toggle" title="播放列表">♫</button>
     <button id="helpBtn" title="操作说明（H）">?</button>
+    <button id="photoBtn" title="导入我的照片（只在本机处理，不上传）">🖼</button>
+    <!-- 选本地文件夹用的隐藏 input：webkitdirectory 才能一次拿到整个目录 -->
+    <input type="file" id="photoInput" webkitdirectory multiple hidden aria-hidden="true">
 
     <!-- 操作说明。开场提示几秒后就没地方查了，这里给一个常驻入口 -->
     <div id="help-panel" class="help-panel hidden">
@@ -46,6 +49,7 @@
         <div><dt><kbd>空格</kbd></dt><dd>暂停 / 继续背景音乐（右上角 ⏸ ▶ 也能点）</dd></div>
         <div><dt><kbd>N</kbd></dt><dd>切换下一首音乐</dd></div>
         <div><dt>♫</dt><dd>打开播放列表，点曲目直接切换</dd></div>
+        <div><dt>🖼</dt><dd>选一个本地文件夹，用你的照片生成专属展厅（只在本机处理，不上传）；已导入时点 ↩ 还原默认展馆</dd></div>
         <div><dt><kbd>H</kbd></dt><dd>打开 / 关闭这份说明</dd></div>
         <div><dt><kbd>ESC</kbd></dt><dd>关闭浮层 / 起身 / 退出沉浸模式</dd></div>
       </dl>
