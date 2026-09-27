@@ -131,19 +131,19 @@ export function makeFloorTexture(darkHex, lightHex, roomHalf, type = 'checker', 
       ctx.fillRect(baseX, 0, 2, size);
     }
   } else {
-    // 默认：抛光水磨石。没有条纹、没有格子，只有细碎石粒和柔和的色斑。
-    const mid = dark.clone().lerp(light, 0.42);
-    ctx.fillStyle = `#${mid.getHexString()}`;
+    // 默认：简约哑光地砖。整片浅色 + 极淡的云状色差 + 十字细砖缝，没有石粒也没有格子。
+    const base = dark.clone().lerp(light, 0.7);
+    ctx.fillStyle = `#${base.getHexString()}`;
     ctx.fillRect(0, 0, size, size);
 
-    // 柔和的深浅色斑，避免大面积死板
-    for (let i = 0; i < 170; i++) {
+    // 几乎看不见的大块色差，避免大面积死板
+    for (let i = 0; i < 18; i++) {
       const x = rnd() * size;
       const y = rnd() * size;
-      const r = 26 + rnd() * 96;
-      const c = dark.clone().lerp(light, rnd());
+      const r = 90 + rnd() * 170;
+      const c = dark.clone().lerp(light, 0.35 + rnd() * 0.65);
       const g = ctx.createRadialGradient(x, y, 0, x, y, r);
-      g.addColorStop(0, `rgba(${(c.r * 255) | 0},${(c.g * 255) | 0},${(c.b * 255) | 0},0.14)`);
+      g.addColorStop(0, `rgba(${(c.r * 255) | 0},${(c.g * 255) | 0},${(c.b * 255) | 0},0.035)`);
       g.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = g;
       ctx.beginPath();
@@ -151,17 +151,33 @@ export function makeFloorTexture(darkHex, lightHex, roomHalf, type = 'checker', 
       ctx.fill();
     }
 
-    // 细碎石粒 —— 水磨石的质感来源
-    for (let i = 0; i < 11000; i++) {
-      const x = rnd() * size;
-      const y = rnd() * size;
-      const r = 0.5 + rnd() * 2.0;
-      const c = dark.clone().lerp(light, rnd());
-      ctx.fillStyle = `rgba(${(c.r * 255) | 0},${(c.g * 255) | 0},${(c.b * 255) | 0},${0.22 + rnd() * 0.4})`;
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.fill();
+    // 一块纹理铺 2.5m，画 2×2 就是 1.25m 的大砖，每块砖只差一点点深浅
+    const half = size / 2;
+    for (let ty = 0; ty < 2; ty++) {
+      for (let tx = 0; tx < 2; tx++) {
+        const d = (tx + ty) % 2 === 0 ? 0.02 : -0.015;
+        ctx.fillStyle = d >= 0 ? `rgba(255,255,255,${d})` : `rgba(0,0,0,${-d})`;
+        ctx.fillRect(tx * half, ty * half, half, half);
+      }
     }
+
+    // 砖缝：一道压暗的细线，旁边补一道极淡的亮线，看着像砖倒角
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.10)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(half, 0);
+    ctx.lineTo(half, size);
+    ctx.moveTo(0, half);
+    ctx.lineTo(size, half);
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(half + 1.5, 0);
+    ctx.lineTo(half + 1.5, size);
+    ctx.moveTo(0, half + 1.5);
+    ctx.lineTo(size, half + 1.5);
+    ctx.stroke();
   }
 
   const tex = new THREE.CanvasTexture(canvas);

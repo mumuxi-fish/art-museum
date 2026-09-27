@@ -415,8 +415,8 @@ function buildRoomShell(room, plan, lights, floorMats) {
     m.floorDark, m.floorLight, Math.max(room.w, room.d) / 2, m.floorType || 'stone',
     room.w, room.d,
   );
-  // roughness 压低 + 金属度微抬，让它像抛光石材。envMap 稍后由 main.js 统一注入
-  const floorMat = STD({ map: floorTex, roughness: 0.38, metalness: 0.05 });
+  // roughness 抬到哑光，大砖只留一点点反射。envMap 稍后由 main.js 统一注入
+  const floorMat = STD({ map: floorTex, roughness: 0.55, metalness: 0.02 });
   if (floorMats) floorMats.push(floorMat);
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(room.w, room.d), floorMat);
   floor.rotation.x = -Math.PI / 2;

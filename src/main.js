@@ -21,7 +21,7 @@ import { paintingTextureCache, artWallUrl, artDetailUrl } from './textures.js';
 import {
   initAudio, setAudioEnabled, toggleMute, isMuted, footstep, sitSound, clickSound,
   toggleMusic, isMusicOn, audioRms,
-  nextTrack, currentTrack, isTrackLoading, trackList, audioDebug,
+  nextTrack, switchToTrack, currentTrack, isTrackLoading, trackList, audioDebug,
 } from './audio.js';
 
 // DOM
@@ -41,6 +41,10 @@ const minimapRoom = document.getElementById('minimap-room');
 const helpBtn = document.getElementById('helpBtn');
 const helpPanel = document.getElementById('help-panel');
 const helpClose = document.getElementById('help-close');
+const playlistToggles = document.querySelectorAll('.playlist-toggle');
+const playlistPanel = document.getElementById('playlist-panel');
+const playlistItems = document.getElementById('playlist-items');
+const playlistClose = document.getElementById('playlist-close');
 const daylightEl = document.getElementById('daylight');
 const daylightRange = document.getElementById('daylight-range');
 const daylightName = document.getElementById('daylight-name');
@@ -518,7 +522,8 @@ window.addEventListener('keydown', (e) => {
   if (e.code === 'KeyH') toggleHelp();
     if (e.code === 'KeyE' && !glide) activate();
   if (e.code === 'Escape') {
-    if (!helpPanel?.classList.contains('hidden')) toggleHelp(false);
+    if (!playlistPanel?.classList.contains('hidden')) togglePlaylist(false);
+    else if (!helpPanel?.classList.contains('hidden')) toggleHelp(false);
     else if (detailOpen) closeArtDetail();
     else if (isSeated()) stand();
   }
@@ -570,11 +575,81 @@ function toggleHelp(force) {
   const show = force ?? helpPanel.classList.contains('hidden');
   helpPanel.classList.toggle('hidden', !show);
   helpBtn?.classList.toggle('active', show);
+  if (show) togglePlaylist(false);   // 一次只开一个浮层
   // 面板要能用鼠标点，所以打开时先退出指针锁定
   if (show && controls?.isLocked) controls.unlock();
 }
 helpBtn?.addEventListener('click', (e) => { e.stopPropagation(); toggleHelp(); });
 helpClose?.addEventListener('click', () => toggleHelp(false));
+
+// 播放列表面板。右上角 / 手机动作区的 ♫ 打开，点曲目直接切到那一首。
+function togglePlaylist(force) {
+  if (!playlistPanel) return;
+  const show = force ?? playlistPanel.classList.contains('hidden');
+  playlistPanel.classList.toggle('hidden', !show);
+  playlistToggles.forEach((b) => b.classList.toggle('active', show));
+  if (show) {
+    renderPlaylist();
+    toggleHelp(false);
+    if (controls?.isLocked) controls.unlock();
+  }
+}
+playlistToggles.forEach((btn) => {
+  btn.addEventListener('click', (e) => { e.stopPropagation(); togglePlaylist(); });
+});
+playlistClose?.addEventListener('click', () => togglePlaylist(false));
+
+function renderPlaylist() {
+  if (!playlistItems) return;
+  const cur = currentTrack();
+  const loading = isTrackLoading();
+  playlistItems.replaceChildren(...trackList().map((t, i) => {
+    const on = t.id === cur.id;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = on ? 'pl-item active' : 'pl-item';
+
+    const idx = document.createElement('span');
+    idx.className = 'pl-index';
+    idx.textContent = String(i + 1);
+
+    const meta = document.createElement('span');
+    meta.className = 'pl-meta';
+    const title = document.createElement('span');
+    title.className = 'pl-title';
+    title.textContent = t.title;
+    const note = document.createElement('span');
+    note.className = 'pl-note';
+    note.textContent = t.note || '';
+    meta.append(title, note);
+
+    const state = document.createElement('span');
+    state.className = 'pl-state';
+    state.textContent = on ? (loading ? '载入中…' : '正在播放') : '';
+
+    btn.append(idx, meta, state);
+    btn.addEventListener('click', (e) => { e.stopPropagation(); pickTrack(i); });
+    return btn;
+  }));
+}
+
+async function pickTrack(index) {
+  startAudio();
+  const curIdx = trackList().findIndex((t) => t.id === currentTrack().id);
+  if (index === curIdx && !isTrackLoading()) {
+    toast('已经在播这首了');
+    return;
+  }
+  if (isTrackLoading()) {
+    toast('上一首还在载入…');
+    return;
+  }
+  renderPlaylist();
+  const r = await switchToTrack(index);
+  if (r.stale) return;
+  toast(r.ok ? `正在播放：${r.track.title}` : `《${r.track.title}》没载进来，已回到合成氛围`);
+  renderPlaylist();
+}
 
 initFlashlight(flashBtn, {
   onToggle: (isOn) => toast(isOn ? '手电筒已开' : '手电筒已关'),
@@ -674,7 +749,7 @@ async function bootstrap() {
     lights = built.lights;
     roomSamples = built.roomSamples;
 
-    // 抛光地板的环境反射（拍一次，不是每帧）
+    // 哑光地板的环境反射（拍一次，不是每帧）
     applyFloorReflection(built.floorMats);
 
     // 场景建完了，冻结全部静态节点的矩阵（详见 room.js）
@@ -721,7 +796,7 @@ async function bootstrap() {
     // 之前是等 40 张图加载完才开始，用户在加载期间走进展厅就会现场编译，卡一下。
     warmupQueue = plan.rooms.map((r) => r.id);
 
-    initAudio({});
+    initAudio({ onStateChange: () => renderPlaylist() });
 
     initInteract({
       artTargets: built.artTargets,
