@@ -3,16 +3,16 @@ import * as THREE from 'three';
 import { EYE_HEIGHT } from './config.js';
 
 export const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x0a0a0c);
+scene.background = new THREE.Color(0x14151a);
 // 整座馆横向 60m、纵向 35m，雾要淡一些，否则站在门厅看不到走廊尽头
-scene.fog = new THREE.FogExp2(0x0a0a0c, 0.0095);
+scene.fog = new THREE.FogExp2(0xf6f9fc, 0.0065);
 
 export const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.08, 200);
 camera.position.set(0, EYE_HEIGHT, 0);
 
 // 全馆共用一盏环境光。three.js 的 AmbientLight 没有空间衰减，
 // 按房间各建一盏会互相叠加，所以只留一盏当底子，房间的明暗交给各自的顶灯。
-export const ambient = new THREE.AmbientLight(0xffffff, 0.5);
+export const ambient = new THREE.AmbientLight(0xf6f9fc, 0.82);
 scene.add(ambient);
 
 export const renderer = new THREE.WebGLRenderer({ antialias: true });

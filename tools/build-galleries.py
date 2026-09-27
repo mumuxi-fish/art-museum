@@ -34,12 +34,12 @@ THEMES = {
         "rect": {"x": 18.25, "z": 9.0, "w": 12.5, "d": 15.0, "h": 7.4},
         "ambientIntensity": 0.58,
         "materials": {
-            "wallColor": 0xF2EDE3, "ceilingColor": 0xC6C1B7, "accentColor": 0x8C7A5E,
-            "floorDark": 0xA9A093, "floorLight": 0xE7E1D5, "floorType": "stone",
+            "wallColor": 0xF5F3EE, "ceilingColor": 0xE0DDD6, "accentColor": 0x8C7A5E,
+            "floorDark": 0xC0BBB2, "floorLight": 0xEEEBE5, "floorType": "stone",
             "doorColor": 0x4A3B2C, "frameColor": 0x5A4632,
             "frameRoughness": 0.7, "frameMetalness": 0.05,
         },
-        "lightColor": "#fff5e8", "wallLightColor": "#ffe8d0",
+        "lightColor": "#fffdfb", "wallLightColor": "#fff4ec",
     },
     "sun": {
         "name": "展厅二 · 日常与肖像",
@@ -53,12 +53,12 @@ THEMES = {
         ],
         "ambientIntensity": 0.55,
         "materials": {
-            "wallColor": 0xEFE0CE, "ceilingColor": 0xCAC0B1, "accentColor": 0xB08454,
-            "floorDark": 0xC3A184, "floorLight": 0xEFE3D2, "floorType": "stone",
+            "wallColor": 0xF4F1EA, "ceilingColor": 0xE2DFD8, "accentColor": 0xB08454,
+            "floorDark": 0xD1C8BC, "floorLight": 0xF3EFE8, "floorType": "stone",
             "doorColor": 0x5C4028, "frameColor": 0x6B4F2F,
             "frameRoughness": 0.72, "frameMetalness": 0.04,
         },
-        "lightColor": "#ffeedd", "wallLightColor": "#ffeecc",
+        "lightColor": "#fffaf4", "wallLightColor": "#fff6ee",
     },
     "minimal": {
         "name": "展厅三 · 浮世绘",
@@ -67,12 +67,12 @@ THEMES = {
         "rect": {"x": 19.0, "z": 27.75, "w": 14.0, "d": 13.5, "h": 7.8},
         "ambientIntensity": 0.62,
         "materials": {
-            "wallColor": 0xEDEDEA, "ceilingColor": 0xD2D2CD, "accentColor": 0x4A4A48,
-            "floorDark": 0xC7C7C0, "floorLight": 0xE4E4DE, "floorType": "stone",
+            "wallColor": 0xF1F2F2, "ceilingColor": 0xE8E9E9, "accentColor": 0x4A4A48,
+            "floorDark": 0xD7D7D2, "floorLight": 0xEEEEEA, "floorType": "stone",
             "doorColor": 0x3A3A38, "frameColor": 0x2E2E2C,
             "frameRoughness": 0.6, "frameMetalness": 0.12,
         },
-        "lightColor": "#f7f4ee", "wallLightColor": "#f0ece4",
+        "lightColor": "#f8fafb", "wallLightColor": "#f4f5f7",
     },
     "night": {
         "name": "展厅四 · 夜色与海",
@@ -88,12 +88,12 @@ THEMES = {
         ],
         "ambientIntensity": 0.62,
         "materials": {
-            "wallColor": 0x2A3040, "ceilingColor": 0x1E222E, "accentColor": 0x6E7BA8,
-            "floorDark": 0x2A3140, "floorLight": 0x4A5470, "floorType": "stone",
+            "wallColor": 0x323C55, "ceilingColor": 0x283043, "accentColor": 0x6E7BA8,
+            "floorDark": 0x333C50, "floorLight": 0x5A6580, "floorType": "stone",
             "doorColor": 0x1B2030, "frameColor": 0x8A7A5A,
             "frameRoughness": 0.55, "frameMetalness": 0.25,
         },
-        "lightColor": "#e8f0ff", "wallLightColor": "#cfd8ff",
+        "lightColor": "#f0f5ff", "wallLightColor": "#dce4ff",
         "artLight": {"base": 15.0, "hero": 20.0},
     },
     "flora": {
@@ -103,12 +103,12 @@ THEMES = {
         "rect": {"x": 55.25, "z": 18.75, "w": 9.5, "d": 16.5, "h": 7.0},
         "ambientIntensity": 0.58,
         "materials": {
-            "wallColor": 0xF3E6E8, "ceilingColor": 0xC9BFC1, "accentColor": 0xA86B76,
-            "floorDark": 0x8A6248, "floorLight": 0xD9BFA8, "floorType": "wood",
+            "wallColor": 0xF6EDEF, "ceilingColor": 0xE2DCE0, "accentColor": 0xA86B76,
+            "floorDark": 0xA07B64, "floorLight": 0xE3D0C0, "floorType": "wood",
             "doorColor": 0x6B4038, "frameColor": 0x7A5240,
             "frameRoughness": 0.75, "frameMetalness": 0.03,
         },
-        "lightColor": "#fff3e0", "wallLightColor": "#ffe9d0",
+        "lightColor": "#fffbf7", "wallLightColor": "#fff3e9",
     },
 
     # ---- 以下四厅按「画派」划分，和上面按题材分的五厅互补 ----
@@ -124,12 +124,12 @@ THEMES = {
         # 深墙：十七世纪绘画靠一束侧光造型，浅色墙会把那束光吃掉
         "ambientIntensity": 0.42,
         "materials": {
-            "wallColor": 0x4A443C, "ceilingColor": 0x3A352F, "accentColor": 0xB8A88A,
-            "floorDark": 0x6E6355, "floorLight": 0xA79A86, "floorType": "stone",
+            "wallColor": 0x565045, "ceilingColor": 0x4B453C, "accentColor": 0xB8A88A,
+            "floorDark": 0x7E7263, "floorLight": 0xB4A895, "floorType": "stone",
             "doorColor": 0x2E2A24, "frameColor": 0x8A7346,
             "frameRoughness": 0.62, "frameMetalness": 0.18,
         },
-        "lightColor": "#ffe9c8", "wallLightColor": "#ffdba8",
+        "lightColor": "#fff0d8", "wallLightColor": "#ffe6bc",
         "artLight": {"base": 12.0, "hero": 16.0},
     },
     "barbizon": {
@@ -140,12 +140,12 @@ THEMES = {
         "rect": {"x": 6.0, "z": 29.25, "w": 12.0, "d": 11.5, "h": 7.0},
         "ambientIntensity": 0.56,
         "materials": {
-            "wallColor": 0xD6D4C8, "ceilingColor": 0xB4B2A6, "accentColor": 0x7A7A64,
-            "floorDark": 0x9A978A, "floorLight": 0xD6D3C6, "floorType": "stone",
+            "wallColor": 0xE2E0D8, "ceilingColor": 0xD0CEC7, "accentColor": 0x7A7A64,
+            "floorDark": 0xB1AEA3, "floorLight": 0xE2DFD8, "floorType": "stone",
             "doorColor": 0x3E3B32, "frameColor": 0x5E5238,
             "frameRoughness": 0.74, "frameMetalness": 0.04,
         },
-        "lightColor": "#fff6e6", "wallLightColor": "#ffeed6",
+        "lightColor": "#fffdf9", "wallLightColor": "#fff5ea",
     },
     "postimp": {
         "name": "展厅八 · 后印象与纳比",
@@ -155,12 +155,12 @@ THEMES = {
         "rect": {"x": 46.5, "z": 8.25, "w": 8.0, "d": 16.5, "h": 7.4},
         "ambientIntensity": 0.60,
         "materials": {
-            "wallColor": 0xE8DCC0, "ceilingColor": 0xC6BAA0, "accentColor": 0xA8813C,
-            "floorDark": 0xA89372, "floorLight": 0xE2D5B8, "floorType": "wood",
+            "wallColor": 0xF0EBDE, "ceilingColor": 0xDFD8C8, "accentColor": 0xA8813C,
+            "floorDark": 0xBCAB91, "floorLight": 0xEBE3D2, "floorType": "wood",
             "doorColor": 0x54402A, "frameColor": 0x7A6038,
             "frameRoughness": 0.66, "frameMetalness": 0.08,
         },
-        "lightColor": "#fff2d8", "wallLightColor": "#ffe6bc",
+        "lightColor": "#fffbf5", "wallLightColor": "#fff0d4",
     },
     "american": {
         "name": "展厅九 · 美国绘画",
@@ -170,12 +170,12 @@ THEMES = {
         "rect": {"x": 47.25, "z": 28.0, "w": 6.5, "d": 14.0, "h": 7.0},
         "ambientIntensity": 0.56,
         "materials": {
-            "wallColor": 0xE4D9C6, "ceilingColor": 0xC0B5A2, "accentColor": 0x8A7050,
-            "floorDark": 0x9C8A70, "floorLight": 0xD8CBB4, "floorType": "wood",
+            "wallColor": 0xEDE8DE, "ceilingColor": 0xDAD4C8, "accentColor": 0x8A7050,
+            "floorDark": 0xB1A28D, "floorLight": 0xE4DCCE, "floorType": "wood",
             "doorColor": 0x4A3826, "frameColor": 0x6E5638,
             "frameRoughness": 0.72, "frameMetalness": 0.05,
         },
-        "lightColor": "#fff4e2", "wallLightColor": "#ffe8cc",
+        "lightColor": "#fffcf8", "wallLightColor": "#fff2e2",
     },
 }
 
@@ -364,8 +364,8 @@ def build_museum(src):
         "height": ENTRANCE["h"],
         "ambientIntensity": 0.5,
         "materials": {
-            "wallColor": 0xE8E2D6, "ceilingColor": 0xB8B2A6, "accentColor": 0x6B5B45,
-            "floorDark": 0x9A9186, "floorLight": 0xDAD3C6, "floorType": "stone",
+            "wallColor": 0xEFEEE9, "ceilingColor": 0xD8D5CE, "accentColor": 0x6B5B45,
+            "floorDark": 0xB2ACA3, "floorLight": 0xE6E2DB, "floorType": "stone",
             "doorColor": 0x3E3226, "frameColor": 0x5A4632,
             "frameRoughness": 0.7, "frameMetalness": 0.05,
         },
@@ -382,7 +382,7 @@ def build_museum(src):
                     "z": ENTRANCE["z"] + dz * 2.2,
                 },
                 "rotation": {"x": 0, "y": 0, "z": 0},
-                "color": "#fff2e0", "intensity": round(13 * ((ENTRANCE["h"] - 0.5) / 6.0) ** 2, 1),
+                "color": "#fffbf6", "intensity": round(13 * ((ENTRANCE["h"] - 0.5) / 6.0) ** 2, 1),
                 "range": 12, "angle": 1.3, "penumbra": 0.6, "enabled": True,
             }
             for i, (dx, dz) in enumerate([(-1, -1), (1, -1), (-1, 1), (1, 1)])
@@ -425,7 +425,7 @@ def build_museum(src):
             "id": f"corridor-light-{i + 1}", "name": f"走廊灯槽{i + 1}", "type": "cove",
             "position": {"x": 12.0 + i * 12.0, "y": round(CORRIDOR["h"] - 0.06, 2), "z": CORRIDOR["z"]},
             "rotation": {"x": 0, "y": 0, "z": 0},
-            "color": "#fff6ea", "intensity": round(58 * ((CORRIDOR["h"] - 0.5) / 6.0) ** 2, 1),
+            "color": "#fffdf8", "intensity": round(58 * ((CORRIDOR["h"] - 0.5) / 6.0) ** 2, 1),
             "range": 17, "angle": 1.42, "penumbra": 0.85, "enabled": True,
         })
     rooms.append({
@@ -435,8 +435,8 @@ def build_museum(src):
         "height": CORRIDOR["h"],
         "ambientIntensity": 0.45,
         "materials": {
-            "wallColor": 0xDED8CB, "ceilingColor": 0xA9A399, "accentColor": 0x6B5B45,
-            "floorDark": 0x8E877C, "floorLight": 0xD2CBBE, "floorType": "stone",
+            "wallColor": 0xEAE8E2, "ceilingColor": 0xCCC9C2, "accentColor": 0x6B5B45,
+            "floorDark": 0xA8A39B, "floorLight": 0xDFDCD5, "floorType": "stone",
             "doorColor": 0x3E3226, "frameColor": 0x5A4632,
             "frameRoughness": 0.72, "frameMetalness": 0.06,
         },

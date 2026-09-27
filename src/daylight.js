@@ -9,10 +9,10 @@
 import * as THREE from 'three';
 
 export const STOPS = [
-  { at: 0.00, name: '正午', ambient: 0.62, color: 0xffffff, fog: 0.0080, cove: 0.42, reflect: 0.40 },
-  { at: 0.33, name: '午后', ambient: 0.55, color: 0xfff4e4, fog: 0.0095, cove: 0.70, reflect: 0.55 },
-  { at: 0.66, name: '黄昏', ambient: 0.44, color: 0xffd8a4, fog: 0.0125, cove: 0.92, reflect: 0.72 },
-  { at: 1.00, name: '闭馆', ambient: 0.32, color: 0xffc286, fog: 0.0165, cove: 1.00, reflect: 0.85 },
+  { at: 0.00, name: '正午', ambient: 0.92, color: 0xffffff, fog: 0.0052, cove: 0.55, reflect: 0.42 },
+  { at: 0.33, name: '午后', ambient: 0.82, color: 0xf6f9fc, fog: 0.0065, cove: 0.78, reflect: 0.52 },
+  { at: 0.66, name: '黄昏', ambient: 0.52, color: 0xffeedd, fog: 0.0105, cove: 0.95, reflect: 0.70 },
+  { at: 1.00, name: '闭馆', ambient: 0.37, color: 0xffdfb8, fog: 0.0145, cove: 1.00, reflect: 0.82 },
 ];
 
 // 灯槽和地板的基准色，插值时按系数缩放，不改变各自的固有色
@@ -69,7 +69,7 @@ export function applyDaylight(t) {
   }
   if (scene.background?.isColor) {
     // 背景跟着色温走，但压得很暗，免得馆外变成一块亮橙
-    scene.background.copy(cOut.copy(s.color).multiplyScalar(0.055));
+    scene.background.copy(cOut.copy(s.color).multiplyScalar(0.09));
   }
 
   for (const m of coveMats) {
