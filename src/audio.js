@@ -33,6 +33,10 @@ let chordIdx = 0;
 let chordActiveUntil = 0;   // 当前还有声音的和弦到哪一秒为止
 let genLevel = null;        // 生成式（pad+钟）的总闸，切到文件曲时压到 0
 let fileNode = null;        // 正在放的文件曲 { src, gain }
+let fileOffset = 0;         // 当前 source 从第几秒起播（loop 用）
+let fileStartedAt = 0;      // 当前 source 的起播时刻，暂停时算进度用
+let musicPaused = false;    // ⏸ 暂停中：只停背景音乐，环境音/脚步照响
+let pausedBuf = null;       // 暂停时手上那首文件曲的 buffer，▶ 时接着放
 let trackIdx = 0;           // 当前曲目，0 = 生成式 pad
 let trackLoading = false;
 let trackSeq = 0;           // 每次切换 +1，用来丢弃过期的加载结果
@@ -160,7 +164,8 @@ export function setAudioEnabled(on) {
       startAmbient();
       enabled = true;
       // 只在"从关到开"这一下起音乐，重复调用不会打断已经排好的和弦
-      if (trackIdx > 0) void switchToTrack(trackIdx, 4);   // 文件曲：重新载入起播
+      if (musicPaused) { /* 暂停中就别自己响 */ }
+      else if (trackIdx > 0) void switchToTrack(trackIdx, 4);   // 文件曲：重新载入起播
       else if (musicOn) startMusic(4);
     }
     master.gain.cancelScheduledValues(ctx.currentTime);
@@ -475,19 +480,63 @@ function killMusicTimer() {
   }
 }
 
-// B 键：只切音乐，M 仍然是总静音
+// B 键：只切音乐，M 仍然是总静音。暂停中只记状态，▶ 时才真起声
 export function toggleMusic() {
   musicOn = !musicOn;
-  if (ctx && enabled) {
+  if (ctx && enabled && !musicPaused) {
     if (musicOn) startMusic(1.5);
     else stopMusic(1.5);
   }
-  onStateChange?.({ enabled, muted, musicOn });
+  onStateChange?.({ enabled, muted, musicOn, paused: musicPaused });
   return musicOn;
 }
 
 export function isMusicOn() {
   return musicOn;
+}
+
+// ⏯ 播放 / 暂停。只动背景音乐这一条链路：环境音、脚步、提示音照响。
+// 暂停文件曲会记下进度，▶ 接着放；暂停生成式就停排程，▶ 从头起 pad。
+export function isMusicPaused() {
+  return musicPaused;
+}
+
+export function toggleMusicPlay() {
+  return musicPaused ? resumeMusic() : pauseMusic();
+}
+
+function pauseMusic() {
+  if (!ctx || !enabled || musicPaused) return { ok: false, paused: musicPaused };
+  musicPaused = true;
+  if (fileNode) {
+    const dur = fileNode.src.buffer.duration;
+    pausedBuf = fileNode.src.buffer;
+    fileOffset = (fileOffset + (ctx.currentTime - fileStartedAt)) % dur;
+    stopFileTrack(0.25);
+  } else {
+    killGenerative(0.3);
+  }
+  announce();
+  return { ok: true, paused: true };
+}
+
+function resumeMusic() {
+  if (!musicPaused) return { ok: true, paused: false };
+  musicPaused = false;
+  if (!ctx || !enabled) { announce(); return { ok: true, paused: false }; }
+  musicOn = true;   // 按了 ▶ 就是要听
+  ensureMusicGraph();
+  if (pausedBuf) {
+    const buf = pausedBuf;
+    pausedBuf = null;
+    startFileTrack(buf, 0.6, fileOffset);
+    setMusicVol(targetLevel(), 0.6);
+  } else {
+    // 生成式；文件曲还在载入的话，载完会自己接上（见 switchToTrack）
+    startMusic(0.8);
+  }
+  announce();
+  return { ok: true, paused: false };
 }
 
 // 调试：master 上的实时 RMS（静音时约 0），用来验证"到底响没响"
@@ -535,7 +584,7 @@ const TRACKS = Object.freeze([
   { id: 'dreamer', title: 'Dreamer', note: '钢琴与轻打击', url: musicUrl('dreamer.mp3'), credit: MACLEOD },
 ]);
 
-const announce = () => onStateChange?.({ enabled, muted, musicOn, trackIdx, trackLoading });
+const announce = () => onStateChange?.({ enabled, muted, musicOn, trackIdx, trackLoading, paused: musicPaused });
 
 // 下载 + 解码。一首 4 分钟的 mp3 解码完约 35MB，所以只留最近用过的 3 首；
 // 被淘汰的下次切回来再从 HTTP 缓存取、重解码（几百毫秒），不常驻内存。
@@ -594,7 +643,7 @@ function measureRms(buf) {
   return rms > 1e-6 ? rms : 1;
 }
 
-function startFileTrack(buf, fade = MUSIC_FADE) {
+function startFileTrack(buf, fade = MUSIC_FADE, offset = 0) {
   const now = ctx.currentTime;
   const k = TRACK_RMS / measureRms(buf);   // 归一系数
   const src = ctx.createBufferSource();
@@ -605,7 +654,9 @@ function startFileTrack(buf, fade = MUSIC_FADE) {
   g.gain.exponentialRampToValueAtTime(k, now + fade);
   src.connect(g);
   g.connect(musicGain);
-  src.start(now);
+  src.start(now, offset);
+  fileOffset = offset;
+  fileStartedAt = now;
 
   const old = fileNode;
   fileNode = { src, gain: g };
@@ -664,6 +715,8 @@ export function audioDebug() {
     enabled,
     musicOn,
     muted,
+    paused: musicPaused,
+    fileOffset,
     loading: trackLoading,
     buffers: bufferCache.size,
     duration: fileNode ? fileNode.src.buffer.duration : null,
@@ -680,6 +733,9 @@ export async function nextTrack() {
 export async function switchToTrack(index, fade = MUSIC_FADE) {
   const idx = ((Math.trunc(index) % TRACKS.length) + TRACKS.length) % TRACKS.length;
   const seq = ++trackSeq;
+  // 点了新的曲目就当作要听：清掉暂停态（暂停若发生在载入途中，下面 success 分支会兜住）
+  musicPaused = false;
+  pausedBuf = null;
   trackIdx = idx;
   trackLoading = idx !== 0;
   announce();
@@ -708,6 +764,14 @@ export async function switchToTrack(index, fade = MUSIC_FADE) {
     if (seq !== trackSeq) return { ok: false, stale: true, track: currentTrack(), index: trackIdx };
     // 下载完才掐生成式：载入期间 pad 照常出声，接上新曲时再交叉淡入
     killGenerative(0.4);
+    if (musicPaused) {
+      // 载入途中被按了 ⏸：曲子先存着，▶ 时直接接上
+      pausedBuf = buf;
+      fileOffset = 0;
+      trackLoading = false;
+      announce();
+      return { ok: true, track, index: idx };
+    }
     startFileTrack(buf, fade);
     setMusicVol(musicOn ? targetLevel() : 0, fade);
     trackLoading = false;

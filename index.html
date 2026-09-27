@@ -26,6 +26,7 @@
       <h1>Art Museum</h1>
       <p class="gallery" id="galleryLabel"></p>
     </div>
+    <button id="playBtn" class="play-toggle" title="暂停（空格）">⏸</button>
     <button id="bodyToggle" title="显示/隐藏人物">👤</button>
     <button id="nextTrackBtn" class="next-track-btn" title="下一首音乐（N）">⏭</button>
     <button id="playlistBtn" class="playlist-toggle" title="播放列表">♫</button>
@@ -42,6 +43,7 @@
         <div><dt><kbd>F</kbd></dt><dd>手电筒</dd></div>
         <div><dt><kbd>M</kbd></dt><dd>声音开关</dd></div>
         <div><dt><kbd>B</kbd></dt><dd>背景音乐开关</dd></div>
+        <div><dt><kbd>空格</kbd></dt><dd>暂停 / 继续背景音乐（右上角 ⏸ ▶ 也能点）</dd></div>
         <div><dt><kbd>N</kbd></dt><dd>切换下一首音乐</dd></div>
         <div><dt>♫</dt><dd>打开播放列表，点曲目直接切换</dd></div>
         <div><dt><kbd>H</kbd></dt><dd>打开 / 关闭这份说明</dd></div>
@@ -133,6 +135,7 @@
       <div id="actionButtons">
         <button id="flashBtn" class="action-btn toggle-btn" title="手电筒">🔦</button>
         <button id="musicBtn" class="action-btn toggle-btn active" title="背景音乐">🎵</button>
+        <button class="action-btn play-toggle" title="暂停（空格）">⏸</button>
         <button class="action-btn playlist-toggle" title="播放列表">♫</button>
         <button class="action-btn next-track-btn" title="下一首音乐">⏭</button>
         <button id="lookBtn" class="action-btn toggle-btn" title="环顾四周">

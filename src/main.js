@@ -20,7 +20,7 @@ import { initDaylight, applyDaylight, daylightLabel } from './daylight.js';
 import { paintingTextureCache, artWallUrl, artDetailUrl } from './textures.js';
 import {
   initAudio, setAudioEnabled, toggleMute, isMuted, footstep, sitSound, clickSound,
-  toggleMusic, isMusicOn, audioRms,
+  toggleMusic, isMusicOn, toggleMusicPlay, isMusicPaused, audioRms,
   nextTrack, switchToTrack, currentTrack, isTrackLoading, trackList, audioDebug,
 } from './audio.js';
 
@@ -42,6 +42,7 @@ const helpBtn = document.getElementById('helpBtn');
 const helpPanel = document.getElementById('help-panel');
 const helpClose = document.getElementById('help-close');
 const playlistToggles = document.querySelectorAll('.playlist-toggle');
+const playToggles = document.querySelectorAll('.play-toggle');
 const playlistPanel = document.getElementById('playlist-panel');
 const playlistItems = document.getElementById('playlist-items');
 const playlistClose = document.getElementById('playlist-close');
@@ -518,6 +519,7 @@ window.addEventListener('keydown', (e) => {
   if (e.code === 'KeyF') toggle();
   if (e.code === 'KeyM') toggleSound();
   if (e.code === 'KeyB') toggleMusicKey();
+  if (e.code === 'Space') { e.preventDefault(); togglePlayKey(); }
   if (e.code === 'KeyN') nextTrackKey();
   if (e.code === 'KeyH') toggleHelp();
     if (e.code === 'KeyE' && !glide) activate();
@@ -555,6 +557,25 @@ function toggleMusicKey() {
   const on = toggleMusic();
   toast(on ? '音乐已开' : '音乐已关');
   musicBtn?.classList.toggle('active', on);
+}
+
+// 空格 / ⏸ ▶ 按钮：只暂停背景音乐，环境音、脚步、提示音照响。
+// 文件曲记下进度再停，▶ 接着放；生成式停排程，▶ 重新起 pad。
+function togglePlayKey() {
+  startAudio();
+  toggleMusicPlay();
+  syncPlayBtns();
+  renderPlaylist();
+  toast(isMusicPaused() ? '已暂停' : `正在播放：${currentTrack().title}`);
+}
+
+// ⏸ / ▶ 两处入口（桌面右上 + 手机动作区）共用一个状态
+function syncPlayBtns() {
+  const paused = isMusicPaused();
+  playToggles.forEach((b) => {
+    b.textContent = paused ? '▶' : '⏸';
+    b.title = paused ? '继续播放（空格）' : '暂停（空格）';
+  });
 }
 
 // N 键 / ⏭ 按钮：下一首。第一首是本地生成的 pad，后面是 public/music/ 下的文件。
@@ -599,10 +620,16 @@ playlistToggles.forEach((btn) => {
 });
 playlistClose?.addEventListener('click', () => togglePlaylist(false));
 
+playToggles.forEach((btn) => {
+  btn.addEventListener('click', (e) => { e.stopPropagation(); togglePlayKey(); });
+});
+syncPlayBtns();
+
 function renderPlaylist() {
   if (!playlistItems) return;
   const cur = currentTrack();
   const loading = isTrackLoading();
+  const paused = isMusicPaused();
   playlistItems.replaceChildren(...trackList().map((t, i) => {
     const on = t.id === cur.id;
     const btn = document.createElement('button');
@@ -625,7 +652,7 @@ function renderPlaylist() {
 
     const state = document.createElement('span');
     state.className = 'pl-state';
-    state.textContent = on ? (loading ? '载入中…' : '正在播放') : '';
+    state.textContent = on ? (paused ? '已暂停' : loading ? '载入中…' : '正在播放') : '';
 
     btn.append(idx, meta, state);
     btn.addEventListener('click', (e) => { e.stopPropagation(); pickTrack(i); });
@@ -794,7 +821,7 @@ async function bootstrap() {
     // 之前是等 40 张图加载完才开始，用户在加载期间走进展厅就会现场编译，卡一下。
     warmupQueue = plan.rooms.map((r) => r.id);
 
-    initAudio({ onStateChange: () => renderPlaylist() });
+    initAudio({ onStateChange: () => { renderPlaylist(); syncPlayBtns(); } });
 
     initInteract({
       artTargets: built.artTargets,
@@ -871,6 +898,7 @@ window.__artMuseum = {
     get track() { return currentTrack().id; },
     get trackTitle() { return currentTrack().title; },
     get trackLoading() { return isTrackLoading(); },
+    get paused() { return isMusicPaused(); },
     tracks: () => trackList().map((t) => t.id),
     next: () => nextTrack(),
     debug: () => audioDebug(),

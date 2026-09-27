@@ -806,6 +806,25 @@ body.drag-look .drag-hint { display: block; }
 }
 #playlistBtn:hover { background: rgba(0, 0, 0, 0.8); transform: scale(1.08); }
 
+/* 播放 / 暂停（空格）。手机端藏起来，改用动作区的 ⏸ */
+#playBtn {
+  position: fixed;
+  top: 16px;
+  right: 200px;
+  z-index: 20;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+#playBtn:hover { background: rgba(0, 0, 0, 0.8); transform: scale(1.08); }
+
 .playlist-toggle.active {
   background: rgba(40, 40, 54, 0.85);
   border-color: rgba(255, 255, 255, 0.45);
@@ -995,6 +1014,7 @@ body.drag-look .drag-hint { display: block; }
   #helpBtn { top: 12px; right: 54px; width: 38px; height: 38px; font-size: 17px; }
   #nextTrackBtn { display: none; }
   #playlistBtn { display: none; }
+  #playBtn { display: none; }
   .help-panel { top: 58px; right: 10px; left: 10px; width: auto; }
   .playlist-panel { top: 58px; right: 10px; left: 10px; width: auto; }
 }
