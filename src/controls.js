@@ -33,6 +33,7 @@ let opts = null;
 // 现在改成：锁定可用就用锁定，不可用就按住鼠标拖动转视角，两种都能走。
 let pointerLockFailed = false;
 let dragging = false;
+let downPos = { x: 0, y: 0 };
 let lastMouse = { x: 0, y: 0 };
 const LOOK_SENS = 0.0032;
 
@@ -184,8 +185,12 @@ export function initControls(options) {
   };
   document.addEventListener('pointerlockerror', enableDragLook);
 
-  renderer.domElement.addEventListener('click', () => {
+  renderer.domElement.addEventListener('click', (e) => {
     if (!controls || controls.isLocked) return;
+    // 按下之后挪过（拖着转视角了）就不算点击，免得转完视角误开画/误进沉浸
+    if (Math.hypot(e.clientX - downPos.x, e.clientY - downPos.y) > 6) return;
+    // 指针自由时点中画/长凳 → 直接触发；点空处 → 回到沉浸模式
+    if (opts.onSceneClick?.(e)) return;
     try { controls.lock(); } catch { enableDragLook(); return; }
     setTimeout(() => {
       if (!controls.isLocked) enableDragLook();
@@ -193,6 +198,7 @@ export function initControls(options) {
   });
 
   renderer.domElement.addEventListener('mousedown', (e) => {
+    downPos = { x: e.clientX, y: e.clientY };
     if (controls?.isLocked || e.button !== 0) return;
     dragging = true;
     lastMouse = { x: e.clientX, y: e.clientY };

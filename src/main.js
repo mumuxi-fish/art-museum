@@ -14,7 +14,7 @@ import {
 import { initControls, controls, updateMovement, enterMobileMode } from './controls.js';
 import { initPlayer, updatePlayer } from './player.js';
 import { initFlashlight, updateFlashlight, toggle } from './flashlight.js';
-import { initInteract, updateInteract, activate, isSeated, stand, hidePrompt } from './interact.js';
+import { initInteract, updateInteract, activate, isSeated, stand, hidePrompt, pickAt } from './interact.js';
 import { initMinimap, updateMinimap } from './minimap.js';
 import { initDaylight, applyDaylight, daylightLabel } from './daylight.js';
 import { paintingTextureCache, artWallUrl, artDetailUrl } from './textures.js';
@@ -32,9 +32,6 @@ const joystickThumb = document.getElementById('joystickThumb');
 const lookBtn = document.getElementById('lookBtn');
 const mobileToast = document.getElementById('mobileToast');
 const bodyToggle = document.getElementById('bodyToggle');
-const galleryMenu = document.getElementById('gallery-menu');
-const galleryMenuBtn = document.getElementById('galleryMenuBtn');
-const galleryCards = document.getElementById('gallery-cards');
 const flashBtn = document.getElementById('flashBtn');
 const musicBtn = document.getElementById('musicBtn');
 const nextTrackBtns = document.querySelectorAll('.next-track-btn');
@@ -66,14 +63,13 @@ const detailDimensions = document.getElementById('detail-dimensions');
 const detailCredit = document.getElementById('detail-credit');
 const introHint = document.getElementById('intro-hint');
 
-const GALLERY_ICONS = ['🌅', '☀️', '🖼️', '🌌', '🌸', '🏛', '🎨', '🌿', '🔥', '💧'];
-
 let plan = null;
 let lights = [];
 let currentRoomId = null;
 let started = false;
 let warmupQueue = null;
 let detailOpen = false;
+let wasLockedBeforeDetail = false;
 // 全馆作品索引（含世界坐标），供详情浮层的"相关作品"跳转用
 let artIndex = [];
 
@@ -95,10 +91,6 @@ function showLoading(on) {
   if (loadingEl) loadingEl.classList.toggle('hidden', !on);
 }
 
-function menuOpen() {
-  return galleryMenu && !galleryMenu.classList.contains('hidden');
-}
-
 function placePlayer(x, z, yaw) {
   camera.rotation.order = 'YXZ';
   camera.position.set(x, camera.position.y, z);
@@ -107,7 +99,7 @@ function placePlayer(x, z, yaw) {
 
 // ---- 相机滑移 ----
 //
-// 展厅列表和详情浮层的"相关作品"原本是直接改坐标（瞬移），和馆内"没有传送、
+// 详情浮层的"相关作品"原本是直接改坐标（瞬移），和馆内"没有传送、
 // 连续动线"的设定自相矛盾 —— 卡片上还写着「走过去 →」，点下去却是落地。
 //
 // 改成一段带缓动的滑移：本馆的房间图是一棵树（门厅 ↔ 主廊 ↔ 各展厅，
@@ -360,7 +352,7 @@ function updateRoomVisibility(now) {
   }
 }
 
-// 作品详情浮层。打开时锁住走动，并且不要让指针解锁去弹展厅列表
+// 作品详情浮层。打开时锁住走动、放开指针好用鼠标，关闭时回到打开前的指针状态
 function openArtDetail(art) {
   if (!detailEl) return;
   detailOpen = true;
@@ -390,6 +382,7 @@ function openArtDetail(art) {
     }
   }
   renderRelated(art);
+  wasLockedBeforeDetail = Boolean(controls?.isLocked);
   detailEl.classList.remove('hidden');
   if (controls?.isLocked) controls.unlock();
 }
@@ -466,25 +459,11 @@ function closeArtDetail() {
   if (!detailEl || !detailOpen) return;
   detailOpen = false;
   detailEl.classList.add('hidden');
-  if (controls) controls.lock();
+  // 原本就在沉浸模式里看的画，关掉详情接着逛；如果是自由鼠标点开的，别把指针抢回去
+  if (controls && wasLockedBeforeDetail) controls.lock();
 }
 
-function renderGalleryMenu() {
-  if (!galleryCards) return;
-  galleryCards.innerHTML = '';
-  plan.galleries.forEach((g, i) => {
-    const card = document.createElement('div');
-    card.className = 'gallery-card';
-    card.innerHTML = `
-      <div class="gc-icon">${GALLERY_ICONS[i] || '🏛'}</div>
-      <div class="gc-name">${g.name}</div>
-      <div class="gc-arts">${g.arts?.length || 0} 幅画作 · ${g.w} × ${g.d} m</div>
-      <span class="gc-enter">走过去 →</span>`;
-    card.addEventListener('click', () => jumpToGallery(g));
-    galleryCards.appendChild(card);
-  });
-}
-
+// 走到某个展厅门口（调试/测试用的传送钩子，界面上没有入口 —— 展厅只能走进去）
 function jumpToGallery(gallery) {
   const corridor = plan.rooms.find((r) => r.kind === 'corridor');
   const op = corridor
@@ -504,7 +483,6 @@ function jumpToGallery(gallery) {
     }
   }
   const yaw = Math.atan2(-(gallery.cx - x), -(gallery.cz - z));
-  galleryMenu.classList.add('hidden');
   startGlide(x, z, yaw);
   try {
     if (controls) controls.lock();
@@ -521,18 +499,11 @@ initControls({
   lookBtn,
   mobileToast,
   canStand: (x, z) => plan.canStand(x, z),
+  // 指针没锁定时，点到画/长凳就直接打开；点空处才进入沉浸模式
+  onSceneClick: (e) => pickAt(e.clientX, e.clientY),
 });
 
 initPlayer(bodyToggle);
-
-galleryMenuBtn?.addEventListener('click', () => {
-  galleryMenu.classList.toggle('hidden');
-});
-
-// 点列表外的空白处关闭
-galleryMenu?.addEventListener('click', (e) => {
-  if (e.target === galleryMenu) galleryMenu.classList.add('hidden');
-});
 
 detailClose?.addEventListener('click', closeArtDetail);
 detailEl?.addEventListener('click', (e) => {
@@ -618,12 +589,6 @@ nextTrackBtns.forEach((btn) => {
   btn.addEventListener('click', (e) => { e.stopPropagation(); nextTrackKey(); });
 });
 
-if (controls) {
-  controls.addEventListener('unlock', () => {
-    if (!detailOpen) galleryMenu.classList.remove('hidden');
-  });
-}
-
 const clock = new THREE.Clock();
 const prevPos = new THREE.Vector3();
 let stepAccum = 0;
@@ -674,7 +639,7 @@ function animate() {
   requestAnimationFrame(animate);
   const dt = Math.min(clock.getDelta(), 0.05);
   if (glide) updateGlide(dt);
-  else if (!menuOpen() && !detailOpen && !isSeated()) updateMovement(dt);
+  else if (!detailOpen && !isSeated()) updateMovement(dt);
   // 视线拾取和手电瞄准读的是 camera.matrixWorld，而 three 只在 renderer.render()
   // 里更新相机的世界矩阵 —— 现在静止时可能连续很多帧不渲染，射线就会停在上一帧
   // 的位姿上（提示条会指着看不见的东西）。相机就一个节点，这里自己算一次。
@@ -751,7 +716,6 @@ async function bootstrap() {
       onTime();
     }
 
-    renderGalleryMenu();
     animate();
     // 立刻开始预热各房间的光照 shader（每帧一个房间）。
     // 之前是等 40 张图加载完才开始，用户在加载期间走进展厅就会现场编译，卡一下。

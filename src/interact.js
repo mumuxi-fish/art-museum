@@ -4,6 +4,7 @@
 //   1) 从画面正中打一条射线，命中画布 → 可以看作品详情
 //   2) 走到长凳附近 → 可以坐下
 // 两者都在屏幕下方给一个提示条，桌面上按 E、移动端直接点提示条。
+// 指针没锁定时（按过 ESC）改用点击：点中画/凳子直接触发，点空处进入沉浸。
 import * as THREE from 'three';
 import { camera } from './scene.js';
 
@@ -65,6 +66,20 @@ function worldVisible(obj) {
   return true;
 }
 
+// 视线正中打一条射线，画作和长凳一起拾取，谁近认谁。
+// 上一版先判画再按距离判凳子，结果站在凳子前只要视线扫到画就只剩"查看作品"。
+function pickFrom(v2) {
+  raycaster.setFromCamera(v2, camera);
+  raycaster.far = ART_REACH;
+  const hits = raycaster.intersectObjects([...artTargets, ...benchTargets], false);
+  for (const hit of hits) {
+    if (!worldVisible(hit.object)) continue;
+    if (hit.object.userData.art) return { kind: 'art', art: hit.object.userData.art };
+    if (hit.object.userData.bench) return { kind: 'bench', bench: hit.object.userData.bench };
+  }
+  return null;
+}
+
 // 每帧更新当前可交互目标。visRev 传整厅剔除的版本号（room.getVisRevision），
 // 藏起来的厅一变，就算没动也要重算，不然提示条会指着看不见的画。
 export function updateInteract(visRev = 0) {
@@ -87,23 +102,11 @@ export function updateInteract(visRev = 0) {
   lastPose.ry = camera.rotation.y;
   lastVisRev = visRev;
 
-  // 视线正中打一条射线，画作和长凳一起拾取，谁近认谁。
-  // 上一版先判画再按距离判凳子，结果站在凳子前只要视线扫到画就只剩"查看作品"。
-  raycaster.setFromCamera(screenCenter, camera);
-  raycaster.far = ART_REACH;
-  const hits = raycaster.intersectObjects([...artTargets, ...benchTargets], false);
-  for (const hit of hits) {
-    if (!worldVisible(hit.object)) continue;
-    if (hit.object.userData.art) {
-      target = { kind: 'art', art: hit.object.userData.art };
-      showPrompt('E  查看作品');
-      return;
-    }
-    if (hit.object.userData.bench) {
-      target = { kind: 'bench', bench: hit.object.userData.bench };
-      showPrompt('E  坐下');
-      return;
-    }
+  const hit = pickFrom(screenCenter);
+  if (hit) {
+    target = hit;
+    showPrompt(hit.kind === 'art' ? 'E  查看作品' : 'E  坐下');
+    return;
   }
 
   // 兜底：贴得很近但没瞄准（凳子矮，得低头才看得见）
@@ -115,6 +118,21 @@ export function updateInteract(visRev = 0) {
   target = best;
   if (best) showPrompt('E  坐下');
   else hidePrompt();
+}
+
+// 指针没锁定时点画面：命中画/长凳就触发，返回 true；点空处返回 false。
+// 这样"自由鼠标"状态下点击是有意义的，空地才是"回到沉浸"。
+export function pickAt(clientX, clientY) {
+  if (seated) return false;
+  const v2 = new THREE.Vector2(
+    (clientX / window.innerWidth) * 2 - 1,
+    -(clientY / window.innerHeight) * 2 + 1,
+  );
+  const hit = pickFrom(v2);
+  if (!hit) return false;
+  target = hit;
+  activate();
+  return true;
 }
 
 // 按 E / 点提示条
