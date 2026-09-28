@@ -14,6 +14,30 @@ import sys
 
 SRC = sys.argv[1] if len(sys.argv) > 1 else "tools/artworks.json"
 DST = sys.argv[2] if len(sys.argv) > 2 else "public/data/museum.json"
+PORTRAITS = "tools/portraits.json"
+
+
+def load_portraits():
+    """画家头像表：{画家: 'portraits/xxx.webp' 或 'silhouette'}。
+
+    tools/fetch-portraits.py 抓到真头像就写文件路径，没抓到的写 silhouette，
+    由渲染端画一张程序化剪影顶上（见 textures.js makePortraitSilhouette）。
+    文件还没有（头像这步没跑过）就返回空表，整座馆一幅头像也不挂。
+    """
+    if not os.path.exists(PORTRAITS):
+        return {}
+    with open(PORTRAITS, encoding="utf-8") as f:
+        data = json.load(f).get("artists", {})
+    return {name: (info.get("file") or "silhouette") for name, info in data.items()}
+
+
+PORTRAIT_BY_ARTIST = load_portraits()
+
+
+def portrait_for(artist):
+    if not PORTRAIT_BY_ARTIST:
+        return None
+    return PORTRAIT_BY_ARTIST.get(artist) or "silhouette"
 
 WALL_T = 0.3          # 墙厚
 OPEN_W = 3.2          # 门洞宽
@@ -256,6 +280,8 @@ def place_on_wall(items, side, r, max_h, area, hero=False):
             "technique": item.get("technique", ""),
             "dimensions": item.get("dimensions", ""),
             "creditline": item.get("creditline", ""),
+            # 名牌旁边那张画家小像：'portraits/x.webp' / 'silhouette' / null
+            "portrait": portrait_for(item["artist"]),
             "wall": side,
             "position": {"x": round(px, 3), "y": HANG_Y, "z": round(pz, 3)},
             "size": {"width": w, "height": h},
@@ -559,6 +585,32 @@ def write_credits(museum, path):
         "本文件由 `tools/build-galleries.py` 自动生成，请勿手工编辑。",
         "",
     ]
+
+    # 名牌旁边的画家小像：自画像优先，其次他人所作的肖像；抓不到的用剪影
+    if os.path.exists(PORTRAITS):
+        with open(PORTRAITS, encoding="utf-8") as f:
+            pmeta = json.load(f).get("artists", {})
+        real = [(n, i) for n, i in pmeta.items() if i.get("file")]
+        if real:
+            lines += [
+                "## 画家头像",
+                "",
+                f"画作名牌旁边挂着 {len(real)} 位画家的本人小像，同样取自公版开放数据；",
+                "没找到公开头像的画家用一张程序化剪影代替。",
+                "",
+                "| 画家 | 图像 | 来源 | 授权 |",
+                "| --- | --- | --- | --- |",
+            ]
+            for name, info in sorted(real):
+                title = (info.get("title") or "").replace("|", "\\|")
+                src = info.get("source") or ""
+                provider = info.get("provider") or ""
+                link = f"[{provider}]({src})" if src else provider
+                lines.append(
+                    f"| {name.replace('|', chr(92) + '|')} | {title} | {link} | {info.get('license', '')} |"
+                )
+            lines.append("")
+
     for room in museum["rooms"]:
         if room["kind"] != "gallery" or not room["arts"]:
             continue

@@ -21,6 +21,8 @@
 - 📅 **编年布展** - 每个展厅按年代排序，绕房间走一圈就是一条时间线
 - 🏷️ **完整展签** - 作品详情含策展介绍、材质、尺寸、入藏来源（取自馆方 API）
 - 🚶 **第一人称漫游** - WASD 移动，鼠标转视角；指针锁定不可用时自动切拖动转视角
+- 👤 **画家小像** - 名牌右侧挂画家本人的圆形小像：11 位抓到公版真头像（自画像 / 照片 / 胸像，
+  Met + Cleveland CC0），其余 24 位用程序化剪影兜底
 - 📋 **走廊展签** - 每个展厅门旁一块导言展签：展厅名 + 主题介绍 + 年代区间
 - 🪑 **长凳与坐下** - 每个展厅一条长凳，走过去按 <kbd>E</kbd> 坐下看画
 - 🗿 **走廊尽头端景** - 真 3D 扫描雕塑立在石基座上，配顶部射灯
@@ -180,7 +182,43 @@ python3 tools/build-galleries.py tools/artworks.json public/data/museum.json
 脚本会搜索 → 按上面四条规则筛 → 下载 print 尺寸大图 → 缩到长边 1400px → 写元数据。
 宽高比会被限制在 0.34 ~ 3.05，挡掉长卷和条幅（挂墙上会很怪）。
 
-## 三、加 / 换雕塑
+## 三、画家头像（名牌旁边那张小像）
+
+每幅画的名牌右侧挂一张**画家本人的圆形小像**（直径 0.2 来米，跟名牌同高，不占画的位置）。
+`museum.json` 里用一个 `portrait` 字段区分三种情况：
+
+| 值 | 含义 |
+|---|---|
+| `portraits/xxx.webp` | 抓到的公版真头像（自画像 / 照片 / 胸像），文件在 `public/art/portraits/` |
+| `silhouette` | 没抓到，`textures.js` 现画一张剪影兜底（按画家名散列出深浅） |
+| 没有该字段 | 自己导入的照片墙（🖼）：作者是文件夹名，没处抓 |
+
+抓取只用两个在本机可达、且明确 CC0 的源：**The Met** 和 **Cleveland**（维基被墙、
+AIC 的 IIIF 图 403、NGA 的开放数据要下 80MB 且限速，都没走）。
+判定很保守，宁可没有也不挂错脸：
+
+1. 标题是 *self-portrait* **且作者就是本人** → 自画像；
+2. *Portrait of \<画家\>* 且名字出现在**逗号之前** → 他人所作
+   （"Portrait of Wilhem van Heythuijsen, **after Frans Hals**" 画的是前者，不是哈尔斯）；
+3. 题名以画家名开头、作者是别人 → 照片 / 胸像（"Édouard Manet, Seated, Holding His Hat"）。
+
+名刺、风景版画、"XX 的笔法讨论" 这类题名一律挡掉（`BAD_TITLE`）。
+Met 的检索按相关性排序，得开 `title=true` 并翻十几名，所以脚本里是一张
+（查询 × 深度）的计划表：**全局限速 1s + 403/429 指数退避冷却 + 结果落磁盘缓存**，
+重跑只补没拿到的那部分。
+
+```bash
+python3 tools/fetch-portraits.py      # 抓头像 → tools/portraits.json + .portraits-src/ 原图
+python3 tools/shrink-portraits.py     # 居中取方（纵向 40% 处）→ 256px WebP → public/art/portraits/
+python3 tools/build-galleries.py tools/artworks.json public/data/museum.json
+node tools/check-portraits.mjs        # 自检：文件 / 来源授权 / museum.json 三者对得上
+```
+
+现在 35 位画家里 **11 位有真头像**（Met 7 + Cleveland 4），其余 24 位走剪影；
+元数据（标题、作者、来源链接、授权）都在 `tools/portraits.json`，出处同时写进
+[CREDITS.md](./CREDITS.md)。原图 `.portraits-src/` 不进仓库（已 gitignore）。
+
+## 四、加 / 换雕塑
 
 **换一件**：编辑 `tools/sculpture.json`，然后重跑 `build-galleries.py`。
 
@@ -208,7 +246,7 @@ python3 tools/build-galleries.py tools/artworks.json public/data/museum.json
 > Met 的扫描件是 Draco 压缩的，解码器在 `public/draco/`（从 `three` 包里拷的）。
 > 模型加载失败会自动退回程序化形体，不会开天窗。
 
-## 四、加一个展厅
+## 五、加一个展厅
 
 需要动一点 `tools/build-galleries.py`，三处：
 
@@ -219,7 +257,7 @@ python3 tools/build-galleries.py tools/artworks.json public/data/museum.json
 
 门洞、门套、走廊展签、长凳、名牌**全部自动生成**，不用手写。
 
-## 五、换地板材质
+## 六、换地板材质
 
 `build-galleries.py` 里每个房间的 `materials.floorType` 决定地板：
 
@@ -234,7 +272,7 @@ python3 tools/build-galleries.py tools/artworks.json public/data/museum.json
 > ⚠️ 曾经的 `checker`（棋盘）和 `stripes`（条纹）已经废弃——走廊是 41.5×4.5，
 > 长宽比 9:1，任何有方向的图案都会被拉成条状。纹理重复次数现在按房间长宽分别计算。
 
-## 六、用你自己的照片 / 视频 / 音频生成展厅
+## 七、用你自己的照片 / 视频 / 音频生成展厅
 
 右上角 🖼 不走 `tools/` 那条数据管线——照片不是仓库内容，整件事在浏览器里就地完成。
 文件夹里的东西按扩展名分三类，各走各的路：
@@ -280,7 +318,7 @@ python3 tools/build-galleries.py tools/artworks.json public/data/museum.json
 art-museum/
 ├── index.html                  # 入口
 ├── public/
-│   ├── art/                    # 72 幅公版画作（离线打包）
+│   ├── art/                    # 72 幅公版画作（离线打包）+ portraits/ 画家小像
 │   ├── music/                  # 5 首背景音乐（Kevin MacLeod，CC BY 4.0）
 │   ├── models/                 # 雕塑 GLB
 │   ├── draco/                  # Draco 解码器（模型是压缩的）
@@ -310,10 +348,14 @@ art-museum/
 │   ├── to-webp.py              # 把已有的 JPG 批量转 WebP 并同步元数据
 │   ├── fetch-sculpture.py      # 从 Met 抓 3D 雕塑
 │   ├── shrink-sculpture.py     # 压缩 GLB 里的嵌入纹理
+│   ├── fetch-portraits.py       # 画家头像：Met + Cleveland 抓公版（限速 + 缓存）
+│   ├── shrink-portraits.py      # 头像裁方缩到 256px WebP
 │   ├── build-galleries.py      # 排版引擎：生成 museum.json + CREDITS.md
 │   ├── check-plan.mjs          # 默认展馆平面自检（画有没有挂进门洞）
+│   ├── check-portraits.mjs     # 头像自检（文件 / 来源授权 / museum.json 对得上）
 │   ├── check-mygallery.mjs     # 自建展厅平面自检（node 直接跑）
 │   ├── artworks.json           # 画作清单（数据源）
+│   ├── portraits.json          # 画家头像清单（数据源：真头像的来源与授权）
 │   └── sculpture.json          # 雕塑元数据（数据源）
 ├── .github/workflows/deploy.yml
 └── package.json
@@ -323,6 +365,7 @@ art-museum/
 
 画作来自 **The Cleveland Museum of Art Open Access**，雕塑来自 **The Metropolitan
 Museum of Art Open Access**，均为 CC0 公有领域作品。
+名牌旁边的画家小像同理：**11 位**取自 Met / Cleveland 的 CC0 开放数据，
 逐幅清单与馆藏链接见 [CREDITS.md](./CREDITS.md)。
 
 ## 🎵 音乐授权

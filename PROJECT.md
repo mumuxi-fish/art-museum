@@ -49,12 +49,14 @@
 | 长凳 | 12 条 |
 | 门洞 | 10 个 |
 | 灯光 | 全馆 117 盏（当前厅全开 + 按距离补 4 盏，实测同时点亮 ≤ 16 盏） |
-| 源码 | 约 5,800 行（JS + CSS + HTML） |
-| 工具脚本 | 约 1,700 行（Python + Node） |
+| 源码 | 约 7,550 行（JS + CSS + HTML） |
+| 工具脚本 | 约 2,660 行（Python + Node） |
+| 画家小像 | 11 张真头像（256px WebP，共 120 KB）+ 24 位剪影兜底 |
 | `dist` 体积 | 约 46 MB |
 | 其中背景音乐 | 33 MB（5 首 mp3，**首屏不加载**，切到那首才下载解码） |
 | 其中画作 1200px | 8.1 MB（只在详情浮层按需取） |
 | 其中画作 640px | 2.2 MB（挂墙用，进馆即加载） |
+| 其中画家小像 | 120 KB（11 张 256px WebP，名牌旁） |
 | 其中雕塑 GLB | 1.0 MB |
 | 其中 Draco 解码器 | 752 KB |
 | 其中 JS + CSS | 656 KB |
@@ -104,10 +106,10 @@ z=35   └──────────────┴────────�
 ```
 src/
 ├── main.js        1059 行  主循环、交互编排、UI 事件、相机滑移
-├── room.js        1376 行  整馆几何构建（墙/地/顶/画框/影像装置/听音点/长凳/雕塑）+ 按厅分组
+├── room.js        1408 行  整馆几何构建（墙/地/顶/画框/名牌小像/影像装置/听音点/长凳/雕塑）+ 按厅分组
 ├── style.css      1107 行  全部样式
 ├── audio.js        790 行  Web Audio（底噪/脚步/混响 + 生成式 pad + 曲目切换）
-├── textures.js     658 行  程序化纹理 + 画作双档加载（挂墙 640 / 详情 1200）+ 听音点站牌
+├── textures.js     724 行  程序化纹理 + 画作双档加载（挂墙 640 / 详情 1200）+ 听音点站牌 + 画家小像（真图 / 剪影）
 ├── controls.js     276 行  键鼠控制、指针锁定、拖动转视角
 ├── plan.js         332 行  平面图编译：相邻检测、门洞、碰撞体、按厅视线剔除
 ├── mygallery.js    364 行  🖼 本地导入（图片缩图 / 视频抽封面 / 音频探时长 + IndexedDB）
@@ -142,8 +144,12 @@ src/
 | `make-wall-textures.py` | 从 1200px 源图生成挂墙用的 640px 缩图（源图没改就跳过） |
 | `fetch-sculpture.py` / `shrink-sculpture.py` | 抓雕塑扫描件并压缩 GLB |
 | `make-og-image.py` | 从实拍生成分享预览图（1200×630） |
+| `fetch-portraits.py` | 画家头像：Met + Cleveland 抓公版真头像（全局限速 + 指数退避 + 磁盘缓存） |
+| `shrink-portraits.py` | 头像居中取方（纵向 40% 处）缩成 256px WebP → `public/art/portraits/` |
 | `check-plan.mjs` | **平面自检**：列出所有门洞，逐幅检查画有没有挂在门洞里 |
+| `check-portraits.mjs` | **头像自检**：文件 / 来源授权 / `museum.json` 三者对得上 |
 | `artworks.json` | 画作清单（唯一事实来源，改内容改这个） |
+| `portraits.json` | 画家头像清单（真头像的标题、作者、来源链接、授权） |
 
 常用命令：
 
@@ -152,6 +158,8 @@ src/
 python3 tools/build-galleries.py tools/artworks.json public/data/museum.json
 node tools/check-plan.mjs        # 平面自检，有冲突会非零退出
 python3 tools/make-wall-textures.py   # 重出挂墙 640px 缩图
+python3 tools/fetch-portraits.py      # 补 / 重抓画家头像（先搜后取，结果落缓存）
+python3 tools/shrink-portraits.py && node tools/check-portraits.mjs
 node node_modules/vite/bin/vite.js build
 
 # 只重抓某个展厅
@@ -318,3 +326,12 @@ gh run list --limit 1     # 看构建状态
     `<audio>` 单轨互斥播放（和背景音乐两套系统，不进播放列表）。排版上视频和照片
     同为 pieces 一起算尺寸、音频跟在同面墙照片后隔 0.8m（厅长跟着变），
     纯音频文件夹第一块牌子顶替东墙主位。自检扩到 151 项，e2e `media-check.mjs` 21 项
+27. 名牌旁边挂画家小像：`tools/fetch-portraits.py` 只在可达且 CC0 的 Met +
+    Cleveland 上找，判定保守（自画像须作者是本人；`Portrait of X` 只认逗号前那段 ——
+    "after Frans Hals"、名刺、风景版画都被 `BAD_TITLE` 挡掉），Met 走
+    `title=true` 深翻 + **全局限速 1s / 403 指数退避 / 磁盘缓存**。35 位画家里
+    11 位抓到真头像（Met 7 + Cleveland 4，256px 方图共 120KB），其余 24 位
+    `textures.js` 按画家名散列出一张程序化剪影；`room.js` 在名牌右侧挂圆片 +
+    木色细环（`portrait` 字段是 `null` 的自己导入照片墙不会挂），
+    `build-galleries.py` 注入字段并把出处写进 CREDITS.md。
+    自检 `node tools/check-portraits.mjs`（覆盖 / 文件 / 来源授权 / 数据对齐）

@@ -284,6 +284,72 @@ export async function loadPaintingTexture(imagePath, hue = 0.5, seed = 'untitled
   return tex;
 }
 
+// ------------------------------------------------------- 画家小像（名牌旁边）
+// museum.json 里每幅画带一个 portrait 字段：
+//   'portraits/xxx.webp' —— tools/fetch-portraits.py 抓到的公版真头像
+//   'silhouette'         —— 没抓到，用程序化剪影顶上
+//   没有该字段           —— 自己导入的照片墙，不给头像
+// 真图加载的一瞬间先显示剪影，加载完由 room.js 换上去。
+export const portraitUrl = (file) => withVersion(`${ART_DETAIL_DIR}${file}`);
+
+const portraitCache = new Map();
+const silhouetteCache = new Map();
+
+export function makePortraitSilhouette(artist) {
+  const key = artist || 'unknown';
+  if (silhouetteCache.has(key)) return silhouetteCache.get(key);
+
+  const S = 256;
+  const c = document.createElement('canvas');
+  c.width = c.height = S;
+  const ctx = c.getContext('2d');
+  // 底色按画家名散列出深浅，免得一整墙剪影一模一样
+  const rnd = rngFrom('portrait', key);
+  const hue = 24 + rnd() * 26;
+
+  const g = ctx.createLinearGradient(0, 0, 0, S);
+  g.addColorStop(0, `hsl(${hue}, 34%, 92%)`);
+  g.addColorStop(1, `hsl(${hue}, 30%, 84%)`);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, S, S);
+
+  // 半身剪影：头 + 肩，两笔，一眼是个人
+  ctx.fillStyle = `hsl(${hue}, 12%, 26%)`;
+  const cx = S / 2;
+  ctx.beginPath();
+  ctx.ellipse(cx, S * 0.35, S * 0.13, S * 0.16, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(cx - S * 0.36, S);
+  ctx.quadraticCurveTo(cx - S * 0.32, S * 0.58, cx - S * 0.12, S * 0.50);
+  ctx.quadraticCurveTo(cx, S * 0.46, cx + S * 0.12, S * 0.50);
+  ctx.quadraticCurveTo(cx + S * 0.32, S * 0.58, cx + S * 0.36, S);
+  ctx.closePath();
+  ctx.fill();
+
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  silhouetteCache.set(key, tex);
+  return tex;
+}
+
+export async function loadPortraitTexture(file, artist) {
+  if (!file || file === 'silhouette') return makePortraitSilhouette(artist);
+  const cached = portraitCache.get(file);
+  if (cached) return cached;
+  try {
+    const tex = await loadOneTexture(portraitUrl(file));
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    portraitCache.set(file, tex);
+    return tex;
+  } catch {
+    // 图 404 或解不开：剪影顶上，别在墙上留个洞
+    return makePortraitSilhouette(artist);
+  }
+}
+
 // 圆形粒子贴图 —— PointsMaterial 不给 map 时 WebGL 会把点渲染成硬边方块
 let roundSprite = null;
 export function getRoundSprite() {

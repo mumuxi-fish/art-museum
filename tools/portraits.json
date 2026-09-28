@@ -1,0 +1,233 @@
+{
+  "_note": "画家头像：file 是 public/art/ 下的相对路径；没有 file 的用程序化剪影兜底。",
+  "artists": {
+    "Alfred Sisley": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "Ambrosius Bosschaert": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "Antoine Chintreuil": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "Berthe Morisot": {
+      "file": "portraits/berthe-morisot.webp",
+      "raw": "berthe-morisot.jpg",
+      "kind": "portrait-of",
+      "title": "Portrait of Berthe Morisot",
+      "creator": "Édouard Manet (French, 1832–1883)",
+      "date": "1872",
+      "provider": "Cleveland",
+      "license": "CC0",
+      "source": "https://clevelandart.org/art/1952.446",
+      "size": 10712
+    },
+    "Camille Pissarro": {
+      "file": "portraits/camille-pissarro.webp",
+      "raw": "camille-pissarro.jpg",
+      "kind": "self",
+      "title": "Self-Portrait",
+      "creator": "Camille Pissarro (French, 1830–1903)",
+      "date": "c. 1890–91",
+      "provider": "Cleveland",
+      "license": "CC0",
+      "source": "https://clevelandart.org/art/2023.119",
+      "size": 6296
+    },
+    "Charles François Daubigny": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "Chen Hongshou": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "Claude Monet": {
+      "file": "portraits/claude-monet.webp",
+      "raw": "claude-monet.jpg",
+      "kind": "named",
+      "title": "Claude Monet",
+      "creator": "Paul Paulin (French, 1852–1937)",
+      "date": "late 1800s-early 1900s",
+      "provider": "Cleveland",
+      "license": "CC0",
+      "source": "https://clevelandart.org/art/1980.275",
+      "size": 6946
+    },
+    "Edgar Degas": {
+      "file": "portraits/edgar-degas.webp",
+      "raw": "edgar-degas.jpg",
+      "kind": "self",
+      "title": "Self-Portrait",
+      "creator": "Edgar Degas",
+      "date": "ca. 1855–56",
+      "provider": "Met",
+      "license": "CC0 (Open Access)",
+      "source": "https://www.metmuseum.org/art/collection/search/436158",
+      "size": 6846
+    },
+    "Eugène Jansson": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "Frans Hals": {
+      "file": "portraits/frans-hals.webp",
+      "raw": "frans-hals.jpg",
+      "kind": "named",
+      "title": "Frans Hals",
+      "creator": "Cornelis van Noorde (Dutch, 1731–1795)",
+      "date": "1761",
+      "provider": "Cleveland",
+      "license": "CC0",
+      "source": "https://clevelandart.org/art/1925.1228",
+      "size": 10912
+    },
+    "Frederic Edwin Church": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "George Inness": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "Henry Lee McFee": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "Jacob van Ruisdael": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "James McNeill Whistler": {
+      "file": "portraits/james-mcneill-whistler.webp",
+      "raw": "james-mcneill-whistler.jpg",
+      "kind": "named",
+      "title": "James McNeill Whistler",
+      "creator": "Percy Thomas",
+      "date": "1874",
+      "provider": "Met",
+      "license": "CC0 (Open Access)",
+      "source": "https://www.metmuseum.org/art/collection/search/396368",
+      "size": 10810
+    },
+    "Jean Baptiste Camille Corot": {
+      "file": "portraits/jean-baptiste-camille-corot.webp",
+      "raw": "jean-baptiste-camille-corot.jpg",
+      "kind": "named",
+      "title": "Jean Baptiste Camille Corot",
+      "creator": "Etienne Carjat",
+      "date": "1870",
+      "provider": "Met",
+      "license": "CC0 (Open Access)",
+      "source": "https://www.metmuseum.org/art/collection/search/261621",
+      "size": 4974
+    },
+    "Katsushika Hokusai": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "Katsushika Taito II": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "Kitagawa Utamaro": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "Maurice Denis": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "Odilon Redon": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "Pierre-Auguste Renoir": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "Piet Mondrian": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "Rembrandt van Rijn": {
+      "file": "portraits/rembrandt-van-rijn.webp",
+      "raw": "rembrandt-van-rijn.jpg",
+      "kind": "self",
+      "title": "Self-Portrait",
+      "creator": "Rembrandt (Rembrandt van Rijn)",
+      "date": "1660",
+      "provider": "Met",
+      "license": "CC0 (Open Access)",
+      "source": "https://www.metmuseum.org/art/collection/search/437397",
+      "size": 4528
+    },
+    "Salvator Rosa": {
+      "file": "portraits/salvator-rosa.webp",
+      "raw": "salvator-rosa.jpg",
+      "kind": "self",
+      "title": "Self-Portrait",
+      "creator": "Salvator Rosa",
+      "date": "ca. 1647",
+      "provider": "Met",
+      "license": "CC0 (Open Access)",
+      "source": "https://www.metmuseum.org/art/collection/search/437508",
+      "size": 6162
+    },
+    "Sesshū Tōyō": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "Simon Verelst": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "Théodore Rousseau": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "Utagawa Hiroshige": {
+      "file": "portraits/utagawa-hiroshige.webp",
+      "raw": "utagawa-hiroshige.jpg",
+      "kind": "portrait-of",
+      "title": "Memorial Portrait of Ichiryusai Hiroshige (1797–1858)",
+      "creator": "Utagawa Kunisada",
+      "date": "1786–1864",
+      "provider": "Met",
+      "license": "CC0 (Open Access)",
+      "source": "https://www.metmuseum.org/art/collection/search/53719",
+      "size": 17136
+    },
+    "Walter Greaves": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "William Merritt Chase": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "Yun Shouping": {
+      "file": null,
+      "kind": "silhouette"
+    },
+    "Édouard Manet": {
+      "file": "portraits/edouard-manet.webp",
+      "raw": "edouard-manet.jpg",
+      "kind": "named",
+      "title": "Édouard Manet, Seated, Holding His Hat",
+      "creator": "Edgar Degas",
+      "date": "ca. 1868",
+      "provider": "Met",
+      "license": "CC0 (Open Access)",
+      "source": "https://www.metmuseum.org/art/collection/search/333813",
+      "size": 8396
+    },
+    "Édouard Vuillard": {
+      "file": null,
+      "kind": "silhouette"
+    }
+  }
+}

@@ -7,6 +7,25 @@
 
 本文件由 `tools/build-galleries.py` 自动生成，请勿手工编辑。
 
+## 画家头像
+
+画作名牌旁边挂着 11 位画家的本人小像，同样取自公版开放数据；
+没找到公开头像的画家用一张程序化剪影代替。
+
+| 画家 | 图像 | 来源 | 授权 |
+| --- | --- | --- | --- |
+| Berthe Morisot | Portrait of Berthe Morisot | [Cleveland](https://clevelandart.org/art/1952.446) | CC0 |
+| Camille Pissarro | Self-Portrait | [Cleveland](https://clevelandart.org/art/2023.119) | CC0 |
+| Claude Monet | Claude Monet | [Cleveland](https://clevelandart.org/art/1980.275) | CC0 |
+| Edgar Degas | Self-Portrait | [Met](https://www.metmuseum.org/art/collection/search/436158) | CC0 (Open Access) |
+| Frans Hals | Frans Hals | [Cleveland](https://clevelandart.org/art/1925.1228) | CC0 |
+| James McNeill Whistler | James McNeill Whistler | [Met](https://www.metmuseum.org/art/collection/search/396368) | CC0 (Open Access) |
+| Jean Baptiste Camille Corot | Jean Baptiste Camille Corot | [Met](https://www.metmuseum.org/art/collection/search/261621) | CC0 (Open Access) |
+| Rembrandt van Rijn | Self-Portrait | [Met](https://www.metmuseum.org/art/collection/search/437397) | CC0 (Open Access) |
+| Salvator Rosa | Self-Portrait | [Met](https://www.metmuseum.org/art/collection/search/437508) | CC0 (Open Access) |
+| Utagawa Hiroshige | Memorial Portrait of Ichiryusai Hiroshige (1797–1858) | [Met](https://www.metmuseum.org/art/collection/search/53719) | CC0 (Open Access) |
+| Édouard Manet | Édouard Manet, Seated, Holding His Hat | [Met](https://www.metmuseum.org/art/collection/search/333813) | CC0 (Open Access) |
+
 ## 展厅一 · 光与河岸
 
 位置：12.5 × 15.0 m，层高 7.4 m

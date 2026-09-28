@@ -20,6 +20,8 @@ import {
   getPlasterTexture,
   artVideoUrl,
   loadPaintingTexture,
+  makePortraitSilhouette,
+  loadPortraitTexture,
 } from './textures.js';
 import { buildRoomLights } from './lights.js';
 
@@ -894,6 +896,36 @@ function buildArtworks(room, plan, lights, artSlots, artTargets) {
       const label = new THREE.Mesh(new THREE.PlaneGeometry(labelW, labelH), labelMat);
       label.position.set(0, -(a.size.height / 2) - labelH / 2 - 0.22, 0.05);
       grp.add(label);
+
+      // 画家小像挂在名牌右侧（自己导入的照片墙没有 portrait 字段，不会挂）。
+      // 直径跟名牌一个量级：太大会抢画的戏，太小走近了看不清是谁。
+      if (a.portrait) {
+        const d = Math.min(0.3, Math.max(0.18, labelH));
+        const px = labelW / 2 + d / 2 + 0.07;
+        const py = label.position.y;
+        const faceMat = new THREE.MeshBasicMaterial({
+          map: makePortraitSilhouette(a.artist),
+          transparent: true,
+        });
+        faceMat.userData.keepMap = true;
+        const face = new THREE.Mesh(new THREE.CircleGeometry(d / 2, 40), faceMat);
+        face.position.set(px, py, 0.05);
+        grp.add(face);
+        // 一圈细框，和画框的木色呼应
+        const ring = new THREE.Mesh(
+          new THREE.RingGeometry(d / 2, d / 2 + 0.018, 44),
+          frameWood,
+        );
+        ring.position.set(px, py, 0.049);
+        grp.add(ring);
+
+        loadPortraitTexture(a.portrait, a.artist).then((tex) => {
+          if (faceMat.map === tex) return;
+          faceMat.map = tex;
+          faceMat.needsUpdate = true;
+          markDirty();
+        });
+      }
     }
 
     grp.position.set(a.position.x, a.position.y, a.position.z);

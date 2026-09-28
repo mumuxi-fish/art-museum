@@ -536,6 +536,7 @@
           "technique": "oil on fabric",
           "dimensions": "未装框 116.2 × 54.2 cm（45 × 21 in）",
           "creditline": "Bequest of William G. Mather",
+          "portrait": "silhouette",
           "wall": "north",
           "position": {
             "x": 14.817,
@@ -566,6 +567,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 90.5 × 116.8 cm（35 × 46 in）",
           "creditline": "Gift of the Hanna Fund",
+          "portrait": "portraits/claude-monet.webp",
           "wall": "north",
           "position": {
             "x": 18.25,
@@ -596,6 +598,7 @@
           "technique": "oil on fabric",
           "dimensions": "未装框 83.0 × 53.0 cm（32 × 20 in）",
           "creditline": "Leonard C. Hanna Jr. Fund",
+          "portrait": "portraits/camille-pissarro.webp",
           "wall": "north",
           "position": {
             "x": 21.683,
@@ -626,6 +629,7 @@
           "technique": "oil on fabric",
           "dimensions": "未装框 163.0 × 125.0 cm（64 × 49 in）",
           "creditline": "Gift of the Hanna Fund",
+          "portrait": "portraits/camille-pissarro.webp",
           "wall": "east",
           "position": {
             "x": 24.33,
@@ -656,6 +660,7 @@
           "technique": "oil on fabric",
           "dimensions": "未装框 55.8 × 46.6 cm（21 × 18 in）",
           "creditline": "Gift of Mr. and Mrs. Lewis B. Williams from The Blair Trust",
+          "portrait": "silhouette",
           "wall": "east",
           "position": {
             "x": 24.33,
@@ -686,6 +691,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 93.0 × 66.3 cm（36 × 26 in）",
           "creditline": "Gift of Mr. and Mrs. J. H. Wade",
+          "portrait": "portraits/claude-monet.webp",
           "wall": "east",
           "position": {
             "x": 24.33,
@@ -716,6 +722,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 425.6 × 201.3 cm（167 × 79 in）",
           "creditline": "John L. Severance Fund and an anonymous gift",
+          "portrait": "portraits/claude-monet.webp",
           "wall": "west",
           "position": {
             "x": 12.17,
@@ -746,6 +753,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 81.3 × 66.0 cm（32 × 26 in）",
           "creditline": "Nancy F. and Joseph P. Keithley Collection Gift",
+          "portrait": "portraits/camille-pissarro.webp",
           "wall": "west",
           "position": {
             "x": 12.17,
@@ -919,6 +927,7 @@
           "technique": "oil on fabric",
           "dimensions": "未装框 65.0 × 81.3 cm（25 × 32 in）",
           "creditline": "Gift of the Hanna Fund",
+          "portrait": "silhouette",
           "wall": "north",
           "position": {
             "x": 31.58,
@@ -949,6 +958,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 60.0 × 74.0 cm（23 × 29 in）",
           "creditline": "Bequest of Leonard C. Hanna Jr.",
+          "portrait": "portraits/edouard-manet.webp",
           "wall": "north",
           "position": {
             "x": 35.5,
@@ -979,6 +989,7 @@
           "technique": "oil on wood panel",
           "dimensions": "未装框 34.0 × 27.0 cm（13 × 10 in）",
           "creditline": "Bequest of Leonard C. Hanna Jr.",
+          "portrait": "portraits/edgar-degas.webp",
           "wall": "north",
           "position": {
             "x": 39.42,
@@ -1009,6 +1020,7 @@
           "technique": "oil on fabric",
           "dimensions": "未装框 55.8 × 34.0 cm（21 × 13 in）",
           "creditline": "Purchase from the J. H. Wade Fund",
+          "portrait": "portraits/edouard-manet.webp",
           "wall": "east",
           "position": {
             "x": 42.33,
@@ -1039,6 +1051,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 71.8 × 46.0 cm（28 × 18 in）",
           "creditline": "Gift of the Hanna Fund",
+          "portrait": "portraits/berthe-morisot.webp",
           "wall": "east",
           "position": {
             "x": 42.33,
@@ -1069,6 +1082,7 @@
           "technique": "oil on fabric",
           "dimensions": "未装框 34.0 × 25.5 cm（13 × 10 in）",
           "creditline": "Gift of Mrs. Henry White Cannon",
+          "portrait": "silhouette",
           "wall": "east",
           "position": {
             "x": 42.33,
@@ -1099,6 +1113,7 @@
           "technique": "oil on fabric",
           "dimensions": "未装框 46.4 × 55.3 cm（18 × 21 in）",
           "creditline": "Bequest of William G. Mather",
+          "portrait": "silhouette",
           "wall": "west",
           "position": {
             "x": 28.67,
@@ -1129,6 +1144,7 @@
           "technique": "oil on fabric",
           "dimensions": "未装框 200.5 × 70.0 cm（78 × 27 in）",
           "creditline": "Gift of the Hanna Fund",
+          "portrait": "portraits/edgar-degas.webp",
           "wall": "west",
           "position": {
             "x": 28.67,
@@ -1294,6 +1310,7 @@
           "technique": "color woodblock print",
           "dimensions": "",
           "creditline": "Bequest of Edward L. Whittemore",
+          "portrait": "silhouette",
           "wall": "south",
           "position": {
             "x": 15.08,
@@ -1324,6 +1341,7 @@
           "technique": "color woodblock print; surimono",
           "dimensions": "",
           "creditline": "Gift of Mrs. Ralph King",
+          "portrait": "silhouette",
           "wall": "south",
           "position": {
             "x": 19.0,
@@ -1354,6 +1372,7 @@
           "technique": "color woodblock print",
           "dimensions": "",
           "creditline": "Bequest of Edward L. Whittemore",
+          "portrait": "silhouette",
           "wall": "south",
           "position": {
             "x": 22.92,
@@ -1384,6 +1403,7 @@
           "technique": "color woodblock print",
           "dimensions": "",
           "creditline": "Bequest of James Parmelee",
+          "portrait": "silhouette",
           "wall": "east",
           "position": {
             "x": 25.83,
@@ -1414,6 +1434,7 @@
           "technique": "color woodblock print",
           "dimensions": "",
           "creditline": "Gift from J. H. Wade",
+          "portrait": "silhouette",
           "wall": "east",
           "position": {
             "x": 25.83,
@@ -1444,6 +1465,7 @@
           "technique": "color woodblock print",
           "dimensions": "",
           "creditline": "Gift of Mrs. T. Wingate Todd from the Collection of Dr. T. Wingate Todd",
+          "portrait": "portraits/utagawa-hiroshige.webp",
           "wall": "east",
           "position": {
             "x": 25.83,
@@ -1474,6 +1496,7 @@
           "technique": "One of a triptych of color woodblock prints",
           "dimensions": "",
           "creditline": "Gift of Mrs. Francis F. Prentiss for the Dudley P. Allen Collection",
+          "portrait": "portraits/utagawa-hiroshige.webp",
           "wall": "west",
           "position": {
             "x": 12.17,
@@ -1504,6 +1527,7 @@
           "technique": "Triptych of color woodblock prints",
           "dimensions": "",
           "creditline": "Gift of Mrs. Francis F. Prentiss for the Dudley P. Allen Collection",
+          "portrait": "portraits/utagawa-hiroshige.webp",
           "wall": "west",
           "position": {
             "x": 12.17,
@@ -1677,6 +1701,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 162.6 × 101.6 cm（64 × 40 in）",
           "creditline": "Mr. and Mrs. William H. Marlatt Fund",
+          "portrait": "silhouette",
           "wall": "south",
           "position": {
             "x": 33.08,
@@ -1707,6 +1732,7 @@
           "technique": "oil on paper, mounted to cardboard, mounted to plywood",
           "dimensions": "未装框 99.2 × 47.6 cm（39 × 18 in）",
           "creditline": "Bequest of Noah L. Butkin",
+          "portrait": "silhouette",
           "wall": "south",
           "position": {
             "x": 37.0,
@@ -1737,6 +1763,7 @@
           "technique": "oil on canvas",
           "dimensions": "",
           "creditline": "Purchase from the J. H. Wade Fund",
+          "portrait": "portraits/salvator-rosa.webp",
           "wall": "south",
           "position": {
             "x": 40.92,
@@ -1767,6 +1794,7 @@
           "technique": "lithograph on chine collé",
           "dimensions": "",
           "creditline": "Bequest of Charles T. Brooks",
+          "portrait": "portraits/james-mcneill-whistler.webp",
           "wall": "east",
           "position": {
             "x": 43.83,
@@ -1797,6 +1825,7 @@
           "technique": "etching",
           "dimensions": "",
           "creditline": "Gift of Mr. and Mrs. Ralph King",
+          "portrait": "portraits/james-mcneill-whistler.webp",
           "wall": "east",
           "position": {
             "x": 43.83,
@@ -1827,6 +1856,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 58.7 × 51.0 cm（23 × 20 in）",
           "creditline": "Mr. and Mrs. William H. Marlatt Fund",
+          "portrait": "silhouette",
           "wall": "east",
           "position": {
             "x": 43.83,
@@ -1857,6 +1887,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 168.6 × 90.1 cm（66 × 35 in）",
           "creditline": "Mr. and Mrs. William H. Marlatt Fund",
+          "portrait": "silhouette",
           "wall": "west",
           "position": {
             "x": 30.17,
@@ -1887,6 +1918,7 @@
           "technique": "oil on canvas glued to cardboard",
           "dimensions": "未装框 31.4 × 34.9 cm（12 × 13 in）",
           "creditline": "Nancy F. and Joseph P. Keithley Collection Gift",
+          "portrait": "silhouette",
           "wall": "west",
           "position": {
             "x": 30.17,
@@ -2052,6 +2084,7 @@
           "technique": "Six-panel folding screen, ink and color on paper",
           "dimensions": "",
           "creditline": "Gift of Mrs. A. Dean Perry",
+          "portrait": "silhouette",
           "wall": "east",
           "position": {
             "x": 59.83,
@@ -2082,6 +2115,7 @@
           "technique": "album leaf, ink and color on silk",
           "dimensions": "",
           "creditline": "John L. Severance Fund",
+          "portrait": "silhouette",
           "wall": "east",
           "position": {
             "x": 59.83,
@@ -2112,6 +2146,7 @@
           "technique": "oil on copper",
           "dimensions": "未装框 29.3 × 35.6 cm（11 × 14 in）",
           "creditline": "Gift of Carrie Moss Halle in memory of Salmon Portland Halle",
+          "portrait": "silhouette",
           "wall": "east",
           "position": {
             "x": 59.83,
@@ -2142,6 +2177,7 @@
           "technique": "oil on wood",
           "dimensions": "未装框 22.6 × 26.4 cm（8 × 10 in）",
           "creditline": "Gift of Mrs. Noah L. Butkin",
+          "portrait": "silhouette",
           "wall": "north",
           "position": {
             "x": 52.817,
@@ -2172,6 +2208,7 @@
           "technique": "Hanging scroll; ink and color on silk",
           "dimensions": "",
           "creditline": "Gift of the American Foundation for the Maud E. and Warren H. Corning Botanical Collection",
+          "portrait": "silhouette",
           "wall": "north",
           "position": {
             "x": 55.25,
@@ -2202,6 +2239,7 @@
           "technique": "oil on fabric",
           "dimensions": "未装框 59.0 × 73.0 cm（23 × 28 in）",
           "creditline": "Gift of Roberta Holden Bole",
+          "portrait": "silhouette",
           "wall": "north",
           "position": {
             "x": 57.683,
@@ -2232,6 +2270,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 77.0 × 51.5 cm（30 × 20 in）",
           "creditline": "Purchase from the J. H. Wade Fund",
+          "portrait": "silhouette",
           "wall": "south",
           "position": {
             "x": 53.425,
@@ -2262,6 +2301,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 38.5 × 41.5 cm（15 × 16 in）",
           "creditline": "Bequest of Leonard C. Hanna Jr.",
+          "portrait": "silhouette",
           "wall": "south",
           "position": {
             "x": 57.075,
@@ -2427,6 +2467,7 @@
           "technique": "oil on wood",
           "dimensions": "未装框 43.8 × 57.8 cm（17 × 22 in）",
           "creditline": "Bequest of John L. Severance",
+          "portrait": "portraits/rembrandt-van-rijn.webp",
           "wall": "north",
           "position": {
             "x": 2.733,
@@ -2457,6 +2498,7 @@
           "technique": "oil on wood",
           "dimensions": "未装框 64.8 × 77.5 cm（25 × 30 in）",
           "creditline": "The Elisabeth Severance Prentiss Collection",
+          "portrait": "portraits/rembrandt-van-rijn.webp",
           "wall": "north",
           "position": {
             "x": 6.0,
@@ -2487,6 +2529,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 87.0 × 117.0 cm（34 × 46 in）",
           "creditline": "Leonard C. Hanna Jr. Fund",
+          "portrait": "portraits/frans-hals.webp",
           "wall": "north",
           "position": {
             "x": 9.267,
@@ -2517,6 +2560,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 52.3 × 66.5 cm（20 × 26 in）",
           "creditline": "Purchase from the J. H. Wade Fund",
+          "portrait": "portraits/frans-hals.webp",
           "wall": "east",
           "position": {
             "x": 11.83,
@@ -2547,6 +2591,7 @@
           "technique": "oil on wood",
           "dimensions": "未装框 68.5 × 49.5 cm（26 × 19 in）",
           "creditline": "Mr. and Mrs. William H. Marlatt Fund",
+          "portrait": "silhouette",
           "wall": "east",
           "position": {
             "x": 11.83,
@@ -2577,6 +2622,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 69.2 × 84.5 cm（27 × 33 in）",
           "creditline": "Gift of the Hanna Fund",
+          "portrait": "portraits/rembrandt-van-rijn.webp",
           "wall": "east",
           "position": {
             "x": 11.83,
@@ -2607,6 +2653,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 131.0 × 99.2 cm（51 × 39 in）",
           "creditline": "Mr. and Mrs. William H. Marlatt Fund",
+          "portrait": "silhouette",
           "wall": "west",
           "position": {
             "x": 0.17,
@@ -2637,6 +2684,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 72.0 × 87.3 cm（28 × 34 in）",
           "creditline": "Leonard C. Hanna Jr. Fund",
+          "portrait": "portraits/rembrandt-van-rijn.webp",
           "wall": "west",
           "position": {
             "x": 0.17,
@@ -2802,6 +2850,7 @@
           "technique": "oil on fabric",
           "dimensions": "未装框 70.3 × 52.3 cm（27 × 20 in）",
           "creditline": "Leonard C. Hanna Jr. Fund",
+          "portrait": "portraits/jean-baptiste-camille-corot.webp",
           "wall": "south",
           "position": {
             "x": 2.733,
@@ -2832,6 +2881,7 @@
           "technique": "oil on wood panel",
           "dimensions": "未装框 24.6 × 15.9 cm（9 × 6 in）",
           "creditline": "Severance and Greta Millikin Collection",
+          "portrait": "silhouette",
           "wall": "south",
           "position": {
             "x": 6.0,
@@ -2862,6 +2912,7 @@
           "technique": "oil on paper mounted on wood panel",
           "dimensions": "未装框 28.6 × 26.4 cm（11 × 10 in）",
           "creditline": "Gift of Mr. and Mrs. J. H. Wade",
+          "portrait": "silhouette",
           "wall": "south",
           "position": {
             "x": 9.267,
@@ -2892,6 +2943,7 @@
           "technique": "oil on fabric",
           "dimensions": "未装框 130.2 × 109.1 cm（51 × 42 in）",
           "creditline": "John L. Severance Fund",
+          "portrait": "silhouette",
           "wall": "east",
           "position": {
             "x": 11.83,
@@ -2922,6 +2974,7 @@
           "technique": "oil on fabric",
           "dimensions": "未装框 61.0 × 46.0 cm（24 × 18 in）",
           "creditline": "Bequest of William G. Mather",
+          "portrait": "portraits/jean-baptiste-camille-corot.webp",
           "wall": "east",
           "position": {
             "x": 11.83,
@@ -2952,6 +3005,7 @@
           "technique": "oil on wood panel",
           "dimensions": "未装框 69.1 × 40.1 cm（27 × 15 in）",
           "creditline": "Severance and Greta Millikin Collection",
+          "portrait": "silhouette",
           "wall": "east",
           "position": {
             "x": 11.83,
@@ -2982,6 +3036,7 @@
           "technique": "oil on wood panel",
           "dimensions": "未装框 57.1 × 34.5 cm（22 × 13 in）",
           "creditline": "Gift of Mr. and Mrs. J. H. Wade",
+          "portrait": "silhouette",
           "wall": "west",
           "position": {
             "x": 0.17,
@@ -3012,6 +3067,7 @@
           "technique": "oil on fabric",
           "dimensions": "未装框 42.9 × 59.4 cm（16 × 23 in）",
           "creditline": "Gift of the Hanna Fund",
+          "portrait": "portraits/jean-baptiste-camille-corot.webp",
           "wall": "west",
           "position": {
             "x": 0.17,
@@ -3177,6 +3233,7 @@
           "technique": "oil on board",
           "dimensions": "未装框 18.9 × 23.8 cm（7 × 9 in）",
           "creditline": "Nancy F. and Joseph P. Keithley Collection Gift",
+          "portrait": "silhouette",
           "wall": "north",
           "position": {
             "x": 44.567,
@@ -3207,6 +3264,7 @@
           "technique": "oil on canvas",
           "dimensions": "装框 56.5 × 72.7 cm（22 × 28 in）",
           "creditline": "Mr. and Mrs. William H. Marlatt Fund",
+          "portrait": "silhouette",
           "wall": "north",
           "position": {
             "x": 46.5,
@@ -3237,6 +3295,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 46.4 × 55.9 cm（18 × 22 in）",
           "creditline": "Nancy F. and Joseph P. Keithley Collection Gift",
+          "portrait": "silhouette",
           "wall": "north",
           "position": {
             "x": 48.433,
@@ -3267,6 +3326,7 @@
           "technique": "distemper on fabric",
           "dimensions": "未装框 96.3 × 214.2 cm（37 × 84 in）",
           "creditline": "Gift of the Hanna Fund",
+          "portrait": "silhouette",
           "wall": "east",
           "position": {
             "x": 50.33,
@@ -3297,6 +3357,7 @@
           "technique": "oil on board, laid on cradled panel",
           "dimensions": "未装框 27.5 × 28.8 cm（10 × 11 in）",
           "creditline": "Bequest of Leonard C. Hanna Jr.",
+          "portrait": "silhouette",
           "wall": "east",
           "position": {
             "x": 50.33,
@@ -3327,6 +3388,7 @@
           "technique": "oil on board",
           "dimensions": "未装框 32.4 × 29.8 cm（12 × 11 in）",
           "creditline": "Nancy F. and Joseph P. Keithley Collection Gift",
+          "portrait": "silhouette",
           "wall": "east",
           "position": {
             "x": 50.33,
@@ -3357,6 +3419,7 @@
           "technique": "oil on fabric",
           "dimensions": "未装框 103.2 × 62.2 cm（40 × 24 in）",
           "creditline": "Gift of the Hanna Fund",
+          "portrait": "silhouette",
           "wall": "west",
           "position": {
             "x": 42.67,
@@ -3387,6 +3450,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 80.0 × 75.0 cm（31 × 29 in）",
           "creditline": "Nancy F. and Joseph P. Keithley Collection Gift",
+          "portrait": "silhouette",
           "wall": "west",
           "position": {
             "x": 42.67,
@@ -3552,6 +3616,7 @@
           "technique": "oil on board",
           "dimensions": "未装框 22.2 × 30.2 cm（8 × 11 in）",
           "creditline": "Bequest of Mrs. Henry A. Everett for the Dorothy Burnham Everett Memorial Collection",
+          "portrait": "silhouette",
           "wall": "south",
           "position": {
             "x": 45.817,
@@ -3582,6 +3647,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 76.8 × 56.5 cm（30 × 22 in）",
           "creditline": "Gift of Mrs. Henry White Cannon",
+          "portrait": "silhouette",
           "wall": "south",
           "position": {
             "x": 47.25,
@@ -3612,6 +3678,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 60.6 × 50.5 cm（23 × 19 in）",
           "creditline": "Mr. and Mrs. William H. Marlatt Fund",
+          "portrait": "silhouette",
           "wall": "south",
           "position": {
             "x": 48.683,
@@ -3642,6 +3709,7 @@
           "technique": "oil on wood",
           "dimensions": "未装框 34.2 × 23.7 cm（13 × 9 in）",
           "creditline": "Gift of Mrs. John B. Dempsey",
+          "portrait": "silhouette",
           "wall": "east",
           "position": {
             "x": 50.33,
@@ -3672,6 +3740,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 166.4 × 159.8 cm（65 × 62 in）",
           "creditline": "Gift of Mrs. Boudinot Keith in memory of Mr. and Mrs. J. H. Wade",
+          "portrait": "silhouette",
           "wall": "east",
           "position": {
             "x": 50.33,
@@ -3702,6 +3771,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 70.0 × 56.2 cm（27 × 22 in）",
           "creditline": "Gift of the Estate of Charles F. Brush",
+          "portrait": "silhouette",
           "wall": "east",
           "position": {
             "x": 50.33,
@@ -3732,6 +3802,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 121.2 × 183.0 cm（47 × 72 in）",
           "creditline": "Gift of Mr. and Mrs. Hermon A. Kelley, in memory of their daughter Virginia Kelley Newberry",
+          "portrait": "silhouette",
           "wall": "west",
           "position": {
             "x": 44.17,
@@ -3762,6 +3833,7 @@
           "technique": "oil on canvas",
           "dimensions": "未装框 127.0 × 101.5 cm（50 × 39 in）",
           "creditline": "Gift of Mrs. Henry White Cannon",
+          "portrait": "silhouette",
           "wall": "west",
           "position": {
             "x": 44.17,
