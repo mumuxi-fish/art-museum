@@ -14,6 +14,7 @@ const BENCH_REACH = 2.3;   // 离长凳多近才提示坐下
 
 let artTargets = [];
 let benchTargets = [];
+let audioTargets = [];
 let benches = [];
 let promptEl = null;
 let handlers = {};
@@ -36,6 +37,7 @@ let lastVisRev = -1;
 export function initInteract(opts) {
   artTargets = opts.artTargets || [];
   benchTargets = opts.benchTargets || [];
+  audioTargets = opts.audioTargets || [];
   benches = opts.benches || [];
   promptEl = opts.promptEl || null;
   handlers = opts;
@@ -71,11 +73,14 @@ function worldVisible(obj) {
 function pickFrom(v2) {
   raycaster.setFromCamera(v2, camera);
   raycaster.far = ART_REACH;
-  const hits = raycaster.intersectObjects([...artTargets, ...benchTargets], false);
+  const hits = raycaster.intersectObjects(
+    [...artTargets, ...benchTargets, ...audioTargets], false,
+  );
   for (const hit of hits) {
     if (!worldVisible(hit.object)) continue;
     if (hit.object.userData.art) return { kind: 'art', art: hit.object.userData.art };
     if (hit.object.userData.bench) return { kind: 'bench', bench: hit.object.userData.bench };
+    if (hit.object.userData.audio) return { kind: 'audio', audio: hit.object.userData.audio };
   }
   return null;
 }
@@ -105,7 +110,9 @@ export function updateInteract(visRev = 0) {
   const hit = pickFrom(screenCenter);
   if (hit) {
     target = hit;
-    showPrompt(hit.kind === 'art' ? 'E  查看作品' : 'E  坐下');
+    if (hit.kind === 'art') showPrompt('E  查看作品');
+    else if (hit.kind === 'bench') showPrompt('E  坐下');
+    else showPrompt(handlers.isPlaying?.(hit.audio.key) ? 'E  暂停' : 'E  播放');
     return;
   }
 
@@ -144,6 +151,22 @@ export function activate() {
   if (!target) return;
   if (target.kind === 'art') handlers.onOpenArt?.(target.art);
   else if (target.kind === 'bench') sit(target.bench);
+  else if (target.kind === 'audio') handlers.onToggleAudio?.(target.audio);
+}
+
+// 听音点的播放状态是外部变的（牌子自己亮起 / 浏览器放完了），
+// 站着不动时提示条也要跟着换字 —— 强迫下一帧重新拾取一次。
+export function invalidateTarget() {
+  lastPose.x = NaN;
+}
+
+// 调试/自动化用：直接问一句"视线正中现在瞄着什么"（不改状态）
+export function debugPick() {
+  const hit = pickFrom(screenCenter);
+  if (!hit) return null;
+  if (hit.kind === 'art') return { kind: 'art', title: hit.art?.title || '' };
+  if (hit.kind === 'audio') return { kind: 'audio', key: hit.audio?.key || '', title: hit.audio?.title || '' };
+  return { kind: 'bench' };
 }
 
 export function sit(bench) {

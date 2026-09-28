@@ -25,6 +25,9 @@ export const artWallUrl = (image) =>
   customArtUrls.get(image)?.wall || withVersion(`${ART_WALL_DIR}${image}`);
 export const artDetailUrl = (image) =>
   customArtUrls.get(image)?.detail || withVersion(`${ART_DETAIL_DIR}${image}`);
+// 影像装置（选本地文件夹导入的视频）才有：原始视频文件的 object URL。
+// 照片没有这一项，返回空串由调用方兜底。
+export const artVideoUrl = (image) => customArtUrls.get(image)?.video || '';
 
 // 确定性伪随机(mulberry32) —— 同一 seed 永远得到同一串数
 // 用它取代 Math.random(),否则同一幅画每次刷新都会长得不一样
@@ -350,6 +353,89 @@ export function makeLabelTexture(title, artist, year) {
   tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
   labelCache.set(key, tex);
   return tex;
+}
+
+// 听音点站牌（选本地文件夹里的音频）：墙上的小牌子，走近按 E 播放/暂停。
+// 每块牌只有一份（key 唯一），但要按播放状态随时重绘，所以不进缓存：
+// 调用方拿到 { texture, draw(playing) } 自己攥着，状态一变 draw() 一次即可。
+const STA_W = 512;
+const STA_H = 336;
+export function makeAudioStationTexture(title, durationText) {
+  const c = document.createElement('canvas');
+  c.width = STA_W;
+  c.height = STA_H;
+  const ctx = c.getContext('2d');
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
+  const serif = '"Songti SC","Noto Serif SC",Georgia,serif';
+  const sans = '"PingFang SC","Hiragino Sans GB","Microsoft YaHei",Helvetica,Arial,sans-serif';
+
+  const wrap2 = (text, maxW, font) => {
+    ctx.font = font;
+    const chars = [...String(text || '')];
+    const lines = [];
+    let line = '';
+    for (const ch of chars) {
+      if (ctx.measureText(line + ch).width > maxW && line) {
+        lines.push(line);
+        line = ch;
+        if (lines.length === 2) break;
+      } else line += ch;
+    }
+    if (lines.length < 2 && line) lines.push(line);
+    if (lines.length === 2) {
+      // 第二行截断要给「…」留位
+      let l2 = lines[1];
+      while (l2.length > 1 && ctx.measureText(`${l2}…`).width > maxW) l2 = l2.slice(0, -1);
+      lines[1] = `${l2}…`;
+      lines.length = 2;
+    }
+    return lines;
+  };
+
+  const draw = (playing = false) => {
+    ctx.fillStyle = '#f4f1ea';
+    ctx.fillRect(0, 0, STA_W, STA_H);
+    ctx.strokeStyle = 'rgba(0,0,0,0.30)';
+    ctx.lineWidth = 5;
+    ctx.strokeRect(2.5, 2.5, STA_W - 5, STA_H - 5);
+    ctx.strokeStyle = 'rgba(0,0,0,0.14)';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(14, 14, STA_W - 28, STA_H - 28);
+
+    ctx.textBaseline = 'middle';
+
+    // 音符
+    ctx.fillStyle = '#2b2925';
+    ctx.textAlign = 'center';
+    ctx.font = `400 132px ${serif}`;
+    ctx.fillText('♪', 84, STA_H / 2 - 8);
+
+    // 标题（最多两行）
+    const left = 156;
+    const maxW = STA_W - left - 32;
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#1f1d1a';
+    const lines = wrap2(title || '未命名', maxW, `600 40px ${serif}`);
+    lines.forEach((l, i) => ctx.fillText(l, left, lines.length === 1 ? STA_H / 2 - 8 : STA_H / 2 - 34 + i * 52));
+
+    // 底行：时长 +（播放中）状态
+    ctx.font = `400 28px ${sans}`;
+    ctx.fillStyle = '#6a655c';
+    ctx.fillText(durationText || '', left, STA_H - 56);
+    if (playing) {
+      ctx.fillStyle = '#2f6f4e';
+      ctx.font = `600 28px ${sans}`;
+      ctx.fillText('● 播放中', STA_W - 172, STA_H - 56);
+    }
+
+    tex.needsUpdate = true;
+  };
+
+  draw(false);
+  return { texture: tex, draw };
 }
 
 // 图片还没加载完时先挂这个，避免画框空着或闪一下抽象纹理

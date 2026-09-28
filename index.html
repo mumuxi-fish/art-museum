@@ -106,7 +106,10 @@
     <div id="art-detail" class="art-detail hidden">
       <div class="art-detail-card">
         <button id="detail-close" class="detail-close" title="关闭">✕</button>
-        <div class="detail-figure"><img id="detail-img" alt="" /></div>
+        <div class="detail-figure">
+          <img id="detail-img" alt="" />
+          <video id="detail-video" class="hidden" controls playsinline preload="metadata"></video>
+        </div>
         <div class="detail-meta">
           <div class="detail-head">
             <h2 id="detail-title"></h2>

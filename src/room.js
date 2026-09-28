@@ -16,7 +16,10 @@ import {
   makeRoomSignTexture,
   makeDirectoryBoardTexture,
   makeThemeLabelTexture,
+  makeAudioStationTexture,
   getPlasterTexture,
+  artVideoUrl,
+  loadPaintingTexture,
 } from './textures.js';
 import { buildRoomLights } from './lights.js';
 
@@ -29,6 +32,16 @@ let roomGroups = null;
 let buildingRoomId = null;
 // 每个房间的物件世界坐标，交给 plan.visibleRoomsFrom 做视线判定
 let roomSamples = null;
+
+// 影像装置（选本地文件夹导入的视频）。屋里藏着一个 <video>，墙上是它的 VideoTexture：
+// 只有"房间可见 + 页面在前台"时才播，一暂停就省掉整个解码和渲染。
+// three 每次给这个材质绑贴图都会自动刷新视频帧，所以不用自己 needsUpdate ——
+// 要做的只是保证 renderer 每帧都在画（main.js 用 videosNeedRender() 判断）。
+let videoPlayers = [];
+// 房间可见性：null = 剔除关着（全可见），Set = 当前可见的房间 id
+let lastVisibleRooms = null;
+// 听音点站牌的贴图（要按播放状态重绘），key → { texture, draw, mesh }
+const stationViews = new Map();
 
 function addObj(obj) {
   const g = buildingRoomId && roomGroups?.get(buildingRoomId);
@@ -53,6 +66,25 @@ function mat(color, opts = {}) {
 export function disposeMuseum() {
   if (!museumGroup) return;
   scene.remove(museumGroup);
+
+  // 影像装置：先把解码器停掉（页面都不要了还在后台解码是白烧电）
+  for (const p of videoPlayers) {
+    try {
+      p.video.pause();
+      p.video.removeAttribute('src');
+      p.video.load();
+      p.tex.dispose();
+    } catch {
+      // 视频已经卸干净了就不用管
+    }
+  }
+  videoPlayers = [];
+  lastVisibleRooms = null;
+
+  // 听音点站牌的贴图是每块牌一张，不属于全局缓存，这里要真销毁
+  for (const v of stationViews.values()) v.texture.dispose();
+  stationViews.clear();
+
   museumGroup.traverse((obj) => {
     if (obj.geometry) obj.geometry.dispose();
     const m = obj.material;
@@ -809,6 +841,8 @@ function buildArtworks(room, plan, lights, artSlots, artTargets) {
     roughness: m.frameRoughness ?? 0.7,
     metalness: m.frameMetalness ?? 0.05,
   });
+  // 影像装置用深色窄边框（投影机/屏幕那种），和木框照片一眼区分开
+  let frameVideo = null;
   const placeholder = getPlaceholderTexture();
 
   // 射灯按等间隔挑着加：一个厅几十幅画（自己导入的照片墙就是这个量级）
@@ -822,19 +856,24 @@ function buildArtworks(room, plan, lights, artSlots, artTargets) {
 
   room.arts.forEach((a, i) => {
     const seed = `${a.id || i}|${a.title || ''}`;
+    const isVideo = Boolean(a.video);
 
     const bw = a.size.width + 0.16;
     const bh = a.size.height + 0.16;
-    const frame = new THREE.Mesh(BOX(bw, bh, 0.07), frameWood);
+    if (isVideo && !frameVideo) {
+      frameVideo = STD({ color: 0x141414, roughness: 0.5, metalness: 0.2 });
+    }
+    const frame = new THREE.Mesh(BOX(bw, bh, 0.07), isVideo ? frameVideo : frameWood);
 
     // 画布加一点自发光补偿。漫反射是 albedo/π，像惠斯勒夜曲那种本来就接近全黑的画，
     // 再怎么加射灯也提不亮（乘出来还是黑的）。真实美术馆靠人眼宽容度，
     // 这里用一点点自发光把暗部托起来，代价是整体对比度略降。
+    // 影像装置是自己发光的屏幕，给多一点免得走动时灯预算一变画面就发闷。
     const canvasMat = STD({
       map: placeholder,
       emissive: 0xffffff,
       emissiveMap: placeholder,
-      emissiveIntensity: 0.15,
+      emissiveIntensity: isVideo ? 0.42 : 0.15,
       roughness: 0.92,
       metalness: 0,
       side: THREE.DoubleSide,
@@ -871,7 +910,10 @@ function buildArtworks(room, plan, lights, artSlots, artTargets) {
       ));
     }
 
-    if (a.image && !artSlots.has(a.image)) {
+    if (a.image && isVideo) {
+      // 影像装置不进 artSlots（流式加载是给静态照片的）：这里自己管
+      attachVideoArt(canvasMat, a, room.id, seed);
+    } else if (a.image && !artSlots.has(a.image)) {
       artSlots.set(a.image, {
         material: canvasMat, fallbackSeed: seed, hue: a.hue ?? 0.5,
         // 给加载器排序用：id 是按编年编的，每厅前 3 幅挂在进门正对的主墙上
@@ -883,6 +925,151 @@ function buildArtworks(room, plan, lights, artSlots, artTargets) {
     canvas.userData.roomId = room.id;
     artTargets.push(canvas);
   });
+}
+
+// 影像装置：封面帧先顶上墙，视频第一帧解出来就换 VideoTexture；之后靠
+// syncVideoPlayback() 按房间可见性开播/停播。播放状态查询在 videosNeedRender()。
+function attachVideoArt(mat, a, roomId, seed) {
+  const src = artVideoUrl(a.image);
+  if (!src) return;
+
+  const video = document.createElement('video');
+  video.src = src;
+  video.muted = true;
+  video.loop = true;
+  video.playsInline = true;
+  video.preload = 'auto';
+  video.setAttribute('playsinline', '');
+  video.setAttribute('muted', '');
+
+  const tex = new THREE.VideoTexture(video);
+  tex.colorSpace = THREE.SRGBColorSpace;
+
+  const entry = { video, roomId, tex, dead: false, swapped: false };
+  videoPlayers.push(entry);
+
+  // 视频还在解元数据的那一两帧先显示封面（同一张图，相关作品缩略图也用它）
+  loadPaintingTexture(a.image, a.hue ?? 0.5, seed)
+    .then((poster) => {
+      if (entry.swapped) return;
+      mat.map = poster;
+      mat.emissiveMap = poster;
+      markDirty();
+    })
+    .catch(() => {});
+
+  video.addEventListener('loadeddata', () => {
+    entry.swapped = true;
+    mat.map = tex;
+    mat.emissiveMap = tex;
+    markDirty();
+  });
+  video.addEventListener('playing', markDirty);
+  video.addEventListener('error', () => {
+    // 浏览器放不了这个编码（比如导出的 HEVC）：封面已经在墙上了，就当静态照片
+    entry.dead = true;
+    video.pause();
+    mat.map = null;
+    mat.emissiveMap = null;
+    loadPaintingTexture(a.image, a.hue ?? 0.5, seed)
+      .then((poster) => {
+        if (!entry.dead) return;
+        mat.map = poster;
+        mat.emissiveMap = poster;
+        markDirty();
+      })
+      .catch(() => {});
+    markDirty();
+  });
+}
+
+// 房间可见性一变就开/关这间屋里的影像：整厅剔除的用意就是"看不见的别渲染"
+export function applyRoomVisibility(visible) {
+  if (!roomGroups) return false;
+  lastVisibleRooms = visible;
+  let changed = false;
+  for (const [id, g] of roomGroups) {
+    const on = !visible || visible.has(id);
+    if (g.visible !== on) {
+      g.visible = on;
+      changed = true;
+    }
+  }
+  if (changed) visRevision += 1;
+  syncVideoPlayback();
+  return changed;
+}
+
+function syncVideoPlayback() {
+  const hidden = document.hidden;
+  for (const p of videoPlayers) {
+    if (p.dead) continue;
+    const want = !hidden && (!lastVisibleRooms || lastVisibleRooms.has(p.roomId));
+    if (want && p.video.paused) p.video.play().catch(() => {});
+    else if (!want && !p.video.paused) p.video.pause();
+  }
+}
+
+// 页面切到后台就全停（浏览器也会自动节流，但显式停掉能省电），切回来按可见性续播
+document.addEventListener('visibilitychange', syncVideoPlayback);
+
+// main.js 每帧问一句：现在有没有影像正在播？有就别走"静止跳渲染"那条省电路
+export function videosNeedRender() {
+  if (!videoPlayers.length || document.hidden) return false;
+  for (const p of videoPlayers) {
+    if (p.dead || p.video.paused || p.video.ended) continue;
+    if (lastVisibleRooms && !lastVisibleRooms.has(p.roomId)) continue;
+    if (p.video.readyState < 2) continue;
+    return true;
+  }
+  return false;
+}
+
+// 调试/测试用：每段影像的播放状态（只读，不给外部动 video 元素）
+export function videoStates() {
+  return videoPlayers.map((p, i) => ({
+    i,
+    roomId: p.roomId,
+    dead: p.dead,
+    paused: p.video.paused,
+    readyState: p.video.readyState,
+    time: p.video.currentTime,
+    // true = 动态贴图已经挂上墙（false 时墙上还是封面帧）
+    swapped: p.swapped,
+  }));
+}
+
+// ---- 听音点（纯音频的落地形态）：墙上的站牌 ----
+function buildAudioStations(room) {
+  const out = [];
+  for (const s of room.audioStations || []) {
+    // BasicMaterial：站牌不受灯光预算影响，永远恒定亮度（和标识牌同一套做法）
+    const view = makeAudioStationTexture(s.title, s.duration);
+    const material = new THREE.MeshBasicMaterial({ map: view.texture });
+    material.userData.keepMap = true;
+    const plate = new THREE.Mesh(
+      new THREE.PlaneGeometry(s.size.width, s.size.height),
+      material,
+    );
+    plate.position.set(s.position.x, s.position.y, s.position.z);
+    plate.rotation.order = 'YXZ';
+    plate.rotation.y = s.rotation?.y ?? 0;
+    plate.rotation.z = s.rotation?.z ?? 0;
+    plate.userData.audio = s;
+    plate.userData.roomId = room.id;
+    addObj(plate);
+    stationViews.set(s.key, { texture: view.texture, draw: view.draw, mesh: plate });
+    out.push(plate);
+  }
+  return out;
+}
+
+// 播放状态变了就把牌子重画一遍（"● 播放中"），顺带把画面标脏
+export function setAudioStationState(key, playing) {
+  const view = stationViews.get(key);
+  if (!view) return;
+  view.draw(Boolean(playing));
+  markDirty();
 }
 
 // 展厅入口上方的名牌：挂在走廊那一侧
@@ -1092,6 +1279,7 @@ export function buildMuseum(plan) {
   const artTargets = [];
   const benches = [];
   const benchTargets = [];
+  const audioTargets = [];
   const floorMats = [];
   const coveMats = [];
 
@@ -1111,6 +1299,7 @@ export function buildMuseum(plan) {
   for (const room of plan.rooms) {
     buildingRoomId = room.id;
     buildArtworks(room, plan, lights, artSlots, artTargets);
+    audioTargets.push(...buildAudioStations(room));
 
     for (const b of room.benches || []) {
       const entry = { ...b, roomId: room.id, roomName: room.name };
@@ -1144,9 +1333,12 @@ export function buildMuseum(plan) {
     new Set([...artTargets, ...benchTargets]),
   );
 
+  // 影像装置此刻就开始静音循环（muted 自动播放是允许的），后面按房间可见性开/关
+  syncVideoPlayback();
+
   return {
     group: museumGroup, roomGroups, roomSamples,
-    lights, artSlots, artTargets, benches, benchTargets, floorMats, coveMats,
+    lights, artSlots, artTargets, benches, benchTargets, audioTargets, floorMats, coveMats,
   };
 }
 
@@ -1174,20 +1366,6 @@ let visRevision = 0;
 
 export function getVisRevision() {
   return visRevision;
-}
-
-export function applyRoomVisibility(visible) {
-  if (!roomGroups) return false;
-  let changed = false;
-  for (const [id, g] of roomGroups) {
-    const on = !visible || visible.has(id);
-    if (g.visible !== on) {
-      g.visible = on;
-      changed = true;
-    }
-  }
-  if (changed) visRevision += 1;
-  return changed;
 }
 
 export function visibleRoomCount() {

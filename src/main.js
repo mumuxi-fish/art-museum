@@ -10,20 +10,25 @@ import { importPhotoFiles, clearMyGallery } from './mygallery.js';
 import { buildPlan } from './plan.js';
 import {
   buildMuseum, disposeMuseum, applyRoomVisibility, visibleRoomCount,
-  freezeMuseumMatrices, getVisRevision,
+  freezeMuseumMatrices, getVisRevision, videosNeedRender, setAudioStationState, videoStates,
 } from './room.js';
 import { initControls, controls, updateMovement, enterMobileMode } from './controls.js';
 import { initPlayer, updatePlayer } from './player.js';
 import { initFlashlight, updateFlashlight, toggle } from './flashlight.js';
-import { initInteract, updateInteract, activate, isSeated, stand, hidePrompt, pickAt } from './interact.js';
+import {
+  initInteract, updateInteract, activate, isSeated, stand, hidePrompt, pickAt, invalidateTarget,
+  debugPick,
+} from './interact.js';
 import { initMinimap, updateMinimap } from './minimap.js';
 import { initDaylight, applyDaylight, daylightLabel } from './daylight.js';
-import { paintingTextureCache, artWallUrl, artDetailUrl } from './textures.js';
+import { paintingTextureCache, artWallUrl, artDetailUrl, artVideoUrl } from './textures.js';
 import {
   initAudio, setAudioEnabled, toggleMute, isMuted, footstep, sitSound, clickSound,
   toggleMusic, isMusicOn, toggleMusicPlay, isMusicPaused, audioRms,
   nextTrack, switchToTrack, currentTrack, isTrackLoading, trackList, audioDebug,
 } from './audio.js';
+// 听音点（展厅墙上的音频牌）：和背景音乐是两套，走 <audio> 单轨播放
+import { toggleListen, isListening, onListenState, localAudioTitle, listeningKey } from './listen.js';
 
 // DOM
 const roomLabel = document.getElementById('galleryLabel');
@@ -57,6 +62,7 @@ const toastEl = document.getElementById('toast');
 const promptEl = document.getElementById('prompt');
 const detailEl = document.getElementById('art-detail');
 const detailImg = document.getElementById('detail-img');
+const detailVideo = document.getElementById('detail-video');
 const detailTitle = document.getElementById('detail-title');
 const detailArtist = document.getElementById('detail-artist');
 const detailYear = document.getElementById('detail-year');
@@ -366,8 +372,25 @@ function openArtDetail(art) {
   if (!detailEl) return;
   detailOpen = true;
   clickSound();
-  if (detailImg) detailImg.src = art.image ? artDetailUrl(art.image) : '';
-  if (detailImg) detailImg.alt = art.title || '';
+  // 影像装置：浮层里放原始视频（带声音），墙上那块继续静音循环
+  const withVideo = Boolean(art.video) && Boolean(art.image) && Boolean(artVideoUrl(art.image));
+  if (detailVideo) {
+    if (withVideo) {
+      detailVideo.src = artVideoUrl(art.image);
+      detailVideo.currentTime = 0;
+      detailVideo.play().catch(() => {});
+    } else {
+      detailVideo.pause();
+      detailVideo.removeAttribute('src');
+      detailVideo.load();
+    }
+    detailVideo.classList.toggle('hidden', !withVideo);
+  }
+  if (detailImg) {
+    detailImg.classList.toggle('hidden', Boolean(withVideo));
+    detailImg.src = art.image ? artDetailUrl(art.image) : '';
+    detailImg.alt = art.title || '';
+  }
   if (detailTitle) detailTitle.textContent = art.title || '无题';
   if (detailArtist) detailArtist.textContent = art.artist || '佚名';
   if (detailYear) detailYear.textContent = art.year || '';
@@ -468,6 +491,12 @@ function closeArtDetail() {
   if (!detailEl || !detailOpen) return;
   detailOpen = false;
   detailEl.classList.add('hidden');
+  if (detailVideo) {
+    detailVideo.pause();
+    detailVideo.removeAttribute('src');
+    detailVideo.load();
+    detailVideo.classList.add('hidden');
+  }
   // 原本就在沉浸模式里看的画，关掉详情接着逛；如果是自由鼠标点开的，别把指针抢回去
   if (controls && wasLockedBeforeDetail) controls.lock();
 }
@@ -724,17 +753,20 @@ photoInput?.addEventListener('change', async () => {
   photoBtn.disabled = true;
   if (progressEl) {
     progressEl.classList.remove('hidden');
-    progressEl.textContent = '正在读取照片…';
+    progressEl.textContent = '正在读取文件…';
   }
   try {
     const r = await importPhotoFiles(files, ({ done, total, name }) => {
-      if (progressEl) progressEl.textContent = `正在处理照片 ${done + 1} / ${total} · ${name}`;
+      if (progressEl) progressEl.textContent = `正在处理 ${done + 1} / ${total} · ${name}`;
     });
-    if (progressEl) progressEl.textContent = `已生成「${r.folder}」· ${r.count} 张`;
-    toast(
-      `已生成专属展厅：${r.count} 张照片${r.skipped ? `（跳过 ${r.skipped} 张）` : ''}，正在重启…`,
-      3200,
-    );
+    if (progressEl) progressEl.textContent = `已生成「${r.folder}」· ${r.count + r.audios} 件`;
+    const parts = [];
+    if (r.images) parts.push(`${r.images} 张照片`);
+    if (r.videos) parts.push(`${r.videos} 段影像`);
+    if (r.audios) parts.push(`${r.audios} 段音频`);
+    const over = r.oversize > 0 ? `，${r.oversize} 个超 300MB` : '';
+    const skip = r.skipped > r.oversize ? `，跳过 ${r.skipped - r.oversize} 个解不开的` : '';
+    toast(`已生成专属展厅：${parts.join(' · ')}${over}${skip}，正在重启…`, 3600);
     await new Promise((res) => setTimeout(res, 400));
     location.reload();
   } catch (err) {
@@ -806,6 +838,8 @@ function animate() {
   if (!detailOpen && !glide) updateInteract(getVisRevision());
   updatePlayer();
   if (updateFlashlight(dt)) markDirty();
+  // 影像装置在播就得每帧都画：three 会自己刷新视频帧，但只在真的 render 时才上传
+  if (videosNeedRender()) markDirty();
   updateFootsteps();
   stepWarmup();
   renderIfDirty();
@@ -889,11 +923,26 @@ async function bootstrap() {
       artTargets: built.artTargets,
       benches: built.benches,
       benchTargets: built.benchTargets,
+      audioTargets: built.audioTargets,
       promptEl,
       canStand: (x, z) => plan.canStand(x, z),
       onOpenArt: openArtDetail,
       onSit: (b) => { sitSound(); toast(`已坐下 · ${b.roomName}`); },
       onStand: () => { sitSound(); toast('已起身'); },
+      // 听音点：E 切播放/暂停，牌子自己亮起「● 播放中」
+      isPlaying: (key) => isListening(key),
+      onToggleAudio: async (station) => {
+        const r = await toggleListen(station.key);
+        if (!r.ok) toast(r.message || '这段音频放不了', 2600);
+        invalidateTarget();
+      },
+    });
+
+    // 听音点状态一变：重绘那块牌子 + 刷新屏幕正中的提示条
+    onListenState((key, playing) => {
+      setAudioStationState(key, playing);
+      invalidateTarget();
+      if (playing) toast(`正在播放 · ${localAudioTitle(key)}`, 1400);
     });
 
     // 开场提示只留几秒，之后彻底交给沉浸
@@ -955,6 +1004,12 @@ window.__artMuseum = {
       剔除版本: getVisRevision(),
     };
   },
+  // 影像装置 / 听音点：测试要断言「视频在播」「牌子亮着」用
+  importFiles: (files, cb) => importPhotoFiles(files, cb),
+  media: {
+    videos: () => videoStates(),
+    listen: () => ({ key: listeningKey(), playing: Boolean(listeningKey()) }),
+  },
   // 音频调试：rms 是 master 上的实时有效值（总静音≈0）
   audio: {
     rms: () => audioRms(),
@@ -985,6 +1040,8 @@ window.__artMuseum = {
   jumpTo: jumpToGallery,
   // 自动化验证用：直接触发滑移/开详情，不走 UI
   glideToArt: goToArtwork,
+  // 视线正中瞄着什么（画/听音点/凳子），测试用
+  aim: () => debugPick(),
   openArt: openArtDetail,
   get gliding() { return glide; },
   get elapsed() { return clock.elapsedTime; },

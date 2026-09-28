@@ -594,6 +594,15 @@ body.drag-look .drag-hint { display: block; }
   object-fit: contain;
   display: block;
 }
+/* 影像装置：详情浮层里换成原始视频（墙上那块是静音循环，这里带声音） */
+.detail-figure video {
+  max-width: 100%;
+  max-height: 76vh;
+  display: block;
+  background: #000;
+}
+.detail-figure img.hidden,
+.detail-figure video.hidden { display: none; }
 .detail-meta { display: flex; flex-direction: column; justify-content: center; gap: 6px; }
 .detail-meta h2 {
   margin: 0;
@@ -633,7 +642,7 @@ body.drag-look .drag-hint { display: block; }
 .detail-close:hover { background: rgba(255, 255, 255, 0.14); }
 @media (max-width: 768px) {
   .art-detail-card { grid-template-columns: 1fr; gap: 16px; padding: 16px; }
-  .detail-figure img { max-height: 44vh; }
+  .detail-figure img, .detail-figure video { max-height: 44vh; }
 }
 
 /* 作品详情：展签正文 */

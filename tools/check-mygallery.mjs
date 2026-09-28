@@ -121,5 +121,116 @@ for (const n of [1, 2, 3, 5, 12, 24, 40, 80]) {
   );
 }
 
+// ---- 影像装置（视频当画挂）+ 听音点（纯音频的墙牌）----
+console.log('\n— 影像装置 + 听音点 —');
+
+const mediaPieces = [
+  { image: 'p1.webp', title: '照片 A', w: 1600, h: 1067 },
+  { image: 'p2.webp', title: '短片 B', w: 1920, h: 1080, video: true, duration: 204 },
+  { image: 'p3.webp', title: '照片 C', w: 1200, h: 1600 },
+  { image: 'p4.webp', title: '短片 D', w: 1280, h: 720, video: true, duration: 9.6 },
+];
+const audios = [
+  { key: 'au1', title: '环境声', duration: 204 },
+  { key: 'au2', title: '导览词', duration: 63.4 },
+  { key: 'au3', title: '现场录音', duration: 5.2 },
+];
+{
+  const json = buildMyGalleryPlan(mediaPieces, { title: '影像文件夹', audios });
+  const plan = buildPlan(json);
+  const gal = plan.byId.get('gallery');
+  const arts = gal.arts || [];
+  const st = gal.audioStations || [];
+  const op = plan.openings[0];
+  const x0 = gal.x0, x1 = gal.x1, z0 = gal.z0, z1 = gal.z1;
+
+  ok(arts.length === mediaPieces.length, `混排画数 ${arts.length} ≠ ${mediaPieces.length}`);
+  const vids = arts.filter((a) => a.video);
+  ok(vids.length === 2, `影像件 ${vids.length} ≠ 2`);
+  ok(arts[0].wall === 'east' && arts[0].title === '照片 A', '东墙主位不是排在最前的那件');
+  ok(vids.every((a) => a.technique === '影像装置'), '影像件没标「影像装置」');
+  ok(vids.every((a) => /^\d+×\d+$/.test(a.dimensions)), '影像件缺原始像素尺寸');
+  ok(vids.every((a) => /循环播放/.test(a.description)), '影像件描述里没有循环播放');
+  ok(arts.filter((a) => !a.video).every((a) => a.technique === ''), '照片不该标成影像装置');
+
+  ok(st.length === audios.length, `站牌数 ${st.length} ≠ ${audios.length}`);
+  ok(new Set(st.map((s) => s.key)).size === st.length, '站牌 key 有重复');
+  ok(st.every((s) => ['north', 'south'].includes(s.wall)), '站牌挂到了照片以外的墙上');
+  ok(st.every((s) => Math.abs(s.size.width - 0.95) < 1e-9 && Math.abs(s.size.height - 0.62) < 1e-9),
+    '站牌尺寸不对');
+  ok(st.every((s) => s.rotation.y === (s.wall === 'north' ? 0 : Math.PI)), '站牌朝向不对');
+  ok(st.every((s) => s.position.y > 0.6 && s.position.y < 2.2), '站牌中心高度不合理');
+  ok(st.every((s) => s.position.x - s.size.width / 2 > x0 && s.position.x + s.size.width / 2 < x1),
+    '站牌横向越界');
+  ok(st.every((s) => s.position.z > z0 && s.position.z < z1), '站牌不在长厅深度里');
+  const inDoor = (x, z) => Math.abs(x - x0) < 0.4 && z > op.from && z < op.to;
+  ok(st.every((s) => !inDoor(s.position.x, s.position.z)), '有站牌挂在门洞里');
+  const fmt = (k) => st.find((s) => s.key === k)?.duration;
+  ok(fmt('au1') === '3:24', `时长格式 ${fmt('au1')} ≠ 3:24`);
+  ok(fmt('au2') === '1:03', `时长格式 ${fmt('au2')} ≠ 1:03`);
+  ok(fmt('au3') === '0:05', `时长格式 ${fmt('au3')} ≠ 0:05`);
+
+  // 同一面墙上，画和站牌是一条排下来的：任何两件都不能叠在一起
+  for (const wall of ['north', 'south']) {
+    const boxes = [
+      ...arts.filter((a) => a.wall === wall)
+        .map((a) => [a.position.x - a.size.width / 2, a.position.x + a.size.width / 2, `画「${a.title}」`]),
+      ...st.filter((s) => s.wall === wall)
+        .map((s) => [s.position.x - s.size.width / 2, s.position.x + s.size.width / 2, `站牌「${s.title}」`]),
+    ].sort((p, q) => p[0] - q[0]);
+    for (let i = 1; i < boxes.length; i++) {
+      if (boxes[i][0] < boxes[i - 1][1] - 1e-6) {
+        ok(false, `${wall} 墙上 ${boxes[i][2]} 压住了 ${boxes[i - 1][2]}`);
+      }
+    }
+  }
+  console.log(`  混排：画 ${arts.length}（影像 ${vids.length}）· 站牌 ${st.length} · 长厅 ${(x1 - x0).toFixed(1)}m`);
+}
+
+// 纯音频文件夹：一件画都没有，第一块牌子顶替东墙主位
+{
+  const onlyAudios = [
+    { key: 'au1', title: '其一', duration: 12.3 },
+    { key: 'au2', title: '其二', duration: 71 },
+    { key: 'au3', title: '其三', duration: 300 },
+  ];
+  const json = buildMyGalleryPlan([], { title: '纯音频', audios: onlyAudios });
+  const plan = buildPlan(json);
+  const gal = plan.byId.get('gallery');
+  const arts = gal.arts || [];
+  const st = gal.audioStations || [];
+  ok(arts.length === 0, `纯音频不该有画，实际 ${arts.length}`);
+  ok(st.length === onlyAudios.length, `纯音频站牌数 ${st.length} ≠ ${onlyAudios.length}`);
+  const hero = st.find((s) => s.wall === 'east');
+  ok(Boolean(hero), '纯音频时东墙没有主位站牌');
+  if (hero) {
+    ok(Math.abs(hero.position.y - 1.6) < 1e-9, `主位站牌高度 ${hero.position.y} ≠ 1.6`);
+    ok(Math.abs(hero.rotation.y + Math.PI / 2) < 1e-6, '主位站牌朝向不是正对门洞');
+    ok(Math.abs(hero.position.x - (gal.x1 - 0.17)) < 0.01, '主位站牌没贴东墙脸');
+    ok(Math.abs(hero.position.z - gal.cz) < 0.01, '主位站牌不在东墙中间');
+  }
+  ok(st.filter((s) => s.wall !== 'east').length === 2, '北/南墙的站牌数不对');
+  console.log(`  纯音频：站牌 ${st.length}（东墙主位 1）· 长厅 ${(gal.x1 - gal.x0).toFixed(1)}m`);
+}
+
+// 全是视频：东墙主位也得是影像装置（深框、能被射线点开）
+{
+  const onlyVids = [1, 2].map((i) => ({
+    image: `v${i}.webp`, title: `短片 ${i}`, w: 1920, h: 1080, video: true, duration: 30 + i,
+  }));
+  const plan = buildPlan(buildMyGalleryPlan(onlyVids, { title: '全是视频' }));
+  const gal = plan.byId.get('gallery');
+  const arts = gal.arts || [];
+  ok(arts.length === 2, `视频件数 ${arts.length} ≠ 2`);
+  ok(arts[0].wall === 'east' && arts[0].video === true, '东墙主位不是影像装置');
+  ok((gal.audioStations || []).length === 0, '没有音频却生成了站牌');
+  console.log(`  全视频：画 ${arts.length} · 站牌 0 · 长厅 ${(gal.x1 - gal.x0).toFixed(1)}m`);
+}
+
+// 什么都没有必须报错（老行为是「没有照片」，现在还多了「没有媒体」这一档）
+let threw = false;
+try { buildMyGalleryPlan([], { title: '空文件夹' }); } catch { threw = true; }
+ok(threw, '空文件夹没有报错');
+
 console.log(`\n${failed ? `✗ ${failed}/${checks} 项没过` : `✓ ${checks} 项全过`}`);
 process.exit(failed ? 1 : 0);
