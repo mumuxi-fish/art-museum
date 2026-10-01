@@ -646,7 +646,19 @@ body.drag-look .drag-hint { display: block; }
 }
 
 /* 作品详情：展签正文 */
-.detail-head { display: flex; flex-direction: column; gap: 4px; }
+/* 头 + 小像横排：圆头像贴左，标题/画家/年代竖着排右边（没有头像时整列占满） */
+.detail-head { display: flex; align-items: center; gap: 14px; }
+.detail-head-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.detail-portrait {
+  flex: 0 0 auto;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgba(240, 235, 227, 0.28);
+  background: rgba(240, 235, 227, 0.08);
+}
+.detail-portrait.hidden { display: none; }
 .detail-artist { font-size: 15px !important; color: rgba(240, 235, 227, 0.85) !important; }
 .detail-desc {
   margin-top: 14px !important;

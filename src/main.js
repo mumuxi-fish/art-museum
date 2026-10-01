@@ -11,6 +11,7 @@ import { buildPlan } from './plan.js';
 import {
   buildMuseum, disposeMuseum, applyRoomVisibility, visibleRoomCount,
   freezeMuseumMatrices, getVisRevision, videosNeedRender, setAudioStationState, videoStates,
+  startPortraitLoads,
 } from './room.js';
 import { initControls, controls, updateMovement, enterMobileMode } from './controls.js';
 import { initPlayer, updatePlayer } from './player.js';
@@ -21,7 +22,7 @@ import {
 } from './interact.js';
 import { initMinimap, updateMinimap } from './minimap.js';
 import { initDaylight, applyDaylight, daylightLabel } from './daylight.js';
-import { paintingTextureCache, artWallUrl, artDetailUrl, artVideoUrl } from './textures.js';
+import { paintingTextureCache, artWallUrl, artDetailUrl, artVideoUrl, portraitImgSrc } from './textures.js';
 import {
   initAudio, setAudioEnabled, toggleMute, isMuted, footstep, sitSound, clickSound,
   toggleMusic, isMusicOn, toggleMusicPlay, isMusicPaused, audioRms,
@@ -66,6 +67,7 @@ const detailVideo = document.getElementById('detail-video');
 const detailTitle = document.getElementById('detail-title');
 const detailArtist = document.getElementById('detail-artist');
 const detailYear = document.getElementById('detail-year');
+const detailPortrait = document.getElementById('detail-portrait');
 const detailLink = document.getElementById('detail-link');
 const detailClose = document.getElementById('detail-close');
 const detailDesc = document.getElementById('detail-desc');
@@ -394,6 +396,24 @@ function openArtDetail(art) {
   if (detailTitle) detailTitle.textContent = art.title || '无题';
   if (detailArtist) detailArtist.textContent = art.artist || '佚名';
   if (detailYear) detailYear.textContent = art.year || '';
+  // 画家小像：和墙上名牌旁那张同源（真头像走缓存里的 URL，剪影给 data URL）。
+  // 自己导入的照片墙没有 portrait 字段，这里就是空串 → 藏掉。
+  if (detailPortrait) {
+    const src = portraitImgSrc(art.portrait, art.artist);
+    detailPortrait.classList.toggle('hidden', !src);
+    if (src) {
+      detailPortrait.onerror = () => {
+        const fb = portraitImgSrc('silhouette', art.artist);
+        if (fb) detailPortrait.src = fb;
+        detailPortrait.onerror = null;
+      };
+      detailPortrait.alt = art.artist ? `${art.artist} 的小像` : '';
+      detailPortrait.src = src;
+    } else {
+      detailPortrait.removeAttribute('src');
+      detailPortrait.onerror = null;
+    }
+  }
   if (detailDesc) {
     detailDesc.textContent = art.description || '';
     detailDesc.classList.toggle('hidden', !art.description);
@@ -969,6 +989,7 @@ async function bootstrap() {
           progressEl.textContent = `载入画作 ${done} / ${total}`;
         }
       },
+      startPortraitLoads, // 首批挂墙画作到位后，再拉 11 张画家小像真图
     );
   } catch (err) {
     showFatal(err);

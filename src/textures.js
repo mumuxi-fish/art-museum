@@ -294,6 +294,7 @@ export const portraitUrl = (file) => withVersion(`${ART_DETAIL_DIR}${file}`);
 
 const portraitCache = new Map();
 const silhouetteCache = new Map();
+const silhouetteCanvas = new Map();
 
 export function makePortraitSilhouette(artist) {
   const key = artist || 'unknown';
@@ -331,7 +332,19 @@ export function makePortraitSilhouette(artist) {
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
   silhouetteCache.set(key, tex);
+  silhouetteCanvas.set(key, c);
   return tex;
+}
+
+// 详情浮层里的 <img> 用：真头像给带版本号的 URL，剪影给 canvas 导出的 data URL
+// （画布拿不到 URL，<img> 又不能直接吃 Texture，只能这样桥一下）。
+// 自己导入的照片墙没有 portrait 字段，返回 ''，调用方负责藏掉这张图。
+export function portraitImgSrc(file, artist) {
+  if (!file) return '';
+  if (file !== 'silhouette') return portraitUrl(file);
+  makePortraitSilhouette(artist);
+  const c = silhouetteCanvas.get(artist || 'unknown');
+  return c ? c.toDataURL('image/webp', 0.9) : '';
 }
 
 export async function loadPortraitTexture(file, artist) {
