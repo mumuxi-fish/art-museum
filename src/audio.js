@@ -551,7 +551,7 @@ export function audioRms() {
 // —— 曲目：生成式之外，再放几首真正的轻音乐 ——
 //
 // 曲子来自 Kevin MacLeod 的 incompetech.com，CC BY 4.0（署名见帮助面板），
-// 文件放在 public/music/，第一次切到才下载解码（约 6–10MB/首），解码完就缓存。
+// 文件放在 public/music/，第一次切到才下载解码（约 3MB/首，128 kbps），解码完就缓存。
 //
 // 播放链路挂在 musicGain 下面，所以 B 的开关、M 的总静音、干声与大厅混响
 // 全部照旧生效 —— 文件曲和生成式 pad 是同一个"音乐总音量"。

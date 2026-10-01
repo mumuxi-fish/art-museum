@@ -52,8 +52,8 @@
 | 源码 | 约 7,550 行（JS + CSS + HTML） |
 | 工具脚本 | 约 2,660 行（Python + Node） |
 | 画家小像 | 11 张真头像（256px WebP，共 120 KB）+ 24 位剪影兜底 |
-| `dist` 体积 | 约 46 MB |
-| 其中背景音乐 | 33 MB（5 首 mp3，**首屏不加载**，切到那首才下载解码） |
+| `dist` 体积 | 约 29 MB |
+| 其中背景音乐 | 16 MB（5 首 mp3，128 kbps 重转码，**首屏不加载**，切到那首才下载解码） |
 | 其中画作 1200px | 8.1 MB（只在详情浮层按需取） |
 | 其中画作 640px | 2.2 MB（挂墙用，进馆即加载） |
 | 其中画家小像 | 120 KB（11 张 256px WebP，名牌旁） |
@@ -374,3 +374,6 @@ gh run list --limit 1     # 看构建状态
     构建 → 起/复用 4173 预览 → 逐个独立进程跑 → 汇总非 0 退出），
     公共设施 `tests/helpers.mjs`（BASE/SwiftShader/TMPDIR/截图目录/现场搭展厅）；
     素材只提交 `tests/fixtures/media/03-clip.webm`，照片与 15s WAV 现场生成
+32. 音乐转 128 kbps：5 首 mp3 原是 256–325 kbps 混编（33.6 MB），用
+    ffmpeg `libmp3lame -b:a 128k` 重转并保留 ID3 标签 → 16 MB，
+    `dist` 46 MB → 29 MB（回退到 33 MB 版本用 `git checkout c1f3102 -- public/music`）
