@@ -36,9 +36,12 @@ async function runPool(items, worker, limit) {
   await Promise.all(runners);
 }
 
-export async function streamArtTextures(artSlots, onReady, onProgress) {
+export async function streamArtTextures(artSlots, onReady, onProgress, onFirstBatch) {
   const entries = [...artSlots.entries()];
-  if (!entries.length) return;
+  if (!entries.length) {
+    onFirstBatch?.();
+    return;
+  }
 
   const total = entries.length;
   let done = 0;
@@ -61,5 +64,6 @@ export async function streamArtTextures(artSlots, onReady, onProgress) {
   const rest = entries.filter(([, s]) => !isMainWall(s));
 
   await runPool(first, loadOne, CONCURRENCY);
+  onFirstBatch?.(); // 主墙先铺完，画家小像的真图这时才排得上队
   await runPool(rest, loadOne, CONCURRENCY);
 }

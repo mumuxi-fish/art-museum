@@ -44,6 +44,21 @@ let videoPlayers = [];
 let lastVisibleRooms = null;
 // 听音点站牌的贴图（要按播放状态重绘），key → { texture, draw, mesh }
 const stationViews = new Map();
+// 画家小像的真图（11 张）不在建馆时就发请求 —— 那会跟首屏挂墙画作抢带宽。
+// 建馆时先把剪影贴上去，等 loader.js 首批主墙画作到位后 main.js 再点火。
+const portraitQueue = [];
+
+export function startPortraitLoads() {
+  const jobs = portraitQueue.splice(0);
+  for (const { mat, file, artist } of jobs) {
+    loadPortraitTexture(file, artist).then((tex) => {
+      if (mat.map === tex) return;
+      mat.map = tex;
+      mat.needsUpdate = true;
+      markDirty();
+    });
+  }
+}
 
 function addObj(obj) {
   const g = buildingRoomId && roomGroups?.get(buildingRoomId);
@@ -60,6 +75,22 @@ function addObj(obj) {
 
 const BOX = (w, h, d) => new THREE.BoxGeometry(w, h, d);
 const STD = (o) => new THREE.MeshStandardMaterial(o);
+
+// 画家小像的圆片和细环：直径只有几种（名牌尺寸按画幅算出来就 3 档），
+// 按直径缓存几何，全馆 144 个网格共用 3 对而不是各 new 一份。
+const portraitGeoCache = new Map();
+function portraitGeo(d) {
+  const key = d.toFixed(3);
+  let geo = portraitGeoCache.get(key);
+  if (!geo) {
+    geo = {
+      face: new THREE.CircleGeometry(d / 2, 40),
+      ring: new THREE.RingGeometry(d / 2, d / 2 + 0.018, 44),
+    };
+    portraitGeoCache.set(key, geo);
+  }
+  return geo;
+}
 
 function mat(color, opts = {}) {
   return STD({ color, roughness: 0.88, metalness: 0.02, ...opts });
@@ -82,6 +113,7 @@ export function disposeMuseum() {
   }
   videoPlayers = [];
   lastVisibleRooms = null;
+  portraitQueue.length = 0;   // 材质随馆一起没了，别再往死材质上贴图
 
   // 听音点站牌的贴图是每块牌一张，不属于全局缓存，这里要真销毁
   for (const v of stationViews.values()) v.texture.dispose();
@@ -908,23 +940,19 @@ function buildArtworks(room, plan, lights, artSlots, artTargets) {
           transparent: true,
         });
         faceMat.userData.keepMap = true;
-        const face = new THREE.Mesh(new THREE.CircleGeometry(d / 2, 40), faceMat);
+        const { face: faceGeo, ring: ringGeo } = portraitGeo(d);
+        const face = new THREE.Mesh(faceGeo, faceMat);
         face.position.set(px, py, 0.05);
         grp.add(face);
         // 一圈细框，和画框的木色呼应
-        const ring = new THREE.Mesh(
-          new THREE.RingGeometry(d / 2, d / 2 + 0.018, 44),
-          frameWood,
-        );
+        const ring = new THREE.Mesh(ringGeo, frameWood);
         ring.position.set(px, py, 0.049);
         grp.add(ring);
 
-        loadPortraitTexture(a.portrait, a.artist).then((tex) => {
-          if (faceMat.map === tex) return;
-          faceMat.map = tex;
-          faceMat.needsUpdate = true;
-          markDirty();
-        });
+        // 真图先排队，首批挂墙画作到位后才发请求（见 startPortraitLoads）
+        if (a.portrait !== 'silhouette') {
+          portraitQueue.push({ mat: faceMat, file: a.portrait, artist: a.artist });
+        }
       }
     }
 
