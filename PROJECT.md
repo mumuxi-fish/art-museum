@@ -161,11 +161,31 @@ python3 tools/make-wall-textures.py   # 重出挂墙 640px 缩图
 python3 tools/fetch-portraits.py      # 补 / 重抓画家头像（先搜后取，结果落缓存）
 python3 tools/shrink-portraits.py && node tools/check-portraits.mjs
 node node_modules/vite/bin/vite.js build
+npm run check                    # 三个自检一把过（CI push 时也跑）
+npm test                         # 端到端用例（见下）
 
 # 只重抓某个展厅
 python3 tools/fetch-artworks.py public/art tools/artworks.json dutch
 python3 tools/enrich-artworks.py tools/artworks.json
 ```
+
+### 端到端测试（`tests/`）
+
+`npm test` → `tests/run.mjs`：确保 dist 和 4173 预览服务就绪（没有就自己
+build / 起 `vite preview`），再逐个跑 `tests/*.test.mjs`（每文件独立进程），
+按文件汇总 PASS/FAIL，有失败就非 0 退出。用例只挑「核心回归」：
+默认馆冒烟、HUD、ESC 指针闭环、🖼 照片文件夹、影像装置 + 听音点、
+名牌小像、详情浮层小像、播放列表 / 播放暂停 / 切歌 / 音频本身。
+
+公共设施 `tests/helpers.mjs`：基地址（`BASE_URL` 可覆盖）、SwiftShader
+启动参数（无 GPU 的机器也能画）、`TMPDIR` 自动挪到 `/tmp` 子目录
+（Chromium 在 `/tmp` 根目录建共享内存会被这台机器拒掉）、截图落
+`tests/.shots/`、本地展厅素材 `fixturePhotos()` / `fixtureMedia()`——
+图片从 `public/art/640` 现场复制、15s WAV 现场合成，仓库里只提交
+`tests/fixtures/media/03-clip.webm` 一个二进制。
+
+CI 只跑 `npm run check`（不碰浏览器，几秒完事）；`npm ci` 带
+`PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1`，不让部署流水线顺手下 chromium。
 
 ---
 
@@ -258,6 +278,8 @@ python3 tools/enrich-artworks.py tools/artworks.json
 ## 十、部署
 
 推送到 `main` 分支后，GitHub Actions 自动构建并发布到 GitHub Pages。
+流水线顺序：`npm ci`（跳过 chromium 下载）→ `npm run check`（平面 / 自建展厅 /
+头像三个自检，坏了就不浪费构建）→ `npm run build` → 发布。
 
 ```bash
 git push origin main
@@ -325,7 +347,7 @@ gh run list --limit 1     # 看构建状态
     认 `audioTargets`、瞄准提示在「E 播放 / E 暂停」间切换，`listen.js` 用一个
     `<audio>` 单轨互斥播放（和背景音乐两套系统，不进播放列表）。排版上视频和照片
     同为 pieces 一起算尺寸、音频跟在同面墙照片后隔 0.8m（厅长跟着变），
-    纯音频文件夹第一块牌子顶替东墙主位。自检扩到 151 项，e2e `media-check.mjs` 21 项
+    纯音频文件夹第一块牌子顶替东墙主位。自检扩到 151 项，e2e `tests/media.test.mjs` 21 项
 27. 名牌旁边挂画家小像：`tools/fetch-portraits.py` 只在可达且 CC0 的 Met +
     Cleveland 上找，判定保守（自画像须作者是本人；`Portrait of X` 只认逗号前那段 ——
     "after Frans Hals"、名刺、风景版画都被 `BAD_TITLE` 挡掉），Met 走
@@ -335,3 +357,20 @@ gh run list --limit 1     # 看构建状态
     木色细环（`portrait` 字段是 `null` 的自己导入照片墙不会挂），
     `build-galleries.py` 注入字段并把出处写进 CREDITS.md。
     自检 `node tools/check-portraits.mjs`（覆盖 / 文件 / 来源授权 / 数据对齐）
+28. 详情浮层也挂画家小像：`index.html` 的 `detail-head` 拆成 `#detail-portrait`
+    + 文字块，真头像走 `textures.js` 的 `portraitImgSrc()`（带 `?v=` hash）、
+    剪影走同一张 `data:` WebP（和墙上共用 `makePortraitSilhouette`）、
+    404 时 `onerror` 回落剪影，自己导入的照片墙没有 `portrait` 字段就整个藏掉
+29. CI 跑自检：`npm run check` 串上 `check-plan` + `check-mygallery` +
+    `check-portraits`，`deploy.yml` 在 build 之前先过这道（数据坏了不浪费构建）；
+    `npm ci` 带 `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD`，部署流水线不下浏览器
+30. 首批墙画之后才拉头像：`buildArtmarks` 不再立即 `loadPortraitTexture`，
+    改成把 `{mat, file, artist}` 排进 `room.js` 的 `portraitQueue`；
+    `loader.js` 的 `streamArtTextures` 多收一个 `onFirstBatch` 回调，第一批
+    27 张墙画（`runPool(first,…)`）跑完再 `startPortraitLoads()` 补挂小像，
+    `disposeMuseum` 清队列。同尺寸的圆片几何改成 `portraitGeo(d)` 模块级缓存
+    （labelW clamp 之后只有 3 种直径 → 3 组 face+ring），几何体 499 → 430
+31. 端到端用例进仓库：`tests/*.test.mjs` + `tests/run.mjs`（`npm test`：
+    构建 → 起/复用 4173 预览 → 逐个独立进程跑 → 汇总非 0 退出），
+    公共设施 `tests/helpers.mjs`（BASE/SwiftShader/TMPDIR/截图目录/现场搭展厅）；
+    素材只提交 `tests/fixtures/media/03-clip.webm`，照片与 15s WAV 现场生成

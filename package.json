@@ -7,12 +7,15 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check": "node tools/check-plan.mjs && node tools/check-mygallery.mjs && node tools/check-portraits.mjs",
+    "test": "node tests/run.mjs"
   },
   "dependencies": {
     "three": "^0.170.0"
   },
   "devDependencies": {
+    "playwright": "^1.48.2",
     "vite": "^6.0.0"
   }
 }

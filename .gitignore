@@ -4,3 +4,5 @@ dist/
 *.log
 .portraits-src/
 __pycache__/
+tests/.shots/
+tests/.tmp/

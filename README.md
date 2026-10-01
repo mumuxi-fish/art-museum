@@ -53,6 +53,8 @@ npm install
 npm run dev     # 开发模式
 npm run build   # 构建静态文件
 npm run preview # 预览构建结果
+npm run check   # 平面 + 自建展厅 + 头像 数据自检（不碰浏览器，CI 每次 push 都跑）
+npm test        # 端到端用例（Playwright，见下方「测试」）
 ```
 
 ## 🎮 使用说明
@@ -306,6 +308,41 @@ python3 tools/build-galleries.py tools/artworks.json public/data/museum.json
 影像 + 听音点混排、纯音频文件夹，共 151 项：门洞 / 贴墙 / 越界 / 壁灯不压画 /
 射灯数不超上限 / 牌子不与画重叠 / 时长格式）。
 
+---
+
+## 🧪 测试
+
+```bash
+npm test                    # 构建 → 起 4173 预览 → 跑 tests/ 下全部用例
+npm test -- media folder    # 只跑名字里带这两个词的用例
+npm test -- --no-build      # 跳过构建（dist 已经是最新的时候）
+npm test -- --list          # 只列用例
+```
+
+`tests/run.mjs` 保证 dist 和预览服务就绪，然后逐个跑 `tests/*.test.mjs`、
+按文件名汇总 PASS/FAIL，最后按失败数退出（有失败就是非 0，可直接进 CI）。
+公共设施在 `tests/helpers.mjs`：基地址（`BASE_URL` 环境变量可覆盖）、
+SwiftShader 启动参数、截图目录 `tests/.shots/`、以及两个本地展厅素材——
+`fixturePhotos()`（5 张照片）和 `fixtureMedia()`（2 图 + 1 视频 + 1 音频，
+二进制只提交 `tests/fixtures/media/03-clip.webm`，其余跑测试时从
+`public/art/640` 复制 / 现场合成）。
+
+当前用例（每个约 1~2.5 分钟，全套 15 分钟左右）：
+
+| 文件 | 覆盖 |
+| --- | --- |
+| `smoke` | 走一遍默认展馆：零报错、零失败请求、寻路/剔除/绘制调用 |
+| `ui` | 桌面 + 手机两套视口的 HUD（按钮齐全、音乐/播放列表可用、无报错） |
+| `esc` | 指针锁定闭环：ESC 释放、解锁后可点、点画开详情不抢指针 |
+| `folder` | 🖼 导入照片文件夹 → 单厅画廊、详情 blob 大图、↩ 还原 |
+| `media` | 影像装置在墙上真播、听音点 E 播放/暂停、超 300MB 拦截、还原 |
+| `portrait` | 名牌旁画家小像：72 幅带 portrait、26 张真头像全 200 |
+| `detail-portrait` | 详情浮层小像：真头像 / 剪影 / 404 兜底 / 自建展厅藏掉 |
+| `playlist` / `playpause` | 播放列表、空格/按钮播放暂停（桌面 + 手机） |
+| `switch` | 曲目切换（含慢网下的「载入中直接切」） |
+| `track` | 音频本身：rms 有声、生成曲 / 文件曲的开关联动、帮助面板文案 |
+
+
 限制：媒体不进仓库、不上传，换浏览器或清站点数据就没了；一次只保留一套方案
 （导入新的覆盖旧的）；墙上的射灯按 `room.artLight.max` 等间隔挑着加，
 几十张照片也不会把房间的光照 shader 撑爆。
@@ -357,6 +394,11 @@ art-museum/
 │   ├── artworks.json           # 画作清单（数据源）
 │   ├── portraits.json          # 画家头像清单（数据源：真头像的来源与授权）
 │   └── sculpture.json          # 雕塑元数据（数据源）
+├── tests/
+│   ├── run.mjs                 # npm test 入口：构建 → 预览服务 → 汇总
+│   ├── helpers.mjs             # 基地址 / 启动参数 / 截图目录 / 本地展厅素材
+│   ├── *.test.mjs              # 端到端用例（每文件独立进程，非 0 即失败）
+│   └── fixtures/media/         # 影像素材（只提交 03-clip.webm）
 ├── .github/workflows/deploy.yml
 └── package.json
 ```
