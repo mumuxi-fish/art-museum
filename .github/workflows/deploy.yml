@@ -32,6 +32,14 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        env:
+          # CI 不跑浏览器用例，别让 playwright 顺手下几百 MB 的 chromium
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+
+      # 自检不碰浏览器：平面（画有没有挂进门洞）/ 自建展厅 151 项 / 头像数据对齐。
+      # 放在 build 之前——数据坏了就不必浪费一次构建。
+      - name: Check
+        run: npm run check
 
       - name: Build
         run: npm run build
